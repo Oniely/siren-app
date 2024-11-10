@@ -1,8 +1,17 @@
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { Image, Pressable, TextInput, TouchableOpacity } from 'react-native';
-import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Register = () => {
@@ -22,7 +31,7 @@ const Register = () => {
       <SafeAreaView style={styles.container}>
         <Image source={require('@/assets/images/top_image.png')} />
         <View style={styles.formContainer}>
-          <Text style={styles.signupText}>Signup</Text>
+          <Text style={styles.signupText}>Sign Up</Text>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Username</Text>
             <TextInput
@@ -87,10 +96,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
+    right: 0,
+    width: '100%',
   },
   signupText: {
     color: '#0B0C63',
     fontSize: 60,
+    fontFamily: 'DMSansBold',
     fontWeight: 'bold',
     textShadowRadius: 5,
     textShadowColor: '#0B0C63',

@@ -1,12 +1,10 @@
-import { Redirect, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import {
   Dimensions,
   Image,
-  KeyboardAvoidingView,
   Modal,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -16,8 +14,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-const screenWidth = Dimensions.get('window').width;
 
 const Login = () => {
   const router = useRouter();
@@ -29,7 +25,7 @@ const Login = () => {
   const [resetEmail, setResetEmail] = useState('');
 
   const handleLogin = () => {
-    return;
+    return router.push('/(tabs)/');
   };
 
   const handleForgotPassword = () => {
@@ -48,7 +44,12 @@ const Login = () => {
           <View style={styles.whiteLine} />
           <View style={styles.inputContainer}>
             <Icon name="user" size={20} color="#0c0c63" />
-            <TextInput placeholder="Username" style={styles.input} value={username} onChangeText={setUsername} />
+            <TextInput
+              placeholder="Username"
+              style={styles.input}
+              value={username}
+              onChangeText={setUsername}
+            />
           </View>
           <View style={styles.inputContainer}>
             <Icon name="lock" size={20} color="#0c0c63" />
@@ -129,10 +130,10 @@ const styles = StyleSheet.create({
   logo: {
     resizeMode: 'stretch',
     width: 160,
-    height: screenWidth * 0.4,
+    height: '70%',
   },
   logoText: {
-    height: screenWidth * 0.15,
+    height: '25%',
   },
   whiteLine: {
     borderTopWidth: 2,

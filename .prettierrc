@@ -6,6 +6,6 @@
   "useTabs": false,
   "printWidth": 110,
   "bracketSpacing": true,
-  "jsxBracketSameLine": true,
-  "arrowParens": "avoid"
+  "jsxBracketSameLine": false,
+  "arrowParens": "always"
 }

@@ -1,7 +1,7 @@
-import { SplashScreen, Stack } from 'expo-router';
-import { useFonts } from 'expo-font';
-import { useEffect } from 'react';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
+import { SplashScreen, Stack } from 'expo-router';
+import { useEffect } from 'react';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -11,7 +11,8 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
-    SpaceMono: require('@/assets/fonts/SpaceMono-Regular.ttf')
+    DMSans: require('@/assets/fonts/DMSans-Italic-VariableFont_opsz,wght.ttf'),
+    DMSansBold: require('@/assets/fonts/DMSans-Bold.ttf'),
   });
 
   useEffect(() => {
@@ -28,11 +29,16 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack
         screenOptions={{
-          headerShown: false
-        }}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="login" />
-        <Stack.Screen name="register" />
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="(tabs)/index" />
+        <Stack.Screen name="(tabs)/contacts" />
+        <Stack.Screen name="(tabs)/messages" />
+        <Stack.Screen name="(tabs)/profile" />
+        <Stack.Screen name="(auth)/login" />
+        <Stack.Screen name="(auth)/register" />
+        <Stack.Screen name="(auth)/forgot-password" />
         <Stack.Screen name="+not-found" />
       </Stack>
     </ThemeProvider>
