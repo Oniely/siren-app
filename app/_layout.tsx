@@ -36,10 +36,12 @@ export default function RootLayout() {
           headerShown: false,
         }}
       >
+        <Stack.Screen name="index" />
         <Stack.Screen name="(tabs)/index" />
         <Stack.Screen name="(tabs)/contacts" />
         <Stack.Screen name="(tabs)/messages" />
         <Stack.Screen name="(tabs)/profile" />
+        <Stack.Screen name="(tabs)/map" />
         <Stack.Screen name="(auth)/login" />
         <Stack.Screen name="(auth)/register" />
         <Stack.Screen name="(auth)/forgot-password" />

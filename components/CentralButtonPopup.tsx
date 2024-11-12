@@ -75,7 +75,7 @@ export default function CentralButtonPopup({ isVisible, onClose }: Props) {
       <View style={[styles.iconContainer, { top: 20, right: 65 }]}>
         <TouchableOpacity
           onPress={() => {
-            router.push('/');
+            router.push('/map');
             onClose();
           }}
         >
