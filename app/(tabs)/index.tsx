@@ -77,10 +77,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-
   box: {
-    width: '49%',
+    width: '48%',
     height: '50%',
+    maxWidth: 400,
     borderRadius: 50,
     backgroundColor: '#087BB8',
     paddingVertical: 20,
@@ -95,9 +95,9 @@ const styles = StyleSheet.create({
     width: '100%',
     textAlign: 'center',
   },
-
   bigCircleContainer: {
-    width: '65%',
+    width: '70%',
+    maxWidth: 300,
     aspectRatio: 1,
     position: 'absolute',
   },

@@ -1,6 +1,6 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { SplashScreen, Stack } from 'expo-router';
+import { SplashScreen, Stack, usePathname } from 'expo-router';
 import { useEffect } from 'react';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -10,6 +10,8 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const pathname = usePathname();
+
   const [loaded] = useFonts({
     DMSans: require('@/assets/fonts/DMSans-Italic-VariableFont_opsz,wght.ttf'),
     DMSansBold: require('@/assets/fonts/DMSans-Bold.ttf'),
@@ -24,6 +26,8 @@ export default function RootLayout() {
   if (!loaded) {
     return null;
   }
+
+  console.log('Route:', pathname);
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>

@@ -1,38 +1,40 @@
-import { StyleSheet } from 'react-native';
-import { ThemedView } from './ThemedView';
 import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, ViewStyle } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { ThemedView } from './ThemedView';
 
 interface Props {
   children: React.ReactNode;
   bg?: string;
   statusBarStyle?: 'auto' | 'inverted' | 'light' | 'dark';
+  style?: ViewStyle;
 }
 
-const Container = ({ children, bg = '#FFF', statusBarStyle = 'auto' }: Props) => {
+const Container = ({ children, bg = '#FFF', statusBarStyle = 'auto', style }: Props) => {
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ThemedView
-        style={[
-          styles.container,
-          {
-            backgroundColor: bg,
-          },
-        ]}>
-        {children}
-        <StatusBar style={statusBarStyle} />
-      </ThemedView>
-    </SafeAreaView>
+    <ThemedView
+      style={[
+        styles.container,
+        {
+          backgroundColor: bg,
+        },
+        style,
+      ]}
+    >
+      {children}
+      <StatusBar style={statusBarStyle} />
+    </ThemedView>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
+  // safeArea: {
+  //   flex: 1,
+  // },
   container: {
     flex: 1,
-    padding: 16,
+    position: 'relative',
+    overflow: 'hidden',
   },
 });
 

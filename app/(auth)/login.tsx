@@ -25,7 +25,7 @@ const Login = () => {
   const [resetEmail, setResetEmail] = useState('');
 
   const handleLogin = () => {
-    return router.push('/(tabs)/');
+    return router.push('/(tabs)');
   };
 
   const handleForgotPassword = () => {
@@ -60,8 +60,8 @@ const Login = () => {
               value={password}
               onChangeText={setPassword}
             />
-            <Pressable onPress={() => setShowPassword(prev => !prev)}>
-              <Icon name={showPassword ? 'eye' : 'eye-slash'} size={30} color={'#5997C6'} />
+            <Pressable onPress={() => setShowPassword((prev) => !prev)}>
+              <Icon name={showPassword ? 'eye' : 'eye-slash'} size={25} color={'#5997C6'} />
             </Pressable>
           </View>
           <TouchableOpacity style={styles.submit} onPress={handleLogin}>
@@ -167,6 +167,7 @@ const styles = StyleSheet.create({
     color: '#7481ae',
     fontSize: 16,
     fontWeight: 'semibold',
+    paddingVertical: 2,
   },
   submit: {
     width: 160,

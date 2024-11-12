@@ -1,4 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -48,51 +50,47 @@ export default function CentralButtonPopup({ isVisible, onClose }: Props) {
         <Path d="M 180 200 A 130 130 0 0 1 20 200 L 20 200 L 180 200 Z" fill="#5997c6" />
       </Svg>
 
-      <View style={[styles.iconContainer, { top: 70, left: 30 }]}>
+      <View style={[styles.iconContainer, { top: 75, left: 30 }]}>
         <TouchableOpacity
           onPress={() => {
             router.push('/');
             onClose();
           }}
         >
-          <Ionicons name="people" size={30} color="#0c0c63" />
-          <Text style={styles.popupText}>Contacts</Text>
+          <FontAwesome6 name="handshake-angle" size={40} color="#0c0c63" />
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.iconContainer, { top: 25, left: 75 }]}>
+      <View style={[styles.iconContainer, { top: 20, left: 65 }]}>
         <TouchableOpacity
           onPress={() => {
             router.push('/');
             onClose();
           }}
         >
-          <Ionicons name="home" size={30} color="#0c0c63" />
-          <Text style={styles.popupText}>Home</Text>
+          <FontAwesome5 name="graduation-cap" size={40} color="#0c0c63" />
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.iconContainer, { top: 25, right: 75 }]}>
+      <View style={[styles.iconContainer, { top: 20, right: 65 }]}>
         <TouchableOpacity
           onPress={() => {
             router.push('/');
             onClose();
           }}
         >
-          <Ionicons name="settings" size={30} color="#0c0c63" />
-          <Text style={styles.popupText}>Settings</Text>
+          <FontAwesome5 name="map-marked-alt" size={40} color="#0c0c63" />
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.iconContainer, { top: 70, right: 20 }]}>
+      <View style={[styles.iconContainer, { top: 75, right: 30 }]}>
         <TouchableOpacity
           onPress={() => {
             router.push('/');
             onClose();
           }}
         >
-          <Ionicons name="chatbubbles" size={30} color="#0c0c63" />
-          <Text style={styles.popupText}>Messages</Text>
+          <Ionicons name="settings" size={40} color="#0c0c63" />
         </TouchableOpacity>
       </View>
 
