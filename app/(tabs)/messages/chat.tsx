@@ -29,6 +29,8 @@ const MessagingItem = () => {
   const [currentUserId, setCurrentUserId] = useState('');
   const [receiver, setReceiver] = useState<Receiver | null>(null);
 
+  console.log(queryParams);
+
   // useEffect(() => {
   //   async function getUserId() {
   //     const userId = await AsyncStorage.getItem('userId');
