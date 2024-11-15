@@ -114,7 +114,7 @@ const Messaging = () => {
                 style={styles.contactInfo}
                 onPress={() =>
                   router.push({
-                    pathname: '/chat',
+                    pathname: '/messages/chat',
                     params: {
                       selectedId: 1,
                       roomId: 1,
