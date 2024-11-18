@@ -29,11 +29,9 @@ const Register = () => {
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <SafeAreaView style={styles.container}>
-        <Image source={require('@/assets/images/top_image.png')} />
         <View style={styles.formContainer}>
-          <Text style={styles.signupText}>Sign Up</Text>
+          <Text style={styles.signupText}>SIGN UP</Text>
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Username</Text>
             <TextInput
               placeholder="Username"
               style={styles.input}
@@ -42,7 +40,6 @@ const Register = () => {
             />
           </View>
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
             <TextInput
               placeholder="i.e john@gmail.com"
               style={styles.input}
@@ -51,7 +48,6 @@ const Register = () => {
             />
           </View>
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Password</Text>
             <TextInput
               placeholder="Create a strong password"
               style={styles.input}
@@ -61,7 +57,6 @@ const Register = () => {
             />
           </View>
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Confirm Password</Text>
             <TextInput
               placeholder="Re-type password"
               style={styles.input}
@@ -76,7 +71,7 @@ const Register = () => {
           <View style={styles.hasAccount}>
             <Text style={styles.hasAccountQuestion}>Already have an account?</Text>
             <Pressable onPress={() => router.push('/login')}>
-              <Text style={styles.loginLink}>Signin</Text>
+              <Text style={styles.loginLink}>LOGIN</Text>
             </Pressable>
           </View>
         </View>
@@ -89,31 +84,27 @@ const Register = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d7f1f7',
+    backgroundColor: '#faf9f6',
     position: 'relative',
+    textAlign: 'center',
+    justifyContent: 'center',
+    display: 'flex',
   },
-  topImage: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    width: '100%',
-  },
+
   signupText: {
-    color: '#0B0C63',
+    color: '#0c0c63',
     fontSize: 60,
     fontFamily: 'DMSansBold',
     fontWeight: 'bold',
-    textShadowRadius: 5,
-    textShadowColor: '#0B0C63',
-    paddingLeft: 20,
+    textAlign: 'left',
+    marginLeft: 50,
     marginBottom: 50,
   },
   inputContainer: {
     width: '80%',
     marginHorizontal: 'auto',
-    gap: 5,
-    marginBottom: 15,
+    gap: 10,
+    marginBottom: 20,
   },
   label: {
     fontSize: 18,
@@ -126,20 +117,21 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 20,
     fontSize: 18,
-    paddingVertical: 5,
-    backgroundColor: '#AFE8F3',
+    paddingVertical: 10,
   },
   signup: {
     width: '80%',
     marginHorizontal: 'auto',
-    backgroundColor: '#0B0C63',
+    backgroundColor: '#0c0c63',
     padding: 10,
     borderRadius: 30,
     marginVertical: 20,
   },
   createAccountText: {
-    color: '#AFE8F3',
+    color: '#ffffff',
     textAlign: 'center',
+    textTransform: 'uppercase',
+    letterSpacing: 2,
     fontSize: 20,
   },
   hasAccount: {
@@ -150,17 +142,20 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   hasAccountQuestion: {
-    color: '#0C0C63',
+    color: '#000000',
     fontSize: 18,
   },
   loginLink: {
     fontWeight: 'bold',
     fontSize: 18,
-    color: '#0C0C63',
+    textDecorationColor: '#000000',
+    textDecorationStyle: 'solid',
+    textDecorationLine: 'underline',
+    color: '#000000',
   },
   formContainer: {
     flex: 1,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignContent: 'center',
     backgroundColor: '#1010',
   },

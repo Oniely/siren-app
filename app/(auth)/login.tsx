@@ -1,6 +1,6 @@
+import React, { useEffect, useState } from "react";
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -11,32 +11,116 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Alert
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Container from "../../components/Container";
+import { auth, db } from "../../firebaseConfig";
+import {
+	signInWithEmailAndPassword,
+	sendPasswordResetEmail,
+} from "firebase/auth";
+import { ref, get } from "firebase/database";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const screenWidth = Dimensions.get("window").width;
 const Login = () => {
   const router = useRouter();
-
+  console.log(db)
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
 
-  const handleLogin = () => {
-    return router.push('/(tabs)/');
-  };
-
-  const handleForgotPassword = () => {
-    return;
-  };
+    const handleLogin = async () => {
+      if (username.trim() === "" || password.trim() === "") {
+        Alert.alert("Error", "Username and Password are required.");
+        return;
+      }
+      try {
+        const userRef = ref(db, "users");
+        const snapshot = await get(userRef);
+        const users = snapshot.val();
+  
+        let userFound = false;
+        let userEmail = "";
+        let userRole = "";
+  
+        for (const userId in users) {
+          if (users[userId].username === username) {
+            userFound = true;
+            userEmail = users[userId].email;
+            userRole = users[userId].role;
+            console.log(users[userId])
+            break;
+          }
+        }
+  
+        if (!userFound) {
+          Alert.alert("Error", "Username does not exist.");
+          return;
+        }
+  
+        // Sign in with Firebase Auth
+        const user = await signInWithEmailAndPassword(auth, userEmail, password);
+        await AsyncStorage.setItem('userId', user.user.uid);
+        await AsyncStorage.setItem('user', JSON.stringify(user.user));
+        await AsyncStorage.setItem('role', userRole);
+  
+        // Check user role and navigate accordingly
+        if (userRole === "responder") {
+          router.replace("./ResponderSide");
+        } else {
+          router.replace("./Dashboard");
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          Alert.alert("Error", error.message);
+        } else {
+          Alert.alert("Error", "An unknown error occurred.");
+        }
+      }
+    };
+  
+    const handleForgotPassword = async () => {
+      if (resetEmail.trim() === "") {
+        Alert.alert("Error", "Please enter your email address.");
+        return;
+      }
+  
+      try {
+        await sendPasswordResetEmail(auth, resetEmail);
+        Alert.alert("Success", "Password reset link sent to your email.");
+        setShowForgotPasswordModal(false); // Close the modal
+      } catch (error) {
+        if (error instanceof Error) {
+          Alert.alert("Error", error.message);
+        } else {
+          Alert.alert("Error", "An unknown error occurred.");
+        }
+      }
+    };
+    useEffect(() => {
+      (async() => {
+        const role = await AsyncStorage.getItem('role');
+        const userId = await AsyncStorage.getItem('userId');
+        if(userId) {
+          if (role === "responder") {
+            router.replace("./ResponderSide");
+          } else {
+            router.replace("./Dashboard");
+          }
+        }
+  
+      })()
+    },[])
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image source={require('@/assets/images/siren_icon.png')} style={styles.logo} />
-        <Image source={require('@/assets/images/siren_text.png')} style={[styles.logo, styles.logoText]} />
+        <Image source={require('@/assets/images/logo.png')} style={styles.logo} />
       </View>
 
       <View style={styles.formContainer}>
@@ -72,11 +156,11 @@ const Login = () => {
           </Pressable>
         </View>
         <View>
-          <Text style={styles.forgotPass}>or connect with</Text>
+          <Text style={styles.connectWith}>or connect with</Text>
           <View style={styles.thirdpartyButtonContainer}>
-            <Icon name="facebook-square" size={40} color={'#77c4d3'} />
-            <Icon name="user" size={40} color={'#77c4d3'} />
-            <Icon name="google" size={40} color={'#77c4d3'} />
+            <Icon name="facebook-square" size={40} color={'#0c0c63'} />
+            <Icon name="user" size={40} color={'#0c0c63'} />
+            <Icon name="google" size={40} color={'#0c0c63'} />
           </View>
           <View style={styles.askToRegister}>
             <Text style={styles.normalRegisterText}>Don't have an account?</Text>
@@ -116,7 +200,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#0c0c63',
+    backgroundColor: '#faf9f6',
     padding: 16,
   },
   imageContainer: {
@@ -124,16 +208,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'transparent',
-    rowGap: 25,
+    rowGap: 5,
     paddingTop: 20,
   },
   logo: {
-    resizeMode: 'stretch',
-    width: 160,
-    height: '70%',
-  },
-  logoText: {
-    height: '25%',
+    resizeMode: 'center',
+    width: 200,
   },
   whiteLine: {
     borderTopWidth: 2,
@@ -159,6 +239,8 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 30,
+    borderColor: 'black',
+    borderWidth: 1,
     marginVertical: 10,
   },
   input: {
@@ -171,7 +253,7 @@ const styles = StyleSheet.create({
   submit: {
     width: 160,
     marginHorizontal: 'auto',
-    backgroundColor: '#93E0EF',
+    backgroundColor: '#0c0c63',
     marginTop: 15,
     padding: 15,
     borderRadius: 50,
@@ -180,12 +262,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#0C0C63',
+    textTransform: 'uppercase',
+    letterSpacing: 1.2,
+    color: '#ffffff',
   },
   forgotPass: {
     textAlign: 'center',
-    color: '#fff',
+    color: '#000000',
     marginVertical: 10,
+    paddingVertical: 10,
+    fontWeight: 'bold',
+    textDecorationColor: '#000000',
+    textDecorationLine: 'underline',
+    textDecorationStyle: 'solid',
+  },
+  connectWith: {
+    textAlign: 'center',
+    paddingBottom: 20,
+
   },
   thirdpartyButtonContainer: {
     flexDirection: 'row',
@@ -199,14 +293,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 10,
-    marginBottom: 20,
+    marginBottom: 60,
   },
   normalRegisterText: {
-    color: 'white',
+    color: '#000000',
   },
   registerText: {
     fontWeight: 'bold',
-    color: '#93E0EF',
+    color: '#000000',
+    textTransform: 'uppercase',
   },
 
   // Forgot Password Modal Styles
@@ -253,5 +348,4 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-
 export default Login;
