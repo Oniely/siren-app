@@ -16,10 +16,14 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
+<<<<<<< HEAD
     "@firebase/database": "^1.0.10",
     "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-firebase/app": "^21.5.0",
+=======
+    "@react-native-community/geolocation": "^3.4.0",
+>>>>>>> b608ef2db7eabaa8161d5611856bf8c3bc0e98dc
     "@react-navigation/native": "^6.1.18",
     "expo": "~51.0.28",
     "expo-constants": "~16.0.2",
@@ -36,12 +40,14 @@
     "react-native": "0.74.5",
     "react-native-firebase": "^5.6.0",
     "react-native-gesture-handler": "~2.16.1",
+    "react-native-maps": "^1.20.0",
     "react-native-reanimated": "~3.10.1",
     "react-native-safe-area-context": "4.10.5",
     "react-native-screens": "3.31.1",
     "react-native-svg": "^15.2.0",
     "react-native-vector-icons": "^10.2.0",
-    "react-native-web": "~0.19.10"
+    "react-native-web": "~0.19.10",
+    "expo-location": "~17.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

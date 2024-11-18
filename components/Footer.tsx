@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { Href, usePathname, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -6,30 +6,52 @@ import CentralButtonPopup from './CentralButtonPopup';
 
 const Footer = () => {
   const router = useRouter();
+  const currentPath = usePathname();
   const [sirenClicked, setSirenClicked] = useState(false);
+
+  const handlePress = (path: Href) => {
+    if (currentPath !== path) {
+      router.push(path);
+    }
+  };
 
   return (
     <KeyboardAvoidingView style={styles.container}>
       <View style={styles.wrapper}>
-        <TouchableOpacity style={styles.icon} onPress={() => router.push('/(tabs)')}>
+        <TouchableOpacity style={styles.icon} onPress={() => handlePress('/')} disabled={currentPath === '/'}>
           <Icon name="home" size={30} color={'#0C0C63'} />
           <Text style={styles.iconText}>Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.icon} onPress={() => router.push('/(tabs)/contacts')}>
+
+        <TouchableOpacity
+          style={styles.icon}
+          onPress={() => handlePress('/contacts')}
+          disabled={currentPath === '/contacts'}
+        >
           <Icon name="contacts" size={30} color={'#0C0C63'} />
           <Text style={styles.iconText}>Contacts</Text>
         </TouchableOpacity>
-        <Pressable style={styles.icon} onPress={() => setSirenClicked(!sirenClicked)}>
+
+        <Pressable style={styles.icon} onPress={() => setSirenClicked((prev) => !prev)}>
           <CentralButtonPopup isVisible={sirenClicked} onClose={() => setSirenClicked(false)} />
           <Icon name="bell-ring" size={30} color={'#0C0C63'} />
           <Text style={[styles.iconText, { fontWeight: 'bold' }]}>SIREN</Text>
         </Pressable>
-        <TouchableOpacity style={styles.icon} onPress={() => router.push('/(tabs)/messages')}>
+
+        <TouchableOpacity
+          style={styles.icon}
+          onPress={() => handlePress('/messages')}
+          disabled={currentPath === '/messages'}
+        >
           <Icon name="message-processing" size={30} color={'#0C0C63'} />
           <Text style={styles.iconText}>Message</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.icon} onPress={() => router.push('/(tabs)/profile')}>
+        <TouchableOpacity
+          style={styles.icon}
+          onPress={() => handlePress('/profile')}
+          disabled={currentPath === '/profile'}
+        >
           <Icon name="account" size={30} color={'#0C0C63'} />
           <Text style={styles.iconText}>Profile</Text>
         </TouchableOpacity>
@@ -66,8 +88,8 @@ const styles = StyleSheet.create({
     paddingTop: 5,
   },
   iconText: {
-    color: '#0C0C63',
     fontSize: 14,
     fontWeight: 'bold',
+    color: '#0C0C63',
   },
 });

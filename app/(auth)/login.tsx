@@ -34,6 +34,7 @@ const Login = () => {
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
 
+<<<<<<< HEAD
     const handleLogin = async () => {
       if (username.trim() === "" || password.trim() === "") {
         Alert.alert("Error", "Username and Password are required.");
@@ -116,6 +117,15 @@ const Login = () => {
   
       })()
     },[])
+=======
+  const handleLogin = () => {
+    return router.push('/(tabs)');
+  };
+
+  const handleForgotPassword = () => {
+    return;
+  };
+>>>>>>> b608ef2db7eabaa8161d5611856bf8c3bc0e98dc
 
   return (
     <SafeAreaView style={styles.container}>
@@ -144,8 +154,8 @@ const Login = () => {
               value={password}
               onChangeText={setPassword}
             />
-            <Pressable onPress={() => setShowPassword(prev => !prev)}>
-              <Icon name={showPassword ? 'eye' : 'eye-slash'} size={30} color={'#5997C6'} />
+            <Pressable onPress={() => setShowPassword((prev) => !prev)}>
+              <Icon name={showPassword ? 'eye' : 'eye-slash'} size={25} color={'#5997C6'} />
             </Pressable>
           </View>
           <TouchableOpacity style={styles.submit} onPress={handleLogin}>
@@ -249,6 +259,7 @@ const styles = StyleSheet.create({
     color: '#7481ae',
     fontSize: 16,
     fontWeight: 'semibold',
+    paddingVertical: 2,
   },
   submit: {
     width: 160,
