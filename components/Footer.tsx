@@ -73,10 +73,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 15,
+    gap: 0, // original value = 15
     padding: 15,
     zIndex: 1,
     backgroundColor: '#ffffff',
+    width: '100%',
   },
   icon: {
     alignItems: 'center',

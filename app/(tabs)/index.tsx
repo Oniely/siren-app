@@ -51,7 +51,7 @@ const Dashboard = () => {
           </TouchableOpacity> */}
           <Text style={styles.indexText}>Emergency help needed?</Text>
           <View style={styles.bigCircleContainer}>
-            <TouchableOpacity  onPress={() => router.push('/')}>
+            <TouchableOpacity onPress={() => router.push('/')}>
               <Image source={require('@/assets/images/index_logo.png')} style={styles.panicButton} />
             </TouchableOpacity>
           </View>
@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#343434',
     fontWeight: 'bold',
-
   },
   bigCircleContainer: {
     width: '100%',
@@ -108,7 +107,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     position: 'absolute',
   },
- 
+
   panicButton: {
     resizeMode: 'center',
     height: '100%',

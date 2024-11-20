@@ -1,6 +1,7 @@
 import Footer from '@/components/Footer';
 import StyledContainer from '@/components/StyledContainer';
 import { useRouter } from 'expo-router';
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
