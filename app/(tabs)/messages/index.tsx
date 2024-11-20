@@ -17,6 +17,8 @@ import MI from 'react-native-vector-icons/MaterialIcons';
 import Container from '@/components/Container';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import Feather from '@expo/vector-icons/Feather';
+
 // import { equalTo, get, onValue, orderByChild, query, ref } from 'firebase/database';
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import Footer from '../components/Footer';
@@ -96,14 +98,14 @@ const Messaging = () => {
   // }
 
   return (
-    <Container bg="#0B0C63" style={{ paddingTop: 10 }}>
+    <Container bg="#e6e6e6" style={{ paddingTop: 10 }}>
       <View style={styles.lightBg} />
       <View style={styles.back}>
         <TouchableOpacity onPress={() => router.back()}>
-          <MI name="arrow-back-ios" size={40} color={'#D6F0F6'} />
+          <MI name="arrow-back-ios" size={40} color={'#0c0c63'} />
         </TouchableOpacity>
-        <FS name="user-circle" size={40} color="#D6F0F6" style={{ marginLeft: '10%' }} />
-        <Text style={styles.backText}>Messaging</Text>
+        <Text style={styles.backText}>Messages</Text>
+        <Feather name="edit" size={35} color="#646b79" />
       </View>
 
       <View style={styles.container}>
@@ -172,6 +174,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     gap: 10,
     overflow: 'scroll',
+  },
+  headerMessageIndex: {
+    display: 'flex',
+    flex: 1,
+    justifyContent: 'center',
   },
   messagesContent: {
     flex: 1,
@@ -263,7 +270,7 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 30,
-    color: '#D6F0F6',
+    color: '#0c0c63',
     fontWeight: 'bold',
   },
   lightBg: {
@@ -278,9 +285,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingTop: 20,
-    paddingLeft: 20,
     gap: 10,
     marginTop: 10,
+    justifyContent: 'space-between',
+    padding: 20,
   },
   header: {
     marginVertical: 15,

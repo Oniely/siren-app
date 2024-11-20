@@ -64,21 +64,19 @@ export default Footer;
 
 const styles = StyleSheet.create({
   container: {
-    width: '90%',
+    width: '100%',
     marginHorizontal: 'auto',
     position: 'relative',
     zIndex: 1,
   },
   wrapper: {
-    borderTopLeftRadius: 35,
-    borderTopRightRadius: 35,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 15,
     padding: 15,
     zIndex: 1,
-    backgroundColor: '#45d2f6',
+    backgroundColor: '#ffffff',
   },
   icon: {
     alignItems: 'center',
@@ -86,6 +84,8 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: 'space-between',
     paddingTop: 5,
+    paddingHorizontal: 10,
+    width: 80,
   },
   iconText: {
     fontSize: 14,

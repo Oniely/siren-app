@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import {
@@ -11,113 +11,107 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Alert
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Container from "../../components/Container";
-import { auth, db } from "../../firebaseConfig";
-import {
-	signInWithEmailAndPassword,
-	sendPasswordResetEmail,
-} from "firebase/auth";
-import { ref, get } from "firebase/database";
+import Container from '../../components/Container';
+import { auth, db } from '../../firebaseConfig';
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { ref, get } from 'firebase/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const screenWidth = Dimensions.get("window").width;
+const screenWidth = Dimensions.get('window').width;
 const Login = () => {
   const router = useRouter();
-  console.log(db)
+  console.log(db);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
 
-<<<<<<< HEAD
-    const handleLogin = async () => {
-      if (username.trim() === "" || password.trim() === "") {
-        Alert.alert("Error", "Username and Password are required.");
-        return;
-      }
-      try {
-        const userRef = ref(db, "users");
-        const snapshot = await get(userRef);
-        const users = snapshot.val();
-  
-        let userFound = false;
-        let userEmail = "";
-        let userRole = "";
-  
-        for (const userId in users) {
-          if (users[userId].username === username) {
-            userFound = true;
-            userEmail = users[userId].email;
-            userRole = users[userId].role;
-            console.log(users[userId])
-            break;
-          }
-        }
-  
-        if (!userFound) {
-          Alert.alert("Error", "Username does not exist.");
-          return;
-        }
-  
-        // Sign in with Firebase Auth
-        const user = await signInWithEmailAndPassword(auth, userEmail, password);
-        await AsyncStorage.setItem('userId', user.user.uid);
-        await AsyncStorage.setItem('user', JSON.stringify(user.user));
-        await AsyncStorage.setItem('role', userRole);
-  
-        // Check user role and navigate accordingly
-        if (userRole === "responder") {
-          router.replace("./ResponderSide");
-        } else {
-          router.replace("./Dashboard");
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          Alert.alert("Error", error.message);
-        } else {
-          Alert.alert("Error", "An unknown error occurred.");
-        }
-      }
-    };
-  
-    const handleForgotPassword = async () => {
-      if (resetEmail.trim() === "") {
-        Alert.alert("Error", "Please enter your email address.");
-        return;
-      }
-  
-      try {
-        await sendPasswordResetEmail(auth, resetEmail);
-        Alert.alert("Success", "Password reset link sent to your email.");
-        setShowForgotPasswordModal(false); // Close the modal
-      } catch (error) {
-        if (error instanceof Error) {
-          Alert.alert("Error", error.message);
-        } else {
-          Alert.alert("Error", "An unknown error occurred.");
-        }
-      }
-    };
-    useEffect(() => {
-      (async() => {
-        const role = await AsyncStorage.getItem('role');
-        const userId = await AsyncStorage.getItem('userId');
-        if(userId) {
-          if (role === "responder") {
-            router.replace("./ResponderSide");
-          } else {
-            router.replace("./Dashboard");
-          }
-        }
-  
-      })()
-    },[])
-=======
+  // const handleLogin = async () => {
+  //   if (username.trim() === '' || password.trim() === '') {
+  //     Alert.alert('Error', 'Username and Password are required.');
+  //     return;
+  //   }
+  //   try {
+  //     const userRef = ref(db, 'users');
+  //     const snapshot = await get(userRef);
+  //     const users = snapshot.val();
+
+  //     let userFound = false;
+  //     let userEmail = '';
+  //     let userRole = '';
+
+  //     for (const userId in users) {
+  //       if (users[userId].username === username) {
+  //         userFound = true;
+  //         userEmail = users[userId].email;
+  //         userRole = users[userId].role;
+  //         console.log(users[userId]);
+  //         break;
+  //       }
+  //     }
+
+  //     if (!userFound) {
+  //       Alert.alert('Error', 'Username does not exist.');
+  //       return;
+  //     }
+
+  //     // Sign in with Firebase Auth
+  //     const user = await signInWithEmailAndPassword(auth, userEmail, password);
+  //     await AsyncStorage.setItem('userId', user.user.uid);
+  //     await AsyncStorage.setItem('user', JSON.stringify(user.user));
+  //     await AsyncStorage.setItem('role', userRole);
+
+  //     // Check user role and navigate accordingly
+  //     if (userRole === 'responder') {
+  //       router.replace('./ResponderSide');
+  //     } else {
+  //       router.replace('./Dashboard');
+  //     }
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       Alert.alert('Error', error.message);
+  //     } else {
+  //       Alert.alert('Error', 'An unknown error occurred.');
+  //     }
+  //   }
+  // };
+
+  // const handleForgotPassword = async () => {
+  //   if (resetEmail.trim() === '') {
+  //     Alert.alert('Error', 'Please enter your email address.');
+  //     return;
+  //   }
+
+  //   try {
+  //     await sendPasswordResetEmail(auth, resetEmail);
+  //     Alert.alert('Success', 'Password reset link sent to your email.');
+  //     setShowForgotPasswordModal(false); // Close the modal
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       Alert.alert('Error', error.message);
+  //     } else {
+  //       Alert.alert('Error', 'An unknown error occurred.');
+  //     }
+  //   }
+  // };
+  // useEffect(() => {
+  //   (async () => {
+  //     const role = await AsyncStorage.getItem('role');
+  //     const userId = await AsyncStorage.getItem('userId');
+  //     if (userId) {
+  //       if (role === 'responder') {
+  //         router.replace('./ResponderSide');
+  //       } else {
+  //         router.replace('./Dashboard');
+  //       }
+  //     }
+  //   })();
+  // }, []);
   const handleLogin = () => {
     return router.push('/(tabs)');
   };
@@ -125,7 +119,6 @@ const Login = () => {
   const handleForgotPassword = () => {
     return;
   };
->>>>>>> b608ef2db7eabaa8161d5611856bf8c3bc0e98dc
 
   return (
     <SafeAreaView style={styles.container}>
@@ -290,7 +283,6 @@ const styles = StyleSheet.create({
   connectWith: {
     textAlign: 'center',
     paddingBottom: 20,
-
   },
   thirdpartyButtonContainer: {
     flexDirection: 'row',

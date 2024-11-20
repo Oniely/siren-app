@@ -2,10 +2,9 @@ import React from 'react';
 import { Image, Platform, StatusBar, StyleSheet, View } from 'react-native';
 import Footer from './Footer';
 
-const StyledContainer = ({ children, bg = '#D7f1f7' }: any) => {
+const StyledContainer = ({ children, bg = '#e6e6e6' }: any) => {
   return (
     <View style={[styles.container, { backgroundColor: bg }]}>
-      <Image source={require('@/assets/images/top_image.png')} style={styles.image} />
       {children}
       <Footer />
     </View>

@@ -16,14 +16,11 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
-<<<<<<< HEAD
     "@firebase/database": "^1.0.10",
     "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-firebase/app": "^21.5.0",
-=======
     "@react-native-community/geolocation": "^3.4.0",
->>>>>>> b608ef2db7eabaa8161d5611856bf8c3bc0e98dc
     "@react-navigation/native": "^6.1.18",
     "expo": "~51.0.28",
     "expo-constants": "~16.0.2",

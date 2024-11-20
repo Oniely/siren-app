@@ -18,7 +18,7 @@ const Dashboard = () => {
       <Header />
       <View style={styles.container}>
         <View style={styles.wrapper}>
-          <TouchableOpacity style={styles.box} onPress={() => router.push('/')}>
+          {/* <TouchableOpacity style={styles.box} onPress={() => router.push('/')}>
             <Text style={styles.boxText}>Report Emergency</Text>
             <MCI size={50} name="alert-circle" color={'#D7F1F7'} />
           </TouchableOpacity>
@@ -48,11 +48,11 @@ const Dashboard = () => {
           >
             <FS size={50} name="telegram" color={'#D7F1F7'} />
             <Text style={styles.boxText}>Emergency Text</Text>
-          </TouchableOpacity>
-
+          </TouchableOpacity> */}
+          <Text style={styles.indexText}>Emergency help needed?</Text>
           <View style={styles.bigCircleContainer}>
-            <TouchableOpacity style={styles.bigCircle} onPress={() => router.push('/')}>
-              <Image source={require('@/assets/images/panic_button.png')} style={styles.panicButton} />
+            <TouchableOpacity  onPress={() => router.push('/')}>
+              <Image source={require('@/assets/images/index_logo.png')} style={styles.panicButton} />
             </TouchableOpacity>
           </View>
         </View>
@@ -95,24 +95,24 @@ const styles = StyleSheet.create({
     width: '100%',
     textAlign: 'center',
   },
+  indexText: {
+    fontSize: 50,
+    textAlign: 'center',
+    color: '#343434',
+    fontWeight: 'bold',
+
+  },
   bigCircleContainer: {
-    width: '70%',
-    maxWidth: 300,
+    width: '100%',
+    maxWidth: 500,
     aspectRatio: 1,
     position: 'absolute',
   },
-  bigCircle: {
-    flex: 1,
-    borderRadius: 1000,
-    backgroundColor: '#45D2F6',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+ 
   panicButton: {
-    resizeMode: 'stretch',
-    height: '95%',
-    width: '90%',
+    resizeMode: 'center',
+    height: '100%',
+    width: '100%',
     marginHorizontal: 'auto',
   },
 });

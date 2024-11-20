@@ -1,7 +1,7 @@
 import ContactCard from '@/components/ContactCard';
 import Container from '@/components/Container';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   FlatList,
   Image,
@@ -12,9 +12,12 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Animated,
 } from 'react-native';
+import { useNavigation } from 'expo-router';
 import FS from 'react-native-vector-icons/FontAwesome';
 import MI from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Contact = () => {
   const router = useRouter();
@@ -25,10 +28,32 @@ const Contact = () => {
   const [addedContact, setAddedContact] = useState();
   const [username, setUsername] = useState('');
   const [contacts, setContacts] = useState([]);
+  const [searchText, setSearchText] = useState('');
+  const [filteredData, setFilteredData] = useState(data);
 
-  const handleSelectContact = (id: string | number) => {
-    setSelectedContactId(id);
+  // Sample Data
+  const data = [
+    { id: '1', name: 'Apple' },
+    { id: '2', name: 'Banana' },
+    { id: '3', name: 'Cherry' },
+    { id: '4', name: 'Date' },
+    { id: '5', name: 'Elderberry' },
+  ];
+
+  // Handle Search
+  const handleSearch = (text: string) => {
+    setSearchText(text);
+
+    if (text.trim() === '') {
+      setFilteredData(data);
+    } else {
+      const filtered = data.filter((item) => item.name.toLowerCase().includes(text.toLowerCase()));
+      setFilteredData(filtered);
+    }
   };
+  // const handleSelectContact = (id: string | number) => {
+  //   setSelectedContactId(id);
+  // };
 
   // useEffect(() => {
   //   getContacts();
@@ -157,7 +182,7 @@ const Contact = () => {
 
   return (
     <Container
-      bg="#0B0C63"
+      bg="#e6e6e6"
       style={{
         paddingVertical: 10,
       }}
@@ -192,18 +217,27 @@ const Contact = () => {
       <View style={styles.lightBg} />
       <View style={styles.back}>
         <TouchableOpacity onPress={() => router.back()}>
-          <MI name="arrow-back-ios" size={40} color={'#D6F0F6'} />
+          <MI name="arrow-back-ios" size={40} color={'#0c0c63'} />
         </TouchableOpacity>
-        <FS name="user-circle" size={40} color="#D6F0F6" style={{ marginLeft: '10%' }} />
         <Text style={styles.backText}>Contacts</Text>
+        <Pressable>
+          <Icon name="user-circle" size={34} color="#8F8E8D" />
+        </Pressable>
       </View>
-
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Search..."
+          value={searchText}
+          onChangeText={handleSearch}
+        />
+      </View>
       <View style={styles.container}>
         <View style={styles.contactContainer}>
           <Text style={styles.header}>Personal Contacts</Text>
 
           <View style={styles.contacts}>
-            <FlatList
+            {/* <FlatList
               data={contacts}
               renderItem={({ item }: any) => (
                 <ContactCard
@@ -217,7 +251,7 @@ const Contact = () => {
                 />
               )}
               keyExtractor={(item: any) => item.id}
-            />
+            /> */}
           </View>
         </View>
 
@@ -248,6 +282,17 @@ const Contact = () => {
 export default Contact;
 
 const styles = StyleSheet.create({
+  searchContainer: {
+    paddingHorizontal: 20,
+  },
+  searchBar: {
+    height: 40,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 10,
+  },
   lightBg: {
     position: 'absolute',
     height: '62%',
@@ -259,24 +304,25 @@ const styles = StyleSheet.create({
   back: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingTop: 20,
     paddingLeft: 20,
+    paddingRight: 20,
     gap: 10,
     marginTop: 10,
   },
   backText: {
     fontSize: 30,
-    color: '#D6F0F6',
+    color: '#0c0c63',
     fontWeight: 'bold',
   },
 
   container: {
     flex: 1,
     marginTop: '15%',
-    width: '91%',
+    width: '100%',
     marginHorizontal: 'auto',
     backgroundColor: '#08B6D9',
-    borderRadius: 30,
   },
   header: {
     marginVertical: 15,
@@ -284,13 +330,14 @@ const styles = StyleSheet.create({
     width: '50%',
     paddingVertical: 7,
     borderRadius: 20,
-    backgroundColor: '#D6F0F6',
     marginHorizontal: 'auto',
     color: '#0B0C63',
     fontWeight: 'bold',
+    fontSize: 20,
   },
   contactContainer: {
     flex: 1,
+    backgroundColor: '#faf9f6',
   },
   contacts: {
     flex: 1,
