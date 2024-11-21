@@ -34,6 +34,21 @@ interface LocationProp {
   latitude: any;
 }
 
+// Custom hook for location
+const useLocation = (setLocation: (location: LocationProp) => void) => {
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        return;
+      }
+
+      let location: any = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, [setLocation]);
+};
+
 const ReportEmergency = () => {
   const router = useRouter();
 
@@ -66,17 +81,7 @@ const ReportEmergency = () => {
   });
   const [status, setStatus] = useState('Standby');
 
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    })();
-  }, []);
+  useLocation(setLocation);
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -403,7 +408,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     marginTop: 20,
     height: '20%',
-
   },
   emergencyDetailsText: {
     fontWeight: 'bold',
@@ -425,10 +429,9 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 5,
     marginVertical: 5,
-   
+
     backgroundColor: '#e6e6e6',
     marginTop: 10,
-
   },
   detailsInput: {
     borderWidth: 1,

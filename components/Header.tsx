@@ -69,13 +69,12 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
             ) : (
               // <Icon name="user-circle" size={70} color="#8F8E8D" />
               <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
-
             )}
           </Pressable>
           <Text style={styles.burgerName}>Elizabeth Olsen</Text>
         </View>
 
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/')}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/emergency_call')}>
           <Feather name="phone-call" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Emergency Call</Text>
         </TouchableOpacity>
@@ -83,16 +82,15 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
           <FontAwesome name="send" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Emergency Text</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/report_emergency')}>
           <Foundation name="alert" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Report Emergency</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/view_alert')}>
           <Ionicons name="eye-sharp" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>View Alert</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/contacts')}
-        >
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/contacts')}>
           <Ionicons name="notifications" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Notifications</Text>
         </TouchableOpacity>
@@ -166,11 +164,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginHorizontal: 10,
     paddingLeft: 30,
-    fontFamily: 'BeVietnamProThin'
+    fontFamily: 'BeVietnamProThin',
   },
-  sliderNavImage: {
-    
-  },
+  sliderNavImage: {},
   closeButton: {
     position: 'absolute',
     top: 10,
