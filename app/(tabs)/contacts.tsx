@@ -21,6 +21,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Feather from '@expo/vector-icons/Feather';
 import Footer from '@/components/Footer';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 const Contact = () => {
   const [activeTab, setActiveTab] = useState<'Emergency' | 'Personal'>('Emergency');
@@ -44,10 +45,10 @@ const Contact = () => {
             .map((_, index) => (
               <View key={index} style={styles.contacts}>
                 <Pressable style={styles.contactsInfo}>
-                  <Icon name="user-circle" size={50} color="#8F8E8D" />
+                <Image source={require('@/assets/images/call-logo.png')} style={styles.iconLogo} />
                   <Text style={styles.contactName}>Police</Text>
-                  <MaterialIcons name="message" size={45} color="#0b0c63" />
-                  <Feather name="phone-call" size={45} color="#0b0c63" />
+                  <Ionicons name="chatbox-ellipses" size={45} color="#0b0c63" />
+                  <Ionicons name="call" size={45} color="#0b0c63" />
                 </Pressable>
               </View>
             ))}
@@ -63,10 +64,10 @@ const Contact = () => {
             .map((_, index) => (
               <View key={index} style={styles.contacts}>
                 <Pressable style={styles.contactsInfo}>
-                  <Icon name="user-circle" size={50} color="#8F8E8D" />
-                  <Text style={styles.contactName}>Lorem Ipsum</Text>
-                  <MaterialIcons name="message" size={45} color="#0b0c63" />
-                  <Feather name="phone-call" size={45} color="#0b0c63" />
+                <Image source={require('@/assets/images/personal-logo.png')} style={styles.iconLogo} />
+                <Text style={styles.contactName}>Lorem Ipsum</Text>
+                  <Ionicons name="chatbox-ellipses" size={45} color="#0b0c63" />
+                  <Ionicons name="call" size={45} color="#0b0c63" />
                 </Pressable>
               </View>
             ))}
@@ -256,7 +257,7 @@ const Contact = () => {
       <View style={styles.back}>
         <Text style={styles.backText}>My Contacts</Text>
         <Pressable>
-          <Icon name="user-circle" size={34} color="#8F8E8D" />
+        <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
         </Pressable>
       </View>
       <View style={styles.searchContainer}>
@@ -336,6 +337,12 @@ const Contact = () => {
 export default Contact;
 
 const styles = StyleSheet.create({
+  police: {
+    resizeMode: 'stretch',
+    height: 40,
+    width: 40,
+    borderRadius: 20,
+  },
   searchContainer: {
     paddingHorizontal: 40,
     top: 50,
@@ -424,6 +431,11 @@ const styles = StyleSheet.create({
   },
   contactName: {
     fontSize: 24,
+  },
+  iconLogo: {
+    resizeMode: 'center',
+    height: 50,
+    width: '25%',
   },
   centeredView: {
     flex: 1,

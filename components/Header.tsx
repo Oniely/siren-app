@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Image, Modal, Pressable, StyleSheet, Text, View, Animated, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {  Href, usePathname, useRouter, useNavigation } from 'expo-router';
+import { Href, usePathname, useRouter, useNavigation } from 'expo-router';
 import { FontAwesome5 } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -50,9 +50,9 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
         </Pressable>
         <Pressable>
           {responder ? (
-            <Image source={require('@/assets/images/policeman.png')} style={styles.police} />
+            <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
           ) : (
-            <Icon name="user-circle" size={34} color="#8F8E8D" />
+            <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
           )}
         </Pressable>
       </View>
@@ -65,15 +65,17 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
         <View style={styles.burgerProfile}>
           <Pressable>
             {responder ? (
-              <Image source={require('@/assets/images/policeman.png')} style={styles.police} />
+              <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
             ) : (
-              <Icon name="user-circle" size={70} color="#8F8E8D" />
+              // <Icon name="user-circle" size={70} color="#8F8E8D" />
+              <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
+
             )}
           </Pressable>
           <Text style={styles.burgerName}>Elizabeth Olsen</Text>
         </View>
 
-        <TouchableOpacity style={styles.sliderNavItem}  onPress={() => handlePress('/emergency_call')}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/')}>
           <Feather name="phone-call" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Emergency Call</Text>
         </TouchableOpacity>
@@ -136,6 +138,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 25,
     color: '#000',
+    fontFamily: 'BeVietnamProThin',
   },
   sliderNav: {
     position: 'absolute',
@@ -163,6 +166,10 @@ const styles = StyleSheet.create({
     fontSize: 24,
     marginHorizontal: 10,
     paddingLeft: 30,
+    fontFamily: 'BeVietnamProThin'
+  },
+  sliderNavImage: {
+    
   },
   closeButton: {
     position: 'absolute',

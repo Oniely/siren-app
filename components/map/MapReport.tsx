@@ -8,6 +8,7 @@ const MapReport = ({ location, handleLocation }: any) => {
       <MapView
         style={styles.mapView}
         initialRegion={{
+          
           latitude: location.latitude,
           longitude: location.longitude,
           latitudeDelta: 0.0922,
@@ -35,12 +36,12 @@ export default MapReport;
 const styles = StyleSheet.create({
   map: {
     height: 200,
-    width: '90%',
+    width: '86%',
+    borderWidth: 1,
+    borderColor: '#000',
     marginHorizontal: 'auto',
-    padding: 5,
-    backgroundColor: '#08B6D9',
     marginTop: 10,
-    borderRadius: 10,
+    
     zIndex: -1,
   },
   mapView: {

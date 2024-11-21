@@ -203,7 +203,7 @@ const ReportEmergency = () => {
               onConfirm={handleConfirm}
               onCancel={hideDatePicker}
             />
-            <View style={[styles.filter]}>
+            <View style={[styles.filterCategory]}>
               <TouchableOpacity
                 style={[
                   styles.filter,
@@ -227,8 +227,8 @@ const ReportEmergency = () => {
                         setShowCateg(false);
                       }}
                     >
-                      <Image source={categ.img} />
-                      <Text>{categ.name}</Text>
+                      <Image source={categ.img} style={styles.categoryImages} />
+                      <Text style={styles.categoryNames}>{categ.name}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -327,11 +327,10 @@ const styles = StyleSheet.create({
   },
   filterRowContainer: {
     flexDirection: 'row',
-    width: '90%',
+    width: '86%',
     marginHorizontal: 'auto',
-    gap: 10,
-    padding: 5,
-    marginTop: 10,
+    paddingBottom: 10,
+    marginTop: 15,
     justifyContent: 'space-between',
     alignItems: 'center',
   },
@@ -347,11 +346,20 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     position: 'relative',
   },
+  filterCategory: {
+    flexDirection: 'row',
+    width: '48%',
+    alignItems: 'center',
+    backgroundColor: '#e6e6e6',
+    justifyContent: 'space-between',
+    borderRadius: 10,
+    position: 'relative',
+  },
   location: {
     flexDirection: 'row',
     borderWidth: 1,
     borderColor: '#000',
-    width: '90%',
+    width: '86%',
     alignItems: 'center',
     backgroundColor: '#e6e6e6',
     justifyContent: 'space-between',
@@ -368,7 +376,7 @@ const styles = StyleSheet.create({
     bottom: -150,
     right: 0,
     padding: 5,
-    backgroundColor: '#e6e6e6',
+    backgroundColor: '#0C0C63',
     maxHeight: 150,
     height: 150,
     zIndex: 100,
@@ -378,17 +386,22 @@ const styles = StyleSheet.create({
   },
   category: {
     flexDirection: 'row',
-    backgroundColor: '#D6F0F6',
+    backgroundColor: '#0C0C63',
     paddingVertical: 10,
     gap: 10,
     paddingLeft: 5,
     borderRadius: 5,
   },
+  categoryNames: {
+    color: '#e6e6e6',
+  },
+  categoryImages: {
+    backgroundColor: '#e6e6e6',
+  },
   emergencyDetails: {
-    width: '90%',
+    width: '84%',
     marginHorizontal: 'auto',
     marginTop: 20,
-    padding: 15,
     height: '20%',
 
   },
@@ -397,10 +410,9 @@ const styles = StyleSheet.create({
     color: '#0B0C63',
   },
   emergencyUpload: {
-    width: '90%',
+    width: '86%',
     marginHorizontal: 'auto',
     marginTop: 20,
-    padding: 15,
     height: '20%',
   },
   emergencyUploadText: {
@@ -422,14 +434,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     textAlignVertical: 'top',
     backgroundColor: '#e6e6e6',
-    borderRadius: 20,
+    borderRadius: 10,
     marginTop: 10,
     padding: 20,
   },
   iconUpload: {
     borderWidth: 1,
     borderColor: '#000',
-    borderRadius: 20,
+    borderRadius: 10,
     padding: 20,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -443,7 +455,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 15,
     borderRadius: 10,
-    width: '90%',
+    width: '86%',
     marginHorizontal: 'auto',
     marginVertical: 100,
   },

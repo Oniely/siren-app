@@ -14,9 +14,15 @@ export default function RootLayout() {
   const pathname = usePathname();
 
   const [loaded] = useFonts({
-    DMSans: require('@/assets/fonts/DMSans-Italic-VariableFont_opsz,wght.ttf'),
-    DMSansBold: require('@/assets/fonts/DMSans-Bold.ttf'),
+    // DMSans: require('@/assets/fonts/DMSans-Italic-VariableFont_opsz,wght.ttf'),
+    // DMSansBold: require('@/assets/fonts/DMSans-Bold.ttf'),
+      BeVietnamProBold: require('@/assets/fonts/Be_Vietnam_Pro/BeVietnamPro-Bold.ttf'),
+      BeVietnamProRegular: require('@/assets/fonts/Be_Vietnam_Pro/BeVietnamPro-Regular.ttf'),
+      BeVietnamProThin: require('@/assets/fonts/Be_Vietnam_Pro/BeVietnamPro-Thin.ttf'),
+      BeVietnamProBlack: require('@/assets/fonts/Be_Vietnam_Pro/BeVietnamPro-Black.ttf'),
   });
+
+  
 
   useEffect(() => {
     if (loaded) {
