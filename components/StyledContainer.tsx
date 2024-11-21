@@ -1,13 +1,14 @@
 import React from 'react';
-import { Image, Platform, StatusBar, StyleSheet, View } from 'react-native';
+import { Image, Platform, StatusBar, StyleSheet } from 'react-native';
 import Footer from './Footer';
+import { ThemedView } from './ThemedView';
 
 const StyledContainer = ({ children, bg = '#e6e6e6' }: any) => {
   return (
-    <View style={[styles.container, { backgroundColor: bg }]}>
+    <ThemedView style={[styles.container, { backgroundColor: bg }]}>
       {children}
       <Footer />
-    </View>
+    </ThemedView>
   );
 };
 

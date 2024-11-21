@@ -83,9 +83,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+<<<<<<< HEAD
+=======
+    gap: 0, // original value = 15
+>>>>>>> 68a3b1888f54cc610f7afec68981598322449599
     padding: 15,
     zIndex: 1,
     backgroundColor: '#ffffff',
+    width: '100%',
   },
   iconContainer: {
     alignItems: 'center',

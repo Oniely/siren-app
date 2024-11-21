@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import React from 'react';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -30,7 +31,7 @@ export default function RootLayout() {
   console.log('Route:', pathname);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme  : DefaultTheme}>
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack
         screenOptions={{
           headerShown: false,
@@ -42,6 +43,8 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)/messages" />
         <Stack.Screen name="(tabs)/profile" />
         <Stack.Screen name="(tabs)/map" />
+        <Stack.Screen name="(tabs)/view_alert" />
+        <Stack.Screen name="(tabs)/report_emergency" />
         <Stack.Screen name="(auth)/login" />
         <Stack.Screen name="(auth)/register" />
         <Stack.Screen name="(auth)/forgot-password" />
