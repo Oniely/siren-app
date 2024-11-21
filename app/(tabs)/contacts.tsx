@@ -18,8 +18,12 @@ import { useNavigation } from 'expo-router';
 import FS from 'react-native-vector-icons/FontAwesome';
 import MI from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Feather from '@expo/vector-icons/Feather';
+import Footer from '@/components/Footer';
 
 const Contact = () => {
+  const [activeTab, setActiveTab] = useState<'Emergency' | 'Personal'>('Emergency');
   const router = useRouter();
 
   const [selectedContactId, setSelectedContactId] = useState<string | number>('');
@@ -31,6 +35,45 @@ const Contact = () => {
   const [searchText, setSearchText] = useState('');
   const [filteredData, setFilteredData] = useState(data);
 
+  const renderContent = () => {
+    if (activeTab === 'Emergency') {
+      return (
+        <View>
+          {Array(3)
+            .fill(null)
+            .map((_, index) => (
+              <View key={index} style={styles.contacts}>
+                <Pressable style={styles.contactsInfo}>
+                  <Icon name="user-circle" size={50} color="#8F8E8D" />
+                  <Text style={styles.contactName}>Police</Text>
+                  <MaterialIcons name="message" size={45} color="#0b0c63" />
+                  <Feather name="phone-call" size={45} color="#0b0c63" />
+                </Pressable>
+              </View>
+            ))}
+        </View>
+      );
+    }
+
+    if (activeTab === 'Personal') {
+      return (
+        <View>
+          {Array(3)
+            .fill(null)
+            .map((_, index) => (
+              <View key={index} style={styles.contacts}>
+                <Pressable style={styles.contactsInfo}>
+                  <Icon name="user-circle" size={50} color="#8F8E8D" />
+                  <Text style={styles.contactName}>Lorem Ipsum</Text>
+                  <MaterialIcons name="message" size={45} color="#0b0c63" />
+                  <Feather name="phone-call" size={45} color="#0b0c63" />
+                </Pressable>
+              </View>
+            ))}
+        </View>
+      );
+    }
+  };
   // Sample Data
   const data = [
     { id: '1', name: 'Apple' },
@@ -181,13 +224,8 @@ const Contact = () => {
   //     });
 
   return (
-    <Container
-      bg="#e6e6e6"
-      style={{
-        paddingVertical: 10,
-      }}
-    >
-      <Pressable
+    <Container bg="#e6e6e6" style={{ paddingTop: 10 }}>
+      {/* <Pressable
         style={{ position: 'absolute', bottom: 15, right: 25, zIndex: 10 }}
         onPress={() => setModalVisible(true)}
       >
@@ -213,28 +251,44 @@ const Contact = () => {
             )}
           </View>
         </View>
-      </Modal>
+      </Modal> */}
       <View style={styles.lightBg} />
       <View style={styles.back}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <MI name="arrow-back-ios" size={40} color={'#0c0c63'} />
-        </TouchableOpacity>
-        <Text style={styles.backText}>Contacts</Text>
+        <Text style={styles.backText}>My Contacts</Text>
         <Pressable>
           <Icon name="user-circle" size={34} color="#8F8E8D" />
         </Pressable>
       </View>
       <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Search..."
-          value={searchText}
-          onChangeText={handleSearch}
-        />
+        <View style={styles.searchBar}>
+          {/* Search Icon */}
+          <Icon name="search" size={30} color="#888" style={styles.icon} />
+
+          {/* Text Input */}
+          <TextInput
+            style={styles.input}
+            placeholder="type to search"
+            value={searchText}
+            onChangeText={(text) => setSearchText(text)}
+          />
+        </View>
       </View>
+
       <View style={styles.container}>
+        <View style={styles.headerTitle}>
+          {/* Emergency Tab */}
+          <Pressable onPress={() => setActiveTab('Emergency')}>
+            <Text style={[styles.header, activeTab === 'Emergency' && styles.activeHeader]}>Emergency</Text>
+          </Pressable>
+
+          {/* Personal Tab */}
+          <Pressable onPress={() => setActiveTab('Personal')}>
+            <Text style={[styles.header, activeTab === 'Personal' && styles.activeHeader]}>Personal</Text>
+          </Pressable>
+        </View>
+
         <View style={styles.contactContainer}>
-          <Text style={styles.header}>Personal Contacts</Text>
+          {renderContent()}
 
           <View style={styles.contacts}>
             {/* <FlatList
@@ -254,7 +308,6 @@ const Contact = () => {
             /> */}
           </View>
         </View>
-
         {/* <View style={styles.contactContainer}>
           <Text style={styles.header}>Emergency Contacts</Text>
           <View style={styles.contacts}>
@@ -275,6 +328,7 @@ const Contact = () => {
           </View>
         </View> */}
       </View>
+      <Footer />
     </Container>
   );
 };
@@ -283,15 +337,25 @@ export default Contact;
 
 const styles = StyleSheet.create({
   searchContainer: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 40,
+    top: 50,
   },
   searchBar: {
-    height: 40,
-    borderWidth: 1,
+    height: 50,
+    borderWidth: 2,
+    backgroundColor: '#fff',
     borderColor: '#ddd',
     borderRadius: 8,
     paddingHorizontal: 10,
-    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  icon: {
+    marginRight: 8,
+  },
+  input: {
+    flex: 1,
+    fontSize: 16,
   },
   lightBg: {
     position: 'absolute',
@@ -306,43 +370,58 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingTop: 20,
-    paddingLeft: 20,
-    paddingRight: 20,
+    paddingLeft: 40,
+    paddingRight: 40,
     gap: 10,
-    marginTop: 10,
+    marginTop: 40,
   },
   backText: {
     fontSize: 30,
     color: '#0c0c63',
     fontWeight: 'bold',
   },
-
   container: {
     flex: 1,
     marginTop: '15%',
     width: '100%',
     marginHorizontal: 'auto',
-    backgroundColor: '#08B6D9',
+  },
+  headerTitle: {
+    flexDirection: 'row',
+    marginLeft: 40,
   },
   header: {
-    marginVertical: 15,
-    textAlign: 'center',
-    width: '50%',
-    paddingVertical: 7,
-    borderRadius: 20,
+    paddingVertical: 10,
     marginHorizontal: 'auto',
-    color: '#0B0C63',
+    color: '#0b0c63',
     fontWeight: 'bold',
     fontSize: 20,
+    flex: 1,
+  },
+  activeHeader: {
+    color: '#0b0c63',
+    borderBottomWidth: 2,
+    borderBottomColor: '#0b0c63',
   },
   contactContainer: {
     flex: 1,
     backgroundColor: '#faf9f6',
   },
   contacts: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    padding: 20,
+    marginBottom: 10,
+  },
+  contactsInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
     flex: 1,
   },
-
+  contactName: {
+    fontSize: 24,
+  },
   centeredView: {
     flex: 1,
     justifyContent: 'center',

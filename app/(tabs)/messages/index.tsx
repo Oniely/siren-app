@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
+import Footer from '@/components/Footer';
 import FS from 'react-native-vector-icons/FontAwesome';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import MI from 'react-native-vector-icons/MaterialIcons';
@@ -101,9 +101,6 @@ const Messaging = () => {
     <Container bg="#e6e6e6" style={{ paddingTop: 10 }}>
       <View style={styles.lightBg} />
       <View style={styles.back}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <MI name="arrow-back-ios" size={40} color={'#0c0c63'} />
-        </TouchableOpacity>
         <Text style={styles.backText}>Messages</Text>
         <Feather name="edit" size={35} color="#646b79" />
       </View>
@@ -124,10 +121,16 @@ const Messaging = () => {
                   })
                 }
               >
-                <FS name="user-circle" size={40} color="#D6F0F6" style={{ marginLeft: '10%' }} />
-                <View>
-                  <Text style={styles.contactName}>{'Test'}</Text>
-                  <Text style={styles.email}>{'Hello, World!'}</Text>
+                <FS name="user-circle" size={40} color="#000" style={{ marginLeft: '10%' }} />
+                <View style={styles.messageText}>
+                  <View style={styles.leftSideMessage}>
+                    <Text style={styles.contactName}>{'Test'}</Text>
+                    <Text style={styles.email}>{'Hello, World!'}</Text>
+                  </View>
+                  <View style={styles.rightSideMessage}>
+                    <Text style={styles.time}>{'12:49AM'}</Text>
+                    <Text style={styles.number}>{'3'}</Text>
+                  </View>
                 </View>
               </Pressable>
             </View>
@@ -160,6 +163,7 @@ const Messaging = () => {
           </View>
         </View>
       </View>
+      <Footer />
     </Container>
   );
 };
@@ -169,11 +173,11 @@ export default Messaging;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '90%',
+    width: '100%',
     marginHorizontal: 'auto',
-    paddingVertical: 10,
     gap: 10,
     overflow: 'scroll',
+    backgroundColor: '#faf9f6',
   },
   headerMessageIndex: {
     display: 'flex',
@@ -184,6 +188,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
   },
+
   chatButtons: {
     backgroundColor: '#0B0C63',
     paddingVertical: 10,
@@ -226,13 +231,10 @@ const styles = StyleSheet.create({
   messaging: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
     alignItems: 'center',
-    backgroundColor: '#D6F0F6',
-    width: '90%',
+    backgroundColor: '#faf9f6',
+    width: '100%',
     marginHorizontal: 'auto',
-    borderRadius: 20,
-    marginVertical: 10,
     overflow: 'hidden',
   },
   call: {
@@ -247,23 +249,53 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 20,
     flex: 1,
+    padding: 20,
     justifyContent: 'flex-start',
+    borderColor: '#000',
+    borderWidth: 0.5,
+  },
+  messageText: {
+    flexDirection: 'row', // Align items horizontally
+    justifyContent: 'space-between', // Push content to opposite sides
+    alignItems: 'center', // Align items vertically in the center
+    width: '75%',
   },
   contactName: {
-    fontSize: 14,
+    fontSize: 20,
+    paddingLeft: 10,
+    paddingBottom: 5,
     fontWeight: 'bold',
-    color: '#0B0C63',
+    color: '#0b0c63',
   },
   email: {
-    fontSize: 10,
+    fontSize: 15,
     fontWeight: '400',
-    color: '#0B0C63',
+    color: '#b0adad',
+    paddingLeft: 10,
+  },
+  leftSideMessage: {
+    flexShrink: 1,
+    paddingRight: 10, 
   },
   contactNumber: {
     fontSize: 14,
     color: '#0B0C63',
   },
-
+  rightSideMessage: {
+    alignItems: 'flex-end', // Align items to the right
+  },
+  time: {
+    fontSize: 14,
+  },
+  number: {
+    backgroundColor: 'red',
+    fontSize: 14,
+    width: 15,
+    textAlign: 'center',
+    borderRadius: 50,
+    marginTop: 5, // Add spacing between time and number
+    fontWeight: 'bold',
+  },
   buttons: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -285,10 +317,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingTop: 20,
+    paddingLeft: 40,
+    paddingRight: 40,
     gap: 10,
-    marginTop: 10,
+    marginTop: 40,
+    paddingBottom: 40,
     justifyContent: 'space-between',
-    padding: 20,
   },
   header: {
     marginVertical: 15,

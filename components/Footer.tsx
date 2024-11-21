@@ -1,6 +1,14 @@
 import { Href, usePathname, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { KeyboardAvoidingView, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import CentralButtonPopup from './CentralButtonPopup';
 
@@ -14,46 +22,48 @@ const Footer = () => {
       router.push(path);
     }
   };
+  const isActive = (path: string) => currentPath === path;
 
   return (
     <KeyboardAvoidingView style={styles.container}>
       <View style={styles.wrapper}>
-        <TouchableOpacity style={styles.icon} onPress={() => handlePress('/')} disabled={currentPath === '/'}>
-          <Icon name="home" size={30} color={'#0C0C63'} />
-          <Text style={styles.iconText}>Home</Text>
+        <TouchableOpacity
+          style={[styles.iconContainer, isActive('/') && styles.activeFooter]}
+          onPress={() => handlePress('/')}
+          disabled={currentPath === '/'}
+        >
+          <Icon name="home" size={40} color={isActive('/') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.icon}
+          style={[styles.iconContainer, isActive('/contacts') && styles.activeFooter]}
           onPress={() => handlePress('/contacts')}
           disabled={currentPath === '/contacts'}
         >
-          <Icon name="contacts" size={30} color={'#0C0C63'} />
-          <Text style={styles.iconText}>Contacts</Text>
+          <Icon name="contacts" size={40} color={isActive('/contacts') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
 
-        <Pressable style={styles.icon} onPress={() => setSirenClicked((prev) => !prev)}>
-          <CentralButtonPopup isVisible={sirenClicked} onClose={() => setSirenClicked(false)} />
-          <Icon name="bell-ring" size={30} color={'#0C0C63'} />
-          <Text style={[styles.iconText, { fontWeight: 'bold' }]}>SIREN</Text>
-        </Pressable>
-
+        <View style={styles.halfCircleWrapper}>
+          <View style={styles.halfCircle} />
+          <Pressable style={styles.iconContainer} onPress={() => setSirenClicked((prev) => !prev)}>
+            <CentralButtonPopup isVisible={sirenClicked} onClose={() => setSirenClicked(false)} />
+            <Image source={require('@/assets/images/footerSiren.png')} style={styles.panicButton} />
+          </Pressable>
+        </View>
         <TouchableOpacity
-          style={styles.icon}
+          style={[styles.iconContainer, isActive('/messages') && styles.activeFooter]}
           onPress={() => handlePress('/messages')}
           disabled={currentPath === '/messages'}
         >
-          <Icon name="message-processing" size={30} color={'#0C0C63'} />
-          <Text style={styles.iconText}>Message</Text>
+          <Icon name="message-processing" size={40} color={isActive('/messages') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.icon}
+          style={[styles.iconContainer, isActive('/profile') && styles.activeFooter]}
           onPress={() => handlePress('/profile')}
           disabled={currentPath === '/profile'}
         >
-          <Icon name="account" size={30} color={'#0C0C63'} />
-          <Text style={styles.iconText}>Profile</Text>
+          <Icon name="account" size={40} color={isActive('/profile') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -73,23 +83,41 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 15,
     padding: 15,
     zIndex: 1,
     backgroundColor: '#ffffff',
   },
-  icon: {
+  iconContainer: {
     alignItems: 'center',
-    gap: 5,
-    height: 60,
-    justifyContent: 'space-between',
-    paddingTop: 5,
+    height: 50,
+    justifyContent: 'center',
     paddingHorizontal: 10,
     width: 80,
+    position: 'relative',
   },
-  iconText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#0C0C63',
+  activeFooter: {
+    borderTopColor: '#3998ff',
+    borderTopWidth: 4,
+    paddingTop: 4,
+  },
+  panicButton: {
+    resizeMode: 'center',
+    height: '100%',
+    width: '100%',
+    marginHorizontal: 'auto',
+  },
+  halfCircleWrapper: {
+    position: 'relative',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  halfCircle: {
+    position: 'absolute',
+    top: -45, 
+    width: 80,
+    height: 35, 
+    backgroundColor: '#ffffff',
+    borderTopLeftRadius: 40, 
+    borderTopRightRadius: 40,
   },
 });

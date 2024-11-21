@@ -1,11 +1,14 @@
 import Container from '@/components/Container';
-import Footer from '@/components/Footer';
 import MessageHeader from '@/components/MessageHeader';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { FlatList, GestureHandlerRootView } from 'react-native-gesture-handler';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
+import Feather from '@expo/vector-icons/Feather';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Entypo from '@expo/vector-icons/Entypo';
+
 // components
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { equalTo, get, onValue, orderByChild, push, query, ref } from 'firebase/database';
@@ -166,10 +169,10 @@ const MessagingItem = () => {
         <View style={styles.chatButtons}>
           <View style={styles.actions}>
             <Pressable>
-              <MCI name="image-outline" size={30} color={'#08B6D9'} />
+              <MCI name="camera-outline" size={30} color={'#b6b6b7'} />
             </Pressable>
             <Pressable>
-              <MCI name="camera-outline" size={30} color={'#08B6D9'} />
+              <Feather name="mic" size={30} color="#b6b6b7" />
             </Pressable>
           </View>
 
@@ -180,7 +183,12 @@ const MessagingItem = () => {
             onChangeText={setMessage}
             value={message}
           />
-
+          <Pressable>
+            <MCI name="image-outline" size={30} color={'#b6b6b7'} />
+          </Pressable>
+          <Pressable>
+            <Entypo name="emoji-happy" size={30} color="#b6b6b7" />
+          </Pressable>
           <TouchableOpacity
             style={{
               width: 40,
@@ -191,11 +199,10 @@ const MessagingItem = () => {
             }}
             // onPress={() => createMessage(message)}
           >
-            <MCI name="send" size={30} color={'#08B6D9'} />
+            <MCI name="send" size={30} color={'#b6b6b7'} />
           </TouchableOpacity>
         </View>
       </View>
-      <Footer />
     </Container>
   );
 };
@@ -216,7 +223,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   chatButtons: {
-    backgroundColor: '#0B0C63',
+    backgroundColor: '#fff',
     paddingVertical: 10,
     borderRadius: 20,
     flexDirection: 'row',

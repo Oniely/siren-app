@@ -16,7 +16,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Container from '../../components/Container';
-import { auth, db } from '../../firebaseConfig';
+// import { auth, db } from '../../firebaseConfig';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { ref, get } from 'firebase/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,7 +24,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const screenWidth = Dimensions.get('window').width;
 const Login = () => {
   const router = useRouter();
-  console.log(db);
+  // console.log(db);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
