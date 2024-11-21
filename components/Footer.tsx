@@ -29,8 +29,8 @@ const Footer = () => {
       <View style={styles.wrapper}>
         <TouchableOpacity
           style={[styles.iconContainer, isActive('/') && styles.activeFooter]}
-          onPress={() => handlePress('/')}
-          disabled={currentPath === '/'}
+          onPress={() => handlePress('/(tabs)')}
+          disabled={currentPath === '/index'}
         >
           <Icon name="home" size={40} color={isActive('/') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>

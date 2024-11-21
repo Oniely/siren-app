@@ -22,8 +22,6 @@ export default function RootLayout() {
       BeVietnamProBlack: require('@/assets/fonts/Be_Vietnam_Pro/BeVietnamPro-Black.ttf'),
   });
 
-  
-
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
@@ -51,6 +49,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)/map" />
         <Stack.Screen name="(tabs)/view_alert" />
         <Stack.Screen name="(tabs)/report_emergency" />
+        <Stack.Screen name="(tabs)/emergency_call" />
         <Stack.Screen name="(auth)/login" />
         <Stack.Screen name="(auth)/register" />
         <Stack.Screen name="(auth)/forgot-password" />
