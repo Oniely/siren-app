@@ -382,25 +382,28 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    marginTop: '15%',
+    marginTop: '20%',
     width: '100%',
     marginHorizontal: 'auto',
   },
   headerTitle: {
     flexDirection: 'row',
     marginLeft: 40,
+    height: 50,
+    marginBottom: 10,
   },
   header: {
     paddingVertical: 10,
     marginHorizontal: 'auto',
-    color: '#0b0c63',
+    color: '#414753',
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 30,
     flex: 1,
+    paddingHorizontal: 10,
   },
   activeHeader: {
     color: '#0b0c63',
-    borderBottomWidth: 2,
+    borderBottomWidth: 4,
     borderBottomColor: '#0b0c63',
   },
   contactContainer: {

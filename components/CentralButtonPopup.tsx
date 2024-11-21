@@ -102,11 +102,11 @@ export default function CentralButtonPopup({ isVisible, onClose }: Props) {
 const styles = StyleSheet.create({
   popupContainer: {
     position: 'absolute',
-    bottom: 80,
+    bottom: 65,
     alignSelf: 'center',
     width: 250,
     height: 130,
-    backgroundColor: '#5997c6',
+    backgroundColor: '#4C9BF0',
     borderTopLeftRadius: 125,
     borderTopRightRadius: 125,
     overflow: 'hidden',
@@ -131,9 +131,9 @@ const styles = StyleSheet.create({
   innerCircle: {
     position: 'absolute',
     bottom: 0,
-    width: 60,
-    height: 50,
-    backgroundColor: '#d7f1f7',
+    width: 80,
+    height: 35,
+    backgroundColor: '#fff',
     borderTopLeftRadius: 1000,
     borderTopRightRadius: 1000,
   },

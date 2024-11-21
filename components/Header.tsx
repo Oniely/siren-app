@@ -2,12 +2,13 @@ import React, { useState, useRef } from 'react';
 import { Image, Modal, Pressable, StyleSheet, Text, View, Animated, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from 'expo-router';
+import {  Href, usePathname, useRouter, useNavigation } from 'expo-router';
 import { FontAwesome5 } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Foundation from '@expo/vector-icons/Foundation';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 interface HeaderProps {
   responder?: boolean;
@@ -17,6 +18,14 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const navigation = useNavigation();
   const slideAnimation = useRef(new Animated.Value(-350)).current;
+  const router = useRouter();
+  const currentPath = usePathname();
+
+  const handlePress = (path: Href) => {
+    if (currentPath !== path) {
+      router.push(path);
+    }
+  };
 
   const toggleMenu = () => {
     const toValue = menuVisible ? 350 : 0;
@@ -51,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
       {/* Burger Menu Modal */}
       <Animated.View style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }]}>
         <TouchableOpacity onPress={toggleMenu} style={styles.closeButton}>
-          <Text style={styles.closeButtonText}>X</Text>
+          <AntDesign name="close" size={30} color="black" />
         </TouchableOpacity>
         <View style={styles.burgerProfile}>
           <Pressable>
@@ -64,7 +73,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
           <Text style={styles.burgerName}>Elizabeth Olsen</Text>
         </View>
 
-        <TouchableOpacity style={styles.sliderNavItem}>
+        <TouchableOpacity style={styles.sliderNavItem}  onPress={() => handlePress('/emergency_call')}>
           <Feather name="phone-call" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Emergency Call</Text>
         </TouchableOpacity>
@@ -80,7 +89,8 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
           <Ionicons name="eye-sharp" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>View Alert</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/contacts')}
+        >
           <Ionicons name="notifications" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Notifications</Text>
         </TouchableOpacity>

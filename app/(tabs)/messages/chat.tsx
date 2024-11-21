@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   input: {
-    color: '#F0F1F2',
+    color: '#000',
     flex: 1,
   },
   replyMessage: {

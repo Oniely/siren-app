@@ -177,7 +177,7 @@ const ReportEmergency = () => {
   // };
 
   return (
-    <Container bg="#D6F0F6" style={{ paddingTop: 20 }}>
+    <Container bg="#e6e6e6" style={{ paddingTop: 20 }}>
       <View style={styles.back}>
         <TouchableOpacity onPress={() => router.back()}>
           <MI name="arrow-back-ios" size={30} color={'#0B0C63'} />
@@ -195,7 +195,7 @@ const ReportEmergency = () => {
           <View style={styles.filterRowContainer}>
             <TouchableOpacity style={styles.filter} onPress={showDatePicker}>
               <Text>{selectedDate ? selectedDate.toLocaleString() : 'Date Time'}</Text>
-              <MI name="calendar-month" size={30} color={'#0B0C63'} />
+              <MI name="calendar-month" size={30} color={'#0c0c63'} />
             </TouchableOpacity>
             <DateTimePickerModal
               isVisible={isDatePickerVisible}
@@ -214,7 +214,7 @@ const ReportEmergency = () => {
                 onPress={() => setShowCateg(!showCateg)}
               >
                 <Text>{selectedCateg ? selectedCateg : 'Select Category'}</Text>
-                <MI name={'arrow-downward'} size={30} color={'#0B0C63'} />
+                <MI name={'arrow-downward'} size={30} color={'#0c0c63'} />
               </TouchableOpacity>
               {showCateg && (
                 <View style={styles.categList}>
@@ -253,18 +253,10 @@ const ReportEmergency = () => {
               onChangeText={setDetails}
             />
           </View>
-          <View style={styles.emergencyDetails}>
-            <Text style={styles.emergencyDetailsText}>Photos/Videos</Text>
+          <View style={styles.emergencyUpload}>
+            <Text style={styles.emergencyUploadText}>Photos/Videos</Text>
             {imageUrls && imageUrls.length > 0 ? (
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  gap: 5,
-                  marginVertical: 5,
-                }}
-              >
+              <View style={styles.uploadDetails}>
                 {imageUrls.map((media: any, index: number) => {
                   if (media.file.type.includes('video')) {
                     return (
@@ -307,7 +299,7 @@ const ReportEmergency = () => {
             //   submit(selectedDate, location.latitude, location.longitude, details, imageUrls, selectedCateg)
             // }
           >
-            <Text style={styles.buttonText}>Submit</Text>
+            <Text style={styles.buttonText}>Submit Report</Text>
           </Pressable>
         </ScrollView>
       )}
@@ -326,7 +318,7 @@ const styles = StyleSheet.create({
   },
   backText: {
     fontSize: 24,
-    color: '#0B0C63',
+    color: '#0c0c63',
     fontWeight: 'bold',
   },
   reportContainer: {
@@ -338,6 +330,7 @@ const styles = StyleSheet.create({
     width: '90%',
     marginHorizontal: 'auto',
     gap: 10,
+    padding: 5,
     marginTop: 10,
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -346,7 +339,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '48%',
     alignItems: 'center',
-    backgroundColor: '#08B6D9',
+    backgroundColor: '#e6e6e6',
+    borderWidth: 1,
+    borderColor: '#000',
     justifyContent: 'space-between',
     padding: 5,
     borderRadius: 10,
@@ -354,14 +349,17 @@ const styles = StyleSheet.create({
   },
   location: {
     flexDirection: 'row',
-    width: '48%',
+    borderWidth: 1,
+    borderColor: '#000',
+    width: '90%',
     alignItems: 'center',
-    backgroundColor: '#08B6D9',
+    backgroundColor: '#e6e6e6',
     justifyContent: 'space-between',
     padding: 5,
     borderRadius: 10,
     position: 'relative',
-    marginHorizontal: 20,
+    zIndex: -1,
+    marginHorizontal: 'auto',
   },
 
   categList: {
@@ -370,10 +368,10 @@ const styles = StyleSheet.create({
     bottom: -150,
     right: 0,
     padding: 5,
-    backgroundColor: '#08B6D9',
+    backgroundColor: '#e6e6e6',
     maxHeight: 150,
     height: 150,
-    zIndex: 10,
+    zIndex: 100,
     borderRadius: 10,
     overflow: 'scroll',
     gap: 10,
@@ -391,27 +389,54 @@ const styles = StyleSheet.create({
     marginHorizontal: 'auto',
     marginTop: 20,
     padding: 15,
-    borderRadius: 15,
-    backgroundColor: '#08B6D9',
+    height: '20%',
+
   },
   emergencyDetailsText: {
     fontWeight: 'bold',
     color: '#0B0C63',
   },
+  emergencyUpload: {
+    width: '90%',
+    marginHorizontal: 'auto',
+    marginTop: 20,
+    padding: 15,
+    height: '20%',
+  },
+  emergencyUploadText: {
+    fontWeight: 'bold',
+    color: '#0B0C63',
+  },
+  uploadDetails: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 5,
+    marginVertical: 5,
+   
+    backgroundColor: '#e6e6e6',
+    marginTop: 10,
+
+  },
   detailsInput: {
     borderWidth: 1,
     textAlignVertical: 'top',
-    backgroundColor: '#D6F0F6',
+    backgroundColor: '#e6e6e6',
     borderRadius: 20,
     marginTop: 10,
-    padding: 10,
+    padding: 20,
   },
   iconUpload: {
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 20,
+    padding: 20,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    flex: 1,
+    marginTop: 10,
     gap: 20,
-    paddingVertical: 10,
   },
   button: {
     backgroundColor: '#0B0C63',
@@ -420,7 +445,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '90%',
     marginHorizontal: 'auto',
-    marginVertical: 10,
+    marginVertical: 100,
   },
   buttonText: {
     color: '#ffffff',
