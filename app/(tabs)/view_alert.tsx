@@ -62,7 +62,7 @@ const ViewAlert = () => {
   ];
 
   return (
-    <Container bg="#93E1F0" style={{ paddingTop: 25 }}>
+    <Container bg="#e6e6e6" style={{ paddingTop: 25 }}>
       <View style={styles.back}>
         <TouchableOpacity onPress={() => router.back()}>
           <MI name="arrow-back-ios" size={25} color={'#0B0C63'} />
@@ -71,7 +71,7 @@ const ViewAlert = () => {
       </View>
 
       <View style={styles.container}>
-        <Text style={styles.textInfo}>Happening Right Now!</Text>
+        <Text style={styles.textInfo}>RIGHT NOW</Text>
         <AlertCard
           title={'Flood Alert'}
           dateString={'24 Feb 2024'}
@@ -83,7 +83,7 @@ const ViewAlert = () => {
         />
 
         <View style={styles.nearbyAccidents}>
-          <Text style={styles.textInfo}>Nearby Accidents</Text>
+          <Text style={styles.textInfo}>NEARBY ACCIDENTS</Text>
           <FlatList
             data={nearbyAccidents}
             renderItem={({ item }) => (
@@ -126,12 +126,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: '5%',
   },
   textInfo: {
-    fontSize: 22,
-    color: '#0B0C63',
-    fontWeight: 'semibold',
+    fontSize: 40,
+    color: '#0c0c63',
+    fontWeight: 'bold',
     marginBottom: 10,
+    padding: 3,
   },
   nearbyAccidents: {
     flex: 1,
+    marginTop: 10,
   },
 });

@@ -69,9 +69,10 @@ export default AlertCard;
 
 const styles = StyleSheet.create({
   cardContainer: {
-    backgroundColor: '#D6F0F6',
     padding: 10,
     borderRadius: 15,
+    borderWidth: 1,
+    borderColor: '#000',
     margin: 5,
     marginHorizontal: 0,
   },
@@ -83,12 +84,13 @@ const styles = StyleSheet.create({
   },
   accidentName: {
     color: '#0B0C63',
-    fontSize: 18,
+    fontSize: 22,
+    padding: 5,
     fontWeight: 'bold',
   },
   accidentDate: {
     color: '#0B0C63',
-    fontSize: 11,
+    fontSize: 14,
   },
   accidentViews: {
     flexDirection: 'row',
@@ -122,14 +124,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   address: {
-    fontSize: 12,
+    fontSize: 16,
     color: '#0B0C63',
   },
   buttons: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     gap: 15,
   },
   button: {
