@@ -2,9 +2,10 @@ import { Href, usePathname, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Pressable, StyleSheet, TouchableOpacity, View, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import CentralButtonPopup from './CentralButtonPopup';
+import CentralButtonPopup from '../CentralButtonPopup';
 
-const Footer = () => {
+// THIS IS THE NAV FOOTER FOR ADMIN - CHANGE THE HREF's BELOW
+const AdminFooter = () => {
   const router = useRouter();
   const currentPath = usePathname();
   const [sirenClicked, setSirenClicked] = useState(false);
@@ -20,19 +21,23 @@ const Footer = () => {
     <KeyboardAvoidingView style={styles.container}>
       <View style={styles.wrapper}>
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/') && styles.activeFooter]}
-          onPress={() => handlePress('/(tabs)')}
-          disabled={currentPath === '/index'}
+          style={[styles.iconContainer, isActive('/admin') && styles.activeFooter]}
+          onPress={() => handlePress('/admin')}
+          disabled={currentPath === '/admin'}
         >
-          <Icon name="home" size={40} color={isActive('/') ? '#3998ff' : '#e6e6e6'} />
+          <Icon name="home" size={40} color={isActive('/admin') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/contacts') && styles.activeFooter]}
-          onPress={() => handlePress('/contacts')}
-          disabled={currentPath === '/contacts'}
+          style={[styles.iconContainer, isActive('/admin/emergency_report') && styles.activeFooter]}
+          onPress={() => handlePress('/admin/emergency_report')}
+          disabled={currentPath === '/admin/emergency_report'}
         >
-          <Icon name="contacts" size={40} color={isActive('/contacts') ? '#3998ff' : '#e6e6e6'} />
+          <Icon
+            name="contacts"
+            size={40}
+            color={isActive('/admin/emergency_report') ? '#3998ff' : '#e6e6e6'}
+          />
         </TouchableOpacity>
 
         <View style={styles.halfCircleWrapper}>
@@ -43,17 +48,17 @@ const Footer = () => {
           </Pressable>
         </View>
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/messages') && styles.activeFooter]}
-          onPress={() => handlePress('/messages')}
-          disabled={currentPath === '/messages'}
+          style={[styles.iconContainer, isActive('/change_me_for_active_tab') && styles.activeFooter]}
+          onPress={() => handlePress('/admin')}
+          disabled={currentPath === '/admin'}
         >
           <Icon name="message-processing" size={40} color={isActive('/messages') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/profile') && styles.activeFooter]}
-          onPress={() => handlePress('/profile')}
-          disabled={currentPath === '/profile'}
+          style={[styles.iconContainer, isActive('/change_me_for_active_tab') && styles.activeFooter]}
+          onPress={() => handlePress('/admin')}
+          disabled={currentPath === '/admin'}
         >
           <Icon name="account" size={40} color={isActive('/profile') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
@@ -62,7 +67,7 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default AdminFooter;
 
 const styles = StyleSheet.create({
   container: {
