@@ -10,6 +10,7 @@ export default function AdminLayout() {
     >
       <Stack.Screen name="index" />
       <Stack.Screen name="emergency_report/index" />
+      <Stack.Screen name="emergency_report/report_detail" />
     </Stack>
   );
 }

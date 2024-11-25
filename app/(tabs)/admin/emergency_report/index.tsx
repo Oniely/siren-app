@@ -16,7 +16,7 @@ export default function Reports() {
       </View>
       <View style={styles.container}>
         <View style={styles.reportsContainer}>
-          <TouchableOpacity style={styles.report} onPress={() => console.log('REPORT!')}>
+          <TouchableOpacity style={styles.report} onPress={() => router.push('/admin/emergency_report/report_detail')}>
             <Image source={require('@/assets/images/profile.png')} style={styles.reportImage} />
             <View style={styles.reportDesc}>
               <Text style={styles.descTime}>12:01AM</Text>
@@ -26,7 +26,7 @@ export default function Reports() {
               </Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.report} onPress={() => console.log('REPORT!')}>
+          <TouchableOpacity style={styles.report} onPress={() => router.push('/admin/emergency_report/report_detail')}>
             <Image source={require('@/assets/images/profile.png')} style={styles.reportImage} />
             <View style={styles.reportDesc}>
               <Text style={styles.descTime}>12:01AM</Text>

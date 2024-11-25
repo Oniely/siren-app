@@ -17,6 +17,7 @@ export default function RootLayout() {
     DMSans: require('@/assets/fonts/DMSans-Italic-VariableFont_opsz,wght.ttf'),
     DMSansBold: require('@/assets/fonts/DMSans-Bold.ttf'),
     BeVietnamProBold: require('@/assets/fonts/Be_Vietnam_Pro/BeVietnamPro-Bold.ttf'),
+    BeVietnamProSemiBold: require('@/assets/fonts/Be_Vietnam_Pro/BeVietnamPro-SemiBold.ttf'),
     BeVietnamProRegular: require('@/assets/fonts/Be_Vietnam_Pro/BeVietnamPro-Regular.ttf'),
     BeVietnamProThin: require('@/assets/fonts/Be_Vietnam_Pro/BeVietnamPro-Thin.ttf'),
     BeVietnamProBlack: require('@/assets/fonts/Be_Vietnam_Pro/BeVietnamPro-Black.ttf'),

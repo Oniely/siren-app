@@ -35,38 +35,13 @@ const Dashboard = () => {
         'On November 20, 2024, severe flooding struck the Northern Province after three days of torrential rain. Rivers overflowed, submerging villages and cutting off roads, leaving over 50,000 residents stranded. Emergency services reported 15 fatalities and over 200 injuries.',
     },
   ];
-    const nearbyAccidents = [
-        {
-            id: '1',
-            title: 'Fire Spread',
-            dateString: '24 Feb 2024',
-            timeAgo: '2m ago',
-            viewsString: '560',
-            detailsString: 'On November 20, 2024, severe flooding struck the Northern Province after three days of torrential rain. Rivers overflowed, submerging villages and cutting off roads, leaving over 50,000 residents stranded. Emergency services reported 15 fatalities and over 200 injuries.',
-        },
-        {
-            id: '2',
-            title: 'Fire Alert',
-            dateString: '24 Feb 2024',
-            timeAgo: '25m ago',
-            viewsString: '568',
-            detailsString: 'On November 20, 2024, severe flooding struck the Northern Province after three days of torrential rain. Rivers overflowed, submerging villages and cutting off roads, leaving over 50,000 residents stranded. Emergency services reported 15 fatalities and over 200 injuries.',
-        }
-    ];
-    return (
-        <StyledContainer>
-            <Header />
-            <View style={styles.container}>
-                <View style={styles.wrapper}>
-                    {/* <TouchableOpacity style={styles.box} onPress={() => router.push('/')}>
-=======
+
   return (
     <AdminStyledContainer>
       <AdminHeader />
       <View style={styles.container}>
         <View style={styles.wrapper}>
           {/* <TouchableOpacity style={styles.box} onPress={() => router.push('/')}>
->>>>>>> b3a83483005c1e28ffe030b464d98602003d82f5
             <Text style={styles.boxText}>Report Emergency</Text>
             <MCI size={50} name="alert-circle" color={'#D7F1F7'} />
           </TouchableOpacity>
