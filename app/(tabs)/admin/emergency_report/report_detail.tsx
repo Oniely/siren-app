@@ -66,8 +66,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    overflow: 'hidden',
+    overflow: 'scroll',
     backgroundColor: '#faf9f6',
+    paddingBottom: 50,
+    borderTopWidth: 2,
+    borderTopColor: '#dfdedd',
   },
   header: {
     paddingHorizontal: 20,
@@ -79,8 +82,6 @@ const styles = StyleSheet.create({
     fontFamily: 'BeVietnamProBold',
   },
   reportsContainer: {
-    borderTopWidth: 2,
-    borderTopColor: '#dfdedd',
     padding: 20,
     flexDirection: 'row',
     alignItems: 'center',
@@ -161,6 +162,7 @@ const styles = StyleSheet.create({
     gap: 5,
     justifyContent: "space-around",
     alignItems: "center",
+    paddingBottom: 220
   },
   image: {
     resizeMode: "cover",
