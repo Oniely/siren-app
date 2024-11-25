@@ -20,7 +20,7 @@ const Dashboard = () => {
     const nearbyAccidents = [
         {
             id: '1',
-            title: 'Truck and Jeep Accident',
+            title: 'Fire Spread',
             dateString: '24 Feb 2024',
             timeAgo: '2m ago',
             viewsString: '560',
