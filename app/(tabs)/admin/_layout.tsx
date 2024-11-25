@@ -1,7 +1,7 @@
 import { Stack } from 'expo-router';
 import React from 'react';
 
-export default function MessageLayout() {
+export default function AdminLayout() {
   return (
     <Stack
       screenOptions={{
@@ -9,7 +9,7 @@ export default function MessageLayout() {
       }}
     >
       <Stack.Screen name="index" />
-      <Stack.Screen name="chat" />
+      <Stack.Screen name="emergency_report/index" />
     </Stack>
   );
 }

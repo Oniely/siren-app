@@ -14,7 +14,7 @@ interface HeaderProps {
   responder?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ responder = false }) => {
+const AdminHeader: React.FC<HeaderProps> = ({ responder = false }) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const navigation = useNavigation();
   const slideAnimation = useRef(new Animated.Value(-350)).current;
@@ -100,7 +100,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
   );
 };
 
-export default Header;
+export default AdminHeader;
 
 const styles = StyleSheet.create({
   container: {
