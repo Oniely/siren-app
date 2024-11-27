@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     gap: 5,
     justifyContent: "space-around",
     alignItems: "center",
-    paddingBottom: 220
+    paddingBottom: 220 //change this if the space below of scroll view is too big/small
   },
   image: {
     resizeMode: "cover",
