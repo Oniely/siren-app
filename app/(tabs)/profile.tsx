@@ -23,7 +23,6 @@ const Profile = () => {
   const currentPath = usePathname();
   const [user, setUser] = useState<User | null>(null);
 
-
   const handlePress = (path: Href) => {
     if (currentPath !== path) {
       router.push(path);
@@ -110,7 +109,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     paddingVertical: 4,
-
   },
   infoEmail: {
     fontSize: 18,

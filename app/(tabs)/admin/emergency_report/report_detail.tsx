@@ -39,7 +39,7 @@ export default function ReportDetail() {
               <Text style={styles.infoDesc}>Brgy Concepcion, San Pablo City</Text>
             </View>
             <View style={styles.mapContainer}>
-                <Text>Map here</Text>
+              <Text>Map here</Text>
             </View>
             <View style={styles.infoColumn}>
               <Text style={[styles.infoHeaderText, styles.pad]}>Emergency Details</Text>
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   infoColumn: {
-    width: "100%"
+    width: '100%',
   },
   infoHeaderText: {
     fontSize: 22,
@@ -156,24 +156,24 @@ const styles = StyleSheet.create({
     paddingTop: 25,
   },
   imageContainer: {
-    width: "100%",
+    width: '100%',
     flexDirection: 'row',
     paddingVertical: 30,
     gap: 5,
-    justifyContent: "space-around",
-    alignItems: "center",
-    paddingBottom: 220 //change this if the space below of scroll view is too big/small
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingBottom: 220, //change this if the space below of scroll view is too big/small
   },
   image: {
-    resizeMode: "cover",
+    resizeMode: 'cover',
     width: 110,
     height: 110,
   },
   mapContainer: {
     width: '100%',
-    height: "30%",
+    height: '30%',
     borderWidth: 1,
-    borderColor: "#000",
-    borderRadius: 10
-  }
+    borderColor: '#000',
+    borderRadius: 10,
+  },
 });

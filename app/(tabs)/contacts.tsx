@@ -45,7 +45,7 @@ const Contact = () => {
             .map((_, index) => (
               <View key={index} style={styles.contacts}>
                 <Pressable style={styles.contactsInfo}>
-                <Image source={require('@/assets/images/call-logo.png')} style={styles.iconLogo} />
+                  <Image source={require('@/assets/images/call-logo.png')} style={styles.iconLogo} />
                   <Text style={styles.contactName}>Police</Text>
                   <Ionicons name="chatbox-ellipses" size={45} color="#0b0c63" />
                   <Ionicons name="call" size={45} color="#0b0c63" />
@@ -64,8 +64,8 @@ const Contact = () => {
             .map((_, index) => (
               <View key={index} style={styles.contacts}>
                 <Pressable style={styles.contactsInfo}>
-                <Image source={require('@/assets/images/personal-logo.png')} style={styles.iconLogo} />
-                <Text style={styles.contactName}>Lorem Ipsum</Text>
+                  <Image source={require('@/assets/images/personal-logo.png')} style={styles.iconLogo} />
+                  <Text style={styles.contactName}>Lorem Ipsum</Text>
                   <Ionicons name="chatbox-ellipses" size={45} color="#0b0c63" />
                   <Ionicons name="call" size={45} color="#0b0c63" />
                 </Pressable>
@@ -257,7 +257,7 @@ const Contact = () => {
       <View style={styles.back}>
         <Text style={styles.backText}>My Contacts</Text>
         <Pressable>
-        <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
+          <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
         </Pressable>
       </View>
       <View style={styles.searchContainer}>

@@ -16,8 +16,6 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
-    "@firebase/database": "^1.0.10",
-    "@firebasegen/default-connector": "file:dataconnect-generated/js/default-connector",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-community/datetimepicker": "^8.2.0",
     "@react-native-community/geolocation": "^3.4.0",

@@ -58,9 +58,8 @@ const Dashboard = () => {
         </View>
       </View>
     </StyledContainer>
-  )
+  );
 };
-
 
 const styles = StyleSheet.create({
   container: {
