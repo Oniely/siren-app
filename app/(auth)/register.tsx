@@ -1,8 +1,9 @@
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/firebaseConfig.js';
 import { useState } from 'react';
-import {
-  Image,
+import React, {
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -22,8 +23,27 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleSignup = () => {
-    return;
+  const handleSignup = async () => {
+    if (!username || !email || !password || !confirmPassword) {
+      alert('Please fill in all fields');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
+    try {
+      const response = await createUserWithEmailAndPassword(auth, email, password);
+
+      if (response.user) {
+        alert('Account created successfully');
+        router.push('/login');
+      }
+    } catch (error: any) {
+      alert(error.message);
+    }
   };
 
   return (
