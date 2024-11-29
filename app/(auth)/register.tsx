@@ -121,29 +121,24 @@ const Register = () => {
     }
   };
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={styles.formContainer}>
           <Text style={styles.signupText}>SIGN UP</Text>
           <View style={styles.inputContainer}>
             <TextInput
-              placeholder="Username"
+              placeholder="username"
               style={styles.input}
               value={username}
               onChangeText={setUsername}
             />
           </View>
           <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="i.e john@gmail.com"
-              style={styles.input}
-              value={email}
-              onChangeText={setEmail}
-            />
+            <TextInput placeholder="email" style={styles.input} value={email} onChangeText={setEmail} />
           </View>
           <View style={styles.inputContainer}>
             <TextInput
-              placeholder="Create a strong password"
+              placeholder="password"
               style={styles.input}
               value={password}
               onChangeText={setPassword}
@@ -152,7 +147,7 @@ const Register = () => {
           </View>
           <View style={styles.inputContainer}>
             <TextInput
-              placeholder="Re-type password"
+              placeholder="confirm password"
               style={styles.input}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
@@ -170,8 +165,8 @@ const Register = () => {
           </View>
         </View>
         <StatusBar style="dark" />
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
@@ -184,12 +179,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     display: 'flex',
   },
-
   signupText: {
     color: '#0c0c63',
     fontSize: 60,
-    fontFamily: 'DMSansBold',
-    fontWeight: 'bold',
+    fontFamily: 'BeVietnamProBold',
+    alignSelf: 'flex-start',
     textAlign: 'left',
     marginLeft: 50,
     marginBottom: 50,
@@ -212,6 +206,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     fontSize: 18,
     paddingVertical: 10,
+    fontFamily: 'BeVietnamProRegular',
   },
   signup: {
     width: '80%',
@@ -237,15 +232,16 @@ const styles = StyleSheet.create({
   },
   hasAccountQuestion: {
     color: '#000000',
-    fontSize: 18,
+    fontSize: 16,
+    fontFamily: 'BeVietnamProRegular',
   },
   loginLink: {
-    fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 16,
     textDecorationColor: '#000000',
     textDecorationStyle: 'solid',
     textDecorationLine: 'underline',
     color: '#000000',
+    fontFamily: 'BeVietnamProMedium',
   },
   formContainer: {
     flex: 1,

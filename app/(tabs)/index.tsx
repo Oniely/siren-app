@@ -18,37 +18,6 @@ const Dashboard = () => {
       <Header />
       <View style={styles.container}>
         <View style={styles.wrapper}>
-          {/* <TouchableOpacity style={styles.box} onPress={() => router.push('/')}>
-            <Text style={styles.boxText}>Report Emergency</Text>
-            <MCI size={50} name="alert-circle" color={'#D7F1F7'} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.box} onPress={() => router.push('/')}>
-            <Text style={styles.boxText}>View{'\n'}Alerts</Text>
-            <MCI size={50} name="monitor-eye" color={'#D7F1F7'} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.box,
-              {
-                justifyContent: 'flex-end',
-              },
-            ]}
-          >
-            <MCI size={50} name="phone-ring" color={'#D7F1F7'} />
-            <Text style={styles.boxText}>Emergency Call</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.box,
-              {
-                justifyContent: 'flex-end',
-              },
-            ]}
-            onPress={() => router.push('/')}
-          >
-            <FS size={50} name="telegram" color={'#D7F1F7'} />
-            <Text style={styles.boxText}>Emergency Text</Text>
-          </TouchableOpacity> */}
           <Text style={styles.indexText}>Emergency help needed?</Text>
           <View style={styles.bigCircleContainer}>
             <TouchableOpacity onPress={() => router.push('/report_emergency')}>
@@ -96,10 +65,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   indexText: {
-    fontSize: 50,
+    fontSize: 40,
     textAlign: 'center',
     color: '#343434',
-    fontWeight: 'bold',
+    fontFamily: 'BeVietnamProBold',
   },
   bigCircleContainer: {
     width: '100%',

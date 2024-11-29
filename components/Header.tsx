@@ -1,5 +1,15 @@
 import React, { useState, useRef } from 'react';
-import { Image, Modal, Pressable, StyleSheet, Text, View, Animated, TouchableOpacity } from 'react-native';
+import {
+  Image,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Href, usePathname, useRouter, useNavigation } from 'expo-router';
@@ -59,42 +69,47 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
 
       {/* Burger Menu Modal */}
       <Animated.View style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }]}>
-        <TouchableOpacity onPress={toggleMenu} style={styles.closeButton}>
-          <AntDesign name="close" size={30} color="black" />
-        </TouchableOpacity>
-        <View style={styles.burgerProfile}>
-          <Pressable>
-            {responder ? (
-              <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
-            ) : (
-              // <Icon name="user-circle" size={70} color="#8F8E8D" />
-              <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
-            )}
-          </Pressable>
-          <Text style={styles.burgerName}>Elizabeth Olsen</Text>
-        </View>
-
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/emergency_call')}>
-          <Feather name="phone-call" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Emergency Call</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem}>
-          <FontAwesome name="send" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Emergency Text</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/report_emergency')}>
-          <Foundation name="alert" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Report Emergency</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/view_alert')}>
-          <Ionicons name="eye-sharp" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>View Alert</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/contacts')}>
-          <Ionicons name="notifications" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Notifications</Text>
-        </TouchableOpacity>
-        <Text style={styles.burgerFooter}>All Rights Reserved @Siren2024</Text>
+        <ScrollView style={styles.navScrollContainer}>
+          <TouchableOpacity onPress={toggleMenu} style={styles.closeButton}>
+            <AntDesign name="close" size={30} color="black" />
+          </TouchableOpacity>
+          <View style={styles.burgerProfile}>
+            <Pressable>
+              {responder ? (
+                <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
+              ) : (
+                // <Icon name="user-circle" size={70} color="#8F8E8D" />
+                <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
+              )}
+            </Pressable>
+            <Text style={styles.burgerName}>Elizabeth Olsen</Text>
+          </View>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/emergency_call')}>
+            <Feather name="phone-call" size={35} color="#0c0c63" />
+            <Text style={styles.sliderNavItemText}>Emergency Call</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sliderNavItem}>
+            <FontAwesome name="send" size={35} color="#0c0c63" />
+            <Text style={styles.sliderNavItemText}>Emergency Text</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/report_emergency')}>
+            <Foundation name="alert" size={35} color="#0c0c63" />
+            <Text style={styles.sliderNavItemText}>Report Emergency</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/view_alert')}>
+            <Ionicons name="eye-sharp" size={35} color="#0c0c63" />
+            <Text style={styles.sliderNavItemText}>View Alert</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/contacts')}>
+            <Ionicons name="notifications" size={35} color="#0c0c63" />
+            <Text style={styles.sliderNavItemText}>Notifications</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/contacts')}>
+            <Ionicons name="notifications" size={35} color="#0c0c63" />
+            <Text style={styles.sliderNavItemText}>Settings</Text>
+          </TouchableOpacity>
+          <Text style={styles.burgerFooter}>All Rights Reserved @Siren2024</Text>
+        </ScrollView>
       </Animated.View>
     </View>
   );
@@ -147,9 +162,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     justifyContent: 'flex-start',
     display: 'flex',
-    zIndex: 100,
+    zIndex: 1000,
+    height: 900,
+  },
+  navScrollContainer: {
     flex: 1,
-    height: 1250,
+    flexDirection: 'column',
+    overflow: 'scroll',
+    backgroundColor: '#ffffff',
+    zIndex: 1000,
   },
   sliderNavItem: {
     marginTop: 10,

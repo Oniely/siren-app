@@ -37,9 +37,9 @@ const Footer = () => {
 
         <View style={styles.halfCircleWrapper}>
           <View style={styles.halfCircle} />
-          <Pressable style={styles.iconContainer} onPress={() => setSirenClicked((prev) => !prev)}>
-            <CentralButtonPopup isVisible={sirenClicked} onClose={() => setSirenClicked(false)} />
-            <Image source={require('@/assets/images/footerSiren.png')} style={styles.panicButton} />
+          <Pressable style={styles.iconContainer} onPress={() => router.push('/(tabs)/map')}>
+            {/* <CentralButtonPopup isVisible={sirenClicked} onClose={() => setSirenClicked(false)} /> */}
+            <Image source={require('@/assets/images/nav_map.png')} style={styles.panicButton} />
           </Pressable>
         </View>
         <TouchableOpacity
@@ -95,10 +95,11 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   panicButton: {
-    resizeMode: 'center',
-    height: '100%',
-    width: '100%',
+    resizeMode: 'contain',
+    height: 60,
+    width: 60,
     marginHorizontal: 'auto',
+    marginBottom: 10,
   },
   halfCircleWrapper: {
     position: 'relative',
@@ -107,11 +108,11 @@ const styles = StyleSheet.create({
   },
   halfCircle: {
     position: 'absolute',
-    top: -45,
-    width: 80,
+    top: -30,
+    width: 75,
     height: 35,
     backgroundColor: '#ffffff',
-    borderTopLeftRadius: 40,
-    borderTopRightRadius: 40,
+    borderTopLeftRadius: 60,
+    borderTopRightRadius: 60,
   },
 });
