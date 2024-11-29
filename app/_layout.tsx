@@ -47,6 +47,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)/index" />
         <Stack.Screen name="(tabs)/contacts" />
         <Stack.Screen name="(tabs)/profile" />
+        <Stack.Screen name="(tabs)/settings" />
         <Stack.Screen name="(tabs)/map" />
         <Stack.Screen name="(tabs)/view_alert" />
         <Stack.Screen name="(tabs)/report_emergency" />
