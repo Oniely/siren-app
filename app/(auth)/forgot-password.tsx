@@ -1,5 +1,6 @@
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import React from 'react';
 import { useState } from 'react';
 import { Image, Pressable, TextInput, TouchableOpacity } from 'react-native';
 import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
@@ -13,28 +14,26 @@ const ForgotPassword = () => {
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
 
   const handleResetPassword = () => {
+    // add code to reset password hered
     return;
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <SafeAreaView style={styles.container}>
-        <Image source={require('@/assets/images/top_image.png')} />
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={styles.formContainer}>
-          <Text style={styles.signupText}>Forgot Password</Text>
+          <Text style={styles.signupText}>FORGOT{'\n'}PASSWORD</Text>
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
             <TextInput
-              placeholder="i.e john@gmail.com"
+              placeholder="current password"
               style={styles.input}
               value={currentPassword}
               onChangeText={setCurrentPassword}
             />
           </View>
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Password</Text>
             <TextInput
-              placeholder="Create a strong password"
+              placeholder="password"
               style={styles.input}
               value={newPassword}
               onChangeText={setNewPassword}
@@ -42,9 +41,8 @@ const ForgotPassword = () => {
             />
           </View>
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Confirm Password</Text>
             <TextInput
-              placeholder="Re-type password"
+              placeholder="confirm password"
               style={styles.input}
               value={confirmNewPassword}
               onChangeText={setConfirmNewPassword}
@@ -57,41 +55,39 @@ const ForgotPassword = () => {
           <View style={styles.hasAccount}>
             <Text style={styles.hasAccountQuestion}>Already have an account?</Text>
             <Pressable onPress={() => router.push('/login')}>
-              <Text style={styles.loginLink}>Log in</Text>
+              <Text style={styles.loginLink}>LOGIN</Text>
             </Pressable>
           </View>
         </View>
         <StatusBar style="dark" />
-      </SafeAreaView>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d7f1f7',
+    backgroundColor: '#faf9f6',
     position: 'relative',
-  },
-  topImage: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
+    textAlign: 'center',
+    justifyContent: 'center',
+    display: 'flex',
   },
   signupText: {
-    color: '#0B0C63',
+    color: '#0c0c63',
     fontSize: 60,
-    fontWeight: 'bold',
-    textShadowRadius: 5,
-    textShadowColor: '#0B0C63',
-    paddingLeft: 20,
+    fontFamily: 'BeVietnamProBold',
+    alignSelf: 'flex-start',
+    textAlign: 'left',
+    marginLeft: 50,
     marginBottom: 50,
   },
   inputContainer: {
     width: '80%',
     marginHorizontal: 'auto',
-    gap: 5,
-    marginBottom: 15,
+    gap: 10,
+    marginBottom: 20,
   },
   label: {
     fontSize: 18,
@@ -104,20 +100,22 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 20,
     fontSize: 18,
-    paddingVertical: 5,
-    backgroundColor: '#AFE8F3',
+    paddingVertical: 10,
+    fontFamily: 'BeVietnamProRegular',
   },
   signup: {
     width: '80%',
     marginHorizontal: 'auto',
-    backgroundColor: '#0B0C63',
+    backgroundColor: '#0c0c63',
     padding: 10,
     borderRadius: 30,
     marginVertical: 20,
   },
   createAccountText: {
-    color: '#AFE8F3',
+    color: '#ffffff',
     textAlign: 'center',
+    textTransform: 'uppercase',
+    letterSpacing: 2,
     fontSize: 20,
   },
   hasAccount: {
@@ -128,17 +126,21 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   hasAccountQuestion: {
-    color: '#0C0C63',
-    fontSize: 18,
+    color: '#000000',
+    fontSize: 16,
+    fontFamily: 'BeVietnamProRegular',
   },
   loginLink: {
-    fontWeight: 'bold',
-    fontSize: 18,
-    color: '#0C0C63',
+    fontSize: 16,
+    textDecorationColor: '#000000',
+    textDecorationStyle: 'solid',
+    textDecorationLine: 'underline',
+    color: '#000000',
+    fontFamily: 'BeVietnamProMedium',
   },
   formContainer: {
     flex: 1,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     alignContent: 'center',
     backgroundColor: '#1010',
   },

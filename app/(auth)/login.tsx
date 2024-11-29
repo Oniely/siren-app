@@ -191,7 +191,7 @@ const Login = () => {
           </View>
         </View>
       </Modal>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
     </SafeAreaView>
   );
 };
