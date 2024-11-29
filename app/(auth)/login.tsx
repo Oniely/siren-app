@@ -15,10 +15,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Container from '../../components/Container';
-// import { auth, db } from '../../firebaseConfig';
+import { auth, db } from '../../firebaseConfig';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { ref, get } from 'firebase/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setLogLevel } from 'firebase/app';
 
 const Login = () => {
   const router = useRouter();
@@ -28,95 +29,97 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
+  useEffect(() => {
+    (async () => {
+      const role = await AsyncStorage.getItem('role');
+      const userId = await AsyncStorage.getItem('userId');
+      if (userId) {
+        if (role === 'responder') {
+          router.replace('/(tabs)/responder');
+        } else {
+          router.replace('/(tabs)');
+        }
+      }
+    })();
+  }, []);
 
-  // const handleLogin = async () => {
-  //   if (username.trim() === '' || password.trim() === '') {
-  //     Alert.alert('Error', 'Username and Password are required.');
-  //     return;
-  //   }
-  //   try {
-  //     const userRef = ref(db, 'users');
-  //     const snapshot = await get(userRef);
-  //     const users = snapshot.val();
+  const handleLogin = async () => {
+    if (username.trim() === '' || password.trim() === '') {
+      Alert.alert('Error', 'Username and Password are required.');
+      return;
+    }
+    try {
+      const userRef = ref(db, 'users');
+      const snapshot = await get(userRef);
+      const users = snapshot.val();
 
-  //     let userFound = false;
-  //     let userEmail = '';
-  //     let userRole = '';
+      let userFound = false;
+      let userEmail = '';
+      let userRole = '';
 
-  //     for (const userId in users) {
-  //       if (users[userId].username === username) {
-  //         userFound = true;
-  //         userEmail = users[userId].email;
-  //         userRole = users[userId].role;
-  //         console.log(users[userId]);
-  //         break;
-  //       }
-  //     }
+      for (const userId in users) {
+        if (users[userId].username === username) {
+          userFound = true;
+          userEmail = users[userId].email;
+          userRole = users[userId].role;
+          console.log(users[userId]);
+          break;
+        }
+      }
 
-  //     if (!userFound) {
-  //       Alert.alert('Error', 'Username does not exist.');
-  //       return;
-  //     }
+      if (!userFound) {
+        Alert.alert('Error', 'Username does not exist.');
+        return;
+      }
 
-  //     // Sign in with Firebase Auth
-  //     const user = await signInWithEmailAndPassword(auth, userEmail, password);
-  //     await AsyncStorage.setItem('userId', user.user.uid);
-  //     await AsyncStorage.setItem('user', JSON.stringify(user.user));
-  //     await AsyncStorage.setItem('role', userRole);
+      // Sign in with Firebase Auth
+      const user = await signInWithEmailAndPassword(auth, userEmail, password);
+      await AsyncStorage.setItem('userId', user.user.uid);
+      await AsyncStorage.setItem('user', JSON.stringify(user.user));
+      await AsyncStorage.setItem('role', userRole);
 
-  //     // Check user role and navigate accordingly
-  //     if (userRole === 'responder') {
-  //       router.replace('./ResponderSide');
-  //     } else {
-  //       router.replace('./Dashboard');
-  //     }
-  //   } catch (error) {
-  //     if (error instanceof Error) {
-  //       Alert.alert('Error', error.message);
-  //     } else {
-  //       Alert.alert('Error', 'An unknown error occurred.');
-  //     }
-  //   }
-  // };
-
-  // const handleForgotPassword = async () => {
-  //   if (resetEmail.trim() === '') {
-  //     Alert.alert('Error', 'Please enter your email address.');
-  //     return;
-  //   }
-
-  //   try {
-  //     await sendPasswordResetEmail(auth, resetEmail);
-  //     Alert.alert('Success', 'Password reset link sent to your email.');
-  //     setShowForgotPasswordModal(false); // Close the modal
-  //   } catch (error) {
-  //     if (error instanceof Error) {
-  //       Alert.alert('Error', error.message);
-  //     } else {
-  //       Alert.alert('Error', 'An unknown error occurred.');
-  //     }
-  //   }
-  // };
-  // useEffect(() => {
-  //   (async () => {
-  //     const role = await AsyncStorage.getItem('role');
-  //     const userId = await AsyncStorage.getItem('userId');
-  //     if (userId) {
-  //       if (role === 'responder') {
-  //         router.replace('./ResponderSide');
-  //       } else {
-  //         router.replace('./Dashboard');
-  //       }
-  //     }
-  //   })();
-  // }, []);
-  const handleLogin = () => {
-    return router.push('/(tabs)');
+      // Check user role and navigate accordingly
+      if (userRole === 'responder') {
+        router.replace('/(tabs)/responder');
+      } else {
+        router.replace('/(tabs)');
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert('Error', error.message);
+        setLogLevel('debug');
+      } else {
+        Alert.alert('Error', 'An unknown error occurred.');
+      }
+    }
   };
 
-  const handleForgotPassword = () => {
-    return;
+  const handleForgotPassword = async () => {
+    if (resetEmail.trim() === '') {
+      Alert.alert('Error', 'Please enter your email address.');
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, resetEmail);
+      Alert.alert('Success', 'Password reset link sent to your email.');
+      setShowForgotPasswordModal(false); // Close the modal
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert('Error', error.message);
+        setLogLevel('debug');
+      } else {
+        Alert.alert('Error', 'An unknown error occurred.');
+      }
+    }
   };
+  // const handleLogin = () => {
+  //   return router.push('/(tabs)');
+  // };
+
+  // const handleForgotPassword = () => {
+  //   return;
+  // };
 
   return (
     <SafeAreaView style={styles.container}>

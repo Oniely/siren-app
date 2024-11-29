@@ -1,8 +1,8 @@
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/firebaseConfig.js';
-import { useState } from 'react';
+import { auth, db } from '@/firebaseConfig.js';
+import { useEffect, useState } from 'react';
 import React, {
   KeyboardAvoidingView,
   Platform,
@@ -12,8 +12,11 @@ import React, {
   TextInput,
   TouchableOpacity,
   View,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ref, set, get } from 'firebase/database';
 
 const Register = () => {
   const router = useRouter();
@@ -22,30 +25,101 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  useEffect(() => {
+    (async () => {
+      try {
+        const role = await AsyncStorage.getItem('role');
+        const userId = await AsyncStorage.getItem('userId');
+        if (userId) {
+          if (role === 'responder') {
+            router.replace('/(tabs)/responder');
+          } else {
+            router.replace('/(tabs)/admin');
+          }
+        }
+      } catch (error) {
+        console.error('Error retrieving AsyncStorage data:', error);
+      }
+    })();
+  }, []);
+  const validateEmail = (email: string): boolean => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
 
   const handleSignup = async () => {
     if (!username || !email || !password || !confirmPassword) {
       alert('Please fill in all fields');
       return;
     }
-
+    if (username.length < 3) {
+      Alert.alert('Error', 'Username must be at least 3 characters long.');
+      return;
+    }
+    if (password.length < 6) {
+      Alert.alert('Error', 'Password must be at least 6 characters long.');
+      return;
+    }
     if (password !== confirmPassword) {
-      alert('Passwords do not match');
+      Alert.alert('Error', 'Passwords do not match.');
+      return;
+    }
+    if (!validateEmail(email)) {
+      Alert.alert('Error', 'Invalid email format.');
       return;
     }
 
     try {
-      const response = await createUserWithEmailAndPassword(auth, email, password);
+      const userRef = ref(db, 'users');
+      const snapshot = await get(userRef);
+      const existingUsers = snapshot.val();
 
-      if (response.user) {
-        alert('Account created successfully');
-        router.push('/login');
+      for (const userId in existingUsers) {
+        if (existingUsers[userId].username === username) {
+          Alert.alert('Error', 'Username already exists.');
+          return;
+        }
+        if (existingUsers[userId].email === email) {
+          Alert.alert('Error', 'Email already exists.');
+          return;
+        }
       }
-    } catch (error: any) {
-      alert(error.message);
+
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userId = userCredential.user.uid;
+
+      Alert.alert('Responder', 'Are you a responder?', [
+        {
+          text: 'Yes',
+          onPress: async () => {
+            await set(ref(db, `users/${userId}`), {
+              username,
+              email,
+              role: 'responder',
+            });
+            router.navigate('/(auth)/login');
+          },
+        },
+        {
+          text: 'No',
+          onPress: async () => {
+            await set(ref(db, `users/${userId}`), {
+              username,
+              email,
+              role: 'user',
+            });
+            router.navigate('/(auth)/login');
+          },
+        },
+      ]);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert('Error', error.message);
+      } else {
+        Alert.alert('Error', 'An unknown error occurred.');
+      }
     }
   };
-
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <SafeAreaView style={styles.container}>

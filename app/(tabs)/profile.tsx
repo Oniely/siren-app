@@ -7,10 +7,32 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { get, ref } from 'firebase/database';
 // import { db } from '../firebase';
+import { ref, get } from 'firebase/database';
+import { db, auth } from '@/firebaseConfig';
+
+const fetchProfileData = async () => {
+  try {
+    const userId = auth.currentUser?.uid;
+    if (!userId) throw new Error('No user ID found');
+
+    const userRef = ref(db, `users/${userId}`);
+    const snapshot = await get(userRef);
+
+    if (snapshot.exists()) {
+      return snapshot.val();
+    } else {
+      console.log('No data available');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+  }
+};
 
 interface User {
   username: string;
@@ -22,12 +44,40 @@ const Profile = () => {
   const router = useRouter();
   const currentPath = usePathname();
   const [user, setUser] = useState<User | null>(null);
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const handlePress = (path: Href) => {
     if (currentPath !== path) {
       router.push(path);
     }
   };
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.clear();
+      router.navigate('/(auth)/login');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
+  useEffect(() => {
+    const loadProfileData = async () => {
+      try {
+        const data = await fetchProfileData();
+        setProfileData(data);
+      } catch (error) {
+        console.error('Error loading profile:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfileData();
+  }, []);
+
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
   // useEffect(() => {
   //   init();
   // }, []);
@@ -53,9 +103,9 @@ const Profile = () => {
         <View style={styles.profileContainer}>
           <Image source={require('@/assets/images/profile.png')} style={styles.image} />
           <View style={styles.infoContainer}>
-            <Text style={styles.infoUsername}>{user?.username}Lorem Ipsum</Text>
-            <Text style={styles.infoEmail}>{user?.email}Loremipsum@gmail.com</Text>
-            <Text style={styles.infoRole}>{user?.role?.toUpperCase()}User</Text>
+            <Text style={styles.infoUsername}>{profileData.username}</Text>
+            <Text style={styles.infoEmail}>{profileData.email}</Text>
+            <Text style={styles.infoRole}>{profileData.role.toUpperCase()}</Text>
           </View>
         </View>
         <View style={styles.buttonContainer}>
@@ -71,7 +121,7 @@ const Profile = () => {
             <MaterialIcons name="privacy-tip" size={30} color="black" />
             <Text style={styles.buttonTitle}>Privacy Policy</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => handlePress('/(auth)/login')}>
+          <TouchableOpacity style={styles.button} onPress={handleLogout}>
             <MaterialIcons name="logout" size={30} color="black" />
             <Text style={styles.buttonTitle}>Logout</Text>
           </TouchableOpacity>

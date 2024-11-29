@@ -24,7 +24,7 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { push, ref, set } from 'firebase/database';
 import { getDownloadURL, uploadBytes, ref as reference } from 'firebase/storage';
-// import { db, storage } from '../firebase';
+import { db, storage } from '@/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
@@ -74,11 +74,13 @@ const ReportEmergency = () => {
   const [selectedCateg, setSelectedCateg] = useState('');
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [imageUrls, setImageUrls] = useState([]);
-  const [location, setLocation] = useState<LocationProp | any>({
+  const [imageUrls, setImageUrls] = useState<{ file: any; url: string }[]>([]);
+
+  const [location, setLocation] = useState({
     latitude: 37.78825,
     longitude: -122.4324,
   });
+
   const [status, setStatus] = useState('Standby');
 
   useLocation(setLocation);
@@ -113,73 +115,120 @@ const ReportEmergency = () => {
     }
   };
 
-  // const uploadMediaToStorage = async (mediaFiles: any) => {
-  //   setStatus('Uploading');
-  //   const uploadedUrls = [];
+  const uploadMediaToStorage = async (mediaFiles: any) => {
+    setStatus('Uploading');
+    const uploadedUrls = [];
 
-  //   for (const file of mediaFiles) {
-  //     const { uri, fileName, type } = file; // Get file details
-  //     console.log(file);
-  //     const response = await fetch(uri); // Convert to blob
-  //     const blob = await response.blob();
-  //     console.log(storage);
-  //     const storageRef = reference(storage, `reports/${fileName}`); // Firebase Storage reference
-  //     console.log('REF', storageRef);
+    for (const file of mediaFiles) {
+      const { uri, fileName, type } = file; // Get file details
+      console.log(file);
+      const response = await fetch(uri); // Convert to blob
+      const blob = await response.blob();
+      console.log(storage);
+      const storageRef = reference(storage, `reports/${fileName}`); // Firebase Storage reference
+      console.log('REF', storageRef);
 
-  //     try {
-  //       const snapshot = await uploadBytes(storageRef, blob); // Upload file
-  //       console.log('File uploaded successfully:', snapshot);
-  //       const downloadURL = await getDownloadURL(snapshot.ref);
-  //       uploadedUrls.push({ file: file, url: downloadURL });
-  //       console.log(downloadURL);
-  //       setStatus('Uploaded');
-  //     } catch (error) {
-  //       setStatus('Upload error');
-  //       console.error('Error uploading file:', error);
-  //     }
-  //   }
+      try {
+        const snapshot = await uploadBytes(storageRef, blob); // Upload file
+        console.log('File uploaded successfully:', snapshot);
+        const downloadURL = await getDownloadURL(snapshot.ref);
+        uploadedUrls.push({ file: file, url: downloadURL });
+        console.log(downloadURL);
+        setStatus('Uploaded');
+      } catch (error) {
+        setStatus('Upload error');
+        console.error('Error uploading file:', error);
+      }
+    }
 
-  //   setImageUrls(uploadedUrls); // Store uploaded file URLs
-  // };
+    setImageUrls(uploadedUrls);
+  };
 
-  // const pickImage = async () => {
-  //   const result = await launchImageLibrary({
-  //     mediaType: 'mixed',
-  //     selectionLimit: 3,
-  //     includeBase64: false,
-  //   });
+  const pickImage = async () => {
+    const result = await launchImageLibrary({
+      mediaType: 'mixed',
+      selectionLimit: 3,
+      includeBase64: false,
+    });
 
-  //   if (result.assets && result.assets.length > 0) {
-  //     setSelectedMedia(result.assets);
-  //     uploadMediaToStorage(result.assets);
-  //   }
-  // };
+    if (result.assets && result.assets.length > 0) {
+      setSelectedMedia(result.assets);
+      uploadMediaToStorage(result.assets);
+    }
+  };
 
-  // const submit = async (date, latitude, longitude, details, assets, category) => {
-  //   setStatus('Submitting');
-  //   const userId = await AsyncStorage.getItem('userId');
-  //   const reportRef = ref(db, 'reports/');
-  //   const newReportRef = push(reportRef);
+  const submit = async (
+    date: Date,
+    latitude: number,
+    longitude: number,
+    details: string,
+    assets: { file: any; url: string }[],
+    category: string
+  ) => {
+    console.log('Submit function started');
 
-  //   set(newReportRef, {
-  //     status: 'Reported',
-  //     timestamp: new Date(date).getTime(),
-  //     location: { latitude: latitude, longitude: longitude },
-  //     details: details,
-  //     assets: assets ?? [],
-  //     category: category,
-  //     createdAt: Date.now(),
-  //     senderId: userId,
-  //   })
-  //     .then(() => {
-  //       console.log('Data saved successfully with auto ID!');
-  //       setStatus('Submitted');
-  //     })
-  //     .catch((error) => {
-  //       setStatus('Submitted error');
-  //       console.error('Error writing document: ', error);
-  //     });
-  // };
+    // Display all data that is going to be submitted
+    console.log('Data to be submitted:', {
+      date,
+      latitude,
+      longitude,
+      details,
+      assets,
+      category,
+    });
+    const defaultLatitude = 37.7749; // Example: San Francisco latitude
+    const defaultLongitude = -122.4194; // Example: San Francisco longitude
+
+    const finalLatitude = latitude ?? defaultLatitude;
+    const finalLongitude = longitude ?? defaultLongitude;
+    setStatus('Submitting');
+    const userId = await AsyncStorage.getItem('userId');
+    console.log('User ID:', userId); // Ensure userId is being fetched correctly
+    if (!userId) {
+      console.error('No userId found in AsyncStorage');
+      setStatus('Error: User ID not found');
+      return;
+    }
+    const reportRef = ref(db, 'reports/');
+    console.log('Firebase Reference:', reportRef);
+    const newReportRef = push(reportRef);
+    console.log('New Report Reference:', newReportRef);
+    set(newReportRef, {
+      status: 'Reported',
+      timestamp: new Date(date).getTime(),
+      location: { latitude: finalLatitude, longitude: finalLongitude },
+      details,
+      assets: assets ?? [],
+      category,
+      createdAt: Date.now(),
+      senderId: userId,
+    })
+      .then(() => {
+        console.log('Submitting report with the following data:');
+        console.log('Date:', selectedDate);
+        console.log('Location:', location);
+        console.log('Details:', details);
+        console.log('Assets:', imageUrls);
+        console.log('Category:', selectedCateg);
+        console.log('User ID:', userId);
+        console.log('Data saved successfully with auto ID!');
+        setStatus('Submitted');
+      })
+      .catch((error) => {
+        setStatus('Submitted error');
+        console.error('Error writing document: ', error);
+      });
+    // if (!selectedDate || !location.latitude || !location.longitude || !details || !selectedCateg) {
+    //   console.error('All fields must be filled');
+    //   setStatus('Error: Missing fields');
+    //   return;
+    // }
+    // if (imageUrls.length === 0) {
+    //   console.error('No media uploaded');
+    //   setStatus('Error: No media uploaded');
+    //   return;
+    // }
+  };
 
   return (
     <Container bg="#e6e6e6" style={{ paddingTop: 20 }}>
@@ -246,7 +295,6 @@ const ReportEmergency = () => {
             <MI name={'my-location'} size={30} color={'#0B0C63'} />
           </View>
           <MapReport location={location} handleLocation={setLocation} />
-
           <View style={styles.emergencyDetails}>
             <Text style={styles.emergencyDetailsText}>Emergency Details</Text>
             <TextInput
@@ -288,7 +336,7 @@ const ReportEmergency = () => {
               </View>
             ) : (
               <View style={styles.iconUpload}>
-                <TouchableOpacity onPress={() => console.log('PICK IMAGE FUNCTION HERE')}>
+                <TouchableOpacity onPress={pickImage}>
                   <SLI name="cloud-upload" size={40} color={'#0B0C63'} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={takePicture}>
@@ -300,9 +348,10 @@ const ReportEmergency = () => {
           <Pressable
             style={styles.button}
             disabled={status === 'Submitting' || status === 'Uploading'}
-            // onPress={() =>
-            //   submit(selectedDate, location.latitude, location.longitude, details, imageUrls, selectedCateg)
-            // }
+            onPress={() => {
+              console.log('Submit button clicked'); // Debugging
+              submit(selectedDate, location.latitude, location.longitude, details, imageUrls, selectedCateg);
+            }}
           >
             <Text style={styles.buttonText}>Submit Report</Text>
           </Pressable>
@@ -461,6 +510,7 @@ const styles = StyleSheet.create({
     width: '86%',
     marginHorizontal: 'auto',
     marginVertical: 100,
+    zIndex: 10,
   },
   buttonText: {
     color: '#ffffff',
