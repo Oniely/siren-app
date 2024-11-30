@@ -28,6 +28,7 @@ import { db, storage } from '@/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
+import { Route } from 'expo-router/build/Route';
 
 interface LocationProp {
   longitude: any;
@@ -351,6 +352,7 @@ const ReportEmergency = () => {
             onPress={() => {
               console.log('Submit button clicked'); // Debugging
               submit(selectedDate, location.latitude, location.longitude, details, imageUrls, selectedCateg);
+              router.navigate('/waitingResponder');
             }}
           >
             <Text style={styles.buttonText}>Submit Report</Text>

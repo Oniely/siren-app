@@ -8,8 +8,18 @@ import { useRouter } from 'expo-router';
 import AlertCard from '@/components/AlertCard';
 import NewsAlertCard from '@/components/NewsAlertCard';
 import Container from '@/components/Container';
-import AdminStyledContainer from '@/components/admin/AdminStyledContainer';
-import AdminHeader from '@/components/admin/AdminHeader';
+import ResponderStyledContainer from '@/components/responder/responderStyledContainer';
+import ResponderHeader from '@/components/responder/responderHeader';
+import Geolocation from '@react-native-community/geolocation';
+import {db} from '@/firebaseConfig';
+import {getDatabase, ref, onValue, get, set, update, push} from 'firebase/database';
+import {
+  mediaDevices,
+  RTCIceCandidate,
+  RTCPeerConnection,
+  RTCSessionDescription,
+  RTCView,
+} from 'react-native-webrtc';
 
 MCI.loadFont();
 
@@ -37,8 +47,8 @@ const Dashboard = () => {
   ];
 
   return (
-    <AdminStyledContainer>
-      <AdminHeader />
+    <ResponderStyledContainer>
+      <ResponderHeader />
       <View style={styles.container}>
         <View style={styles.wrapper}>
           {/* <TouchableOpacity style={styles.box} onPress={() => router.push('/')}>
@@ -88,7 +98,7 @@ const Dashboard = () => {
             <Image source={require('@/assets/images/call-logo-admin.png')} style={styles.buttonAdmin} />
             <Text style={styles.buttonText}>Emergency Call</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/')}>
+          <TouchableOpacity onPress={() => router.push('../responderMap')}>
             <Image source={require('@/assets/images/view-logo.png')} style={styles.buttonAdmin} />
             <Text style={styles.buttonText}>View Reports</Text>
           </TouchableOpacity>
@@ -120,7 +130,7 @@ const Dashboard = () => {
           </Container>
         </View>
       </View>
-    </AdminStyledContainer>
+    </ResponderStyledContainer>
   );
 };
 
