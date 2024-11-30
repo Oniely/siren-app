@@ -1,17 +1,9 @@
-import Footer from '@/components/Footer';
 import StyledContainer from '@/components/StyledContainer';
 import { useRouter, usePathname, Href } from 'expo-router';
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Entypo from '@expo/vector-icons/Entypo';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import AntDesign from '@expo/vector-icons/AntDesign';
+import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Feather from '@expo/vector-icons/Feather';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Ionicons from '@expo/vector-icons/Ionicons';
-import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 
 // import AsyncStorage from '@react-native-async-storage/async-storage';
 // import { get, ref } from 'firebase/database';
@@ -20,7 +12,7 @@ import { ref, get } from 'firebase/database';
 import { db, auth } from '@/firebaseConfig';
 import { ScaledSheet } from 'react-native-size-matters';
 import Burger from '@/components/Burger';
-import { FontAwesome6 } from '@expo/vector-icons';
+import { Feather, FontAwesome6, Ionicons, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons';
 
 const fetchProfileData = async () => {
   try {
@@ -52,7 +44,6 @@ const Profile = () => {
   const currentPath = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [profileData, setProfileData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
 
   const handlePress = (path: Href) => {
     if (currentPath !== path) {
@@ -68,23 +59,18 @@ const Profile = () => {
     }
   };
   useEffect(() => {
-    const loadProfileData = async () => {
+    async function loadProfileData() {
       try {
         const data = await fetchProfileData();
         setProfileData(data);
       } catch (error) {
         console.error('Error loading profile:', error);
-      } finally {
-        setLoading(false);
       }
-    };
+    }
 
     loadProfileData();
   }, []);
 
-  if (loading) {
-    return <Text>Loading...</Text>;
-  }
   // useEffect(() => {
   //   init();
   // }, []);
@@ -117,8 +103,8 @@ const Profile = () => {
         <View style={styles.profileInfo}>
           <Image source={require('@/assets/images/profile.png')} style={styles.profileImage} />
           <View style={styles.infoContainer}>
-            <Text style={styles.profileName}>{profileData.username}</Text>
-            <Text style={styles.profileAt}>{profileData.email}</Text>
+            <Text style={styles.profileName}>{profileData?.username}</Text>
+            <Text style={styles.profileAt}>{profileData?.email}</Text>
             <TouchableOpacity onPress={() => router.push('/profile/edit_profile')} style={styles.editButton}>
               <Feather name="edit" size={24} color="#FFF" />
               <Text style={styles.editText}>Edit Profile</Text>
@@ -126,7 +112,10 @@ const Profile = () => {
           </View>
         </View>
         <View style={styles.profileSettings}>
-          <TouchableOpacity style={styles.settingButton}>
+          <TouchableOpacity
+            style={styles.settingButton}
+            onPress={() => router.push('/profile/notifications')}
+          >
             <View style={styles.settingContent}>
               <MaterialCommunityIcons name="bell" size={24} color="#b6b6b7" />
               <Text style={styles.settingText}>Notifications</Text>
@@ -173,6 +162,8 @@ const styles = ScaledSheet.create({
     backgroundColor: '#e6e6e6',
     gap: '10@s',
     position: 'relative',
+    borderBottomWidth: 1,
+    borderBottomColor: '#dcdcdb',
   },
   headerText: {
     fontSize: '20@s',

@@ -85,6 +85,8 @@ const styles = ScaledSheet.create({
     backgroundColor: '#e6e6e6',
     gap: '10@s',
     position: 'relative',
+    borderBottomWidth: 1,
+    borderBottomColor: '#343434',
   },
   headerText: {
     fontSize: '20@s',

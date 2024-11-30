@@ -58,7 +58,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
         <Pressable>
           <MaterialCommunityIcons name="bell" size={32} color="#8F8E8D" />
         </Pressable>
-        <Pressable>
+        <Pressable onPress={() => router.push(responder ? '/responder' : '/profile')}>
           {responder ? (
             <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
           ) : (
@@ -74,7 +74,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
             <AntDesign name="close" size={30} color="black" />
           </TouchableOpacity>
           <View style={styles.burgerProfile}>
-            <Pressable>
+            <Pressable onPress={() => router.push(responder ? '/responder' : '/profile')}>
               {responder ? (
                 <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
               ) : (
