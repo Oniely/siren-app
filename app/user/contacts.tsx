@@ -24,9 +24,17 @@ import Footer from '@/components/Footer';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 const Contact = () => {
-  const [activeTab, setActiveTab] = useState<'Emergency' | 'Personal'>('Emergency');
   const router = useRouter();
 
+  const data = [
+    { id: '1', name: 'Apple' },
+    { id: '2', name: 'Banana' },
+    { id: '3', name: 'Cherry' },
+    { id: '4', name: 'Date' },
+    { id: '5', name: 'Elderberry' },
+  ];
+
+  const [activeTab, setActiveTab] = useState<'Emergency' | 'Personal'>('Emergency');
   const [selectedContactId, setSelectedContactId] = useState<string | number>('');
   const [modalVisible, setModalVisible] = useState(false);
   const [contactExists, setContactExists] = useState(false);
@@ -75,14 +83,6 @@ const Contact = () => {
       );
     }
   };
-  // Sample Data
-  const data = [
-    { id: '1', name: 'Apple' },
-    { id: '2', name: 'Banana' },
-    { id: '3', name: 'Cherry' },
-    { id: '4', name: 'Date' },
-    { id: '5', name: 'Elderberry' },
-  ];
 
   // Handle Search
   const handleSearch = (text: string) => {

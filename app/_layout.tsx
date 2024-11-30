@@ -44,21 +44,15 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen name="index" />
-        <Stack.Screen name="(tabs)/index" />
-        <Stack.Screen name="(tabs)/contacts" />
-        <Stack.Screen name="(tabs)/profile" />
-        <Stack.Screen name="(tabs)/settings" />
-        <Stack.Screen name="(tabs)/map" />
-        <Stack.Screen name="(tabs)/view_alert" />
-        <Stack.Screen name="(tabs)/report_emergency" />
-        <Stack.Screen name="(tabs)/emergency_call" />
-        {/* Navs with layout */}
-        <Stack.Screen name="(tabs)/messages" />
-        <Stack.Screen name="(tabs)/admin" />
-        {/* ---------------- */}
+        {/* portals  */}
+        <Stack.Screen name="user" />
+        <Stack.Screen name="responder" />
+        <Stack.Screen name="admin" />
+        {/* auth */}
         <Stack.Screen name="(auth)/login" />
         <Stack.Screen name="(auth)/register" />
         <Stack.Screen name="(auth)/forgot-password" />
+        {/* not-found  */}
         <Stack.Screen name="+not-found" />
       </Stack>
     </ThemeProvider>

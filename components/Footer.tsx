@@ -20,42 +20,46 @@ const Footer = () => {
     <KeyboardAvoidingView style={styles.container}>
       <View style={styles.wrapper}>
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/') && styles.activeFooter]}
-          onPress={() => handlePress('/(tabs)')}
-          disabled={currentPath === '/index'}
+          style={[styles.iconContainer, isActive('/user') && styles.activeFooter]}
+          onPress={() => handlePress('/user')}
+          disabled={currentPath === '/user'}
         >
-          <Icon name="home" size={40} color={isActive('/') ? '#3998ff' : '#e6e6e6'} />
+          <Icon name="home" size={40} color={isActive('/user') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/contacts') && styles.activeFooter]}
-          onPress={() => handlePress('/contacts')}
-          disabled={currentPath === '/contacts'}
+          style={[styles.iconContainer, isActive('/user/contacts') && styles.activeFooter]}
+          onPress={() => handlePress('/user/contacts')}
+          disabled={currentPath === '/user/contacts'}
         >
-          <Icon name="contacts" size={40} color={isActive('/contacts') ? '#3998ff' : '#e6e6e6'} />
+          <Icon name="contacts" size={40} color={isActive('/user/contacts') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
 
         <View style={styles.halfCircleWrapper}>
           <View style={styles.halfCircle} />
-          <Pressable style={styles.iconContainer} onPress={() => router.push('/(tabs)/map')}>
+          <Pressable style={styles.iconContainer} onPress={() => router.push('/user/map')}>
             {/* <CentralButtonPopup isVisible={sirenClicked} onClose={() => setSirenClicked(false)} /> */}
             <Image source={require('@/assets/images/nav_map.png')} style={styles.panicButton} />
           </Pressable>
         </View>
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/messages') && styles.activeFooter]}
-          onPress={() => handlePress('/messages')}
-          disabled={currentPath === '/messages'}
+          style={[styles.iconContainer, isActive('/user/messages') && styles.activeFooter]}
+          onPress={() => handlePress('/user/messages')}
+          disabled={currentPath === '/user/messages'}
         >
-          <Icon name="message-processing" size={40} color={isActive('/messages') ? '#3998ff' : '#e6e6e6'} />
+          <Icon
+            name="message-processing"
+            size={40}
+            color={isActive('/user/messages') ? '#3998ff' : '#e6e6e6'}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/profile') && styles.activeFooter]}
-          onPress={() => handlePress('/profile')}
-          disabled={currentPath === '/profile'}
+          style={[styles.iconContainer, isActive('/user/profile') && styles.activeFooter]}
+          onPress={() => handlePress('/user/profile')}
+          disabled={currentPath === '/user/profile'}
         >
-          <Icon name="account" size={40} color={isActive('/profile') ? '#3998ff' : '#e6e6e6'} />
+          <Icon name="account" size={40} color={isActive('/user/profile') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

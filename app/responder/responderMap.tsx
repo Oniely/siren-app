@@ -3,10 +3,11 @@ import { View, StyleSheet } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { db } from '@/firebaseConfig';
 import { ref, onValue } from 'firebase/database';
+import * as Location from 'expo-location';
 
-const responderMap = ({ reportId }) => {
+const responderMap = ({ reportId }: any) => {
   const [callerLocation, setCallerLocation] = useState(null);
-  const [responderLocation, setResponderLocation] = useState(null);
+  const [responderLocation, setResponderLocation] = useState<any>(null);
 
   useEffect(() => {
     // Watch responder's location
@@ -57,22 +58,10 @@ const responderMap = ({ reportId }) => {
         }}
       >
         {/* Responder Marker */}
-        {responderLocation && (
-          <Marker
-            coordinate={responderLocation}
-            title="Responder"
-            pinColor="blue"
-          />
-        )}
+        {responderLocation && <Marker coordinate={responderLocation} title="Responder" pinColor="blue" />}
 
         {/* Caller Marker */}
-        {callerLocation && (
-          <Marker
-            coordinate={callerLocation}
-            title="Caller"
-            pinColor="red"
-          />
-        )}
+        {callerLocation && <Marker coordinate={callerLocation} title="Caller" pinColor="red" />}
       </MapView>
     </View>
   );

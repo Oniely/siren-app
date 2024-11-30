@@ -352,7 +352,7 @@ const ReportEmergency = () => {
             onPress={() => {
               console.log('Submit button clicked'); // Debugging
               submit(selectedDate, location.latitude, location.longitude, details, imageUrls, selectedCateg);
-              router.navigate('/waitingResponder');
+              router.navigate('/user/waitingResponder');
             }}
           >
             <Text style={styles.buttonText}>Submit Report</Text>

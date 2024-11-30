@@ -105,7 +105,10 @@ const Profile = () => {
           <View style={styles.infoContainer}>
             <Text style={styles.profileName}>{profileData?.username}</Text>
             <Text style={styles.profileAt}>{profileData?.email}</Text>
-            <TouchableOpacity onPress={() => router.push('/profile/edit_profile')} style={styles.editButton}>
+            <TouchableOpacity
+              onPress={() => router.push('/user/profile/edit_profile')}
+              style={styles.editButton}
+            >
               <Feather name="edit" size={24} color="#FFF" />
               <Text style={styles.editText}>Edit Profile</Text>
             </TouchableOpacity>
@@ -114,7 +117,7 @@ const Profile = () => {
         <View style={styles.profileSettings}>
           <TouchableOpacity
             style={styles.settingButton}
-            onPress={() => router.push('/profile/notifications')}
+            onPress={() => router.push('/user/profile/notifications')}
           >
             <View style={styles.settingContent}>
               <MaterialCommunityIcons name="bell" size={24} color="#b6b6b7" />

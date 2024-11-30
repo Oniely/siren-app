@@ -8,18 +8,8 @@ import { useRouter } from 'expo-router';
 import AlertCard from '@/components/AlertCard';
 import NewsAlertCard from '@/components/NewsAlertCard';
 import Container from '@/components/Container';
-import ResponderStyledContainer from '@/components/responder/responderStyledContainer';
-import ResponderHeader from '@/components/responder/responderHeader';
-import Geolocation from '@react-native-community/geolocation';
-import {db} from '@/firebaseConfig';
-import {getDatabase, ref, onValue, get, set, update, push} from 'firebase/database';
-import {
-  mediaDevices,
-  RTCIceCandidate,
-  RTCPeerConnection,
-  RTCSessionDescription,
-  RTCView,
-} from 'react-native-webrtc';
+import AdminStyledContainer from '@/components/admin/AdminStyledContainer';
+import AdminHeader from '@/components/admin/AdminHeader';
 
 MCI.loadFont();
 
@@ -47,8 +37,8 @@ const Dashboard = () => {
   ];
 
   return (
-    <ResponderStyledContainer>
-      <ResponderHeader />
+    <AdminStyledContainer>
+      <AdminHeader />
       <View style={styles.container}>
         <View style={styles.wrapper}>
           {/* <TouchableOpacity style={styles.box} onPress={() => router.push('/')}>
@@ -88,7 +78,7 @@ const Dashboard = () => {
           </View>
 
           <View style={styles.bigCircleContainer}>
-            <TouchableOpacity onPress={() => router.push('/report_emergency')}>
+            <TouchableOpacity onPress={() => router.push('/user/report_emergency')}>
               <Image source={require('@/assets/images/footerSiren.png')} style={styles.panicButton} />
             </TouchableOpacity>
           </View>
@@ -98,7 +88,7 @@ const Dashboard = () => {
             <Image source={require('@/assets/images/call-logo-admin.png')} style={styles.buttonAdmin} />
             <Text style={styles.buttonText}>Emergency Call</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('../responderMap')}>
+          <TouchableOpacity onPress={() => router.push('/')}>
             <Image source={require('@/assets/images/view-logo.png')} style={styles.buttonAdmin} />
             <Text style={styles.buttonText}>View Reports</Text>
           </TouchableOpacity>
@@ -130,7 +120,7 @@ const Dashboard = () => {
           </Container>
         </View>
       </View>
-    </ResponderStyledContainer>
+    </AdminStyledContainer>
   );
 };
 

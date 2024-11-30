@@ -20,7 +20,7 @@ const Dashboard = () => {
         <View style={styles.wrapper}>
           <Text style={styles.indexText}>Emergency help needed?</Text>
           <View style={styles.bigCircleContainer}>
-            <TouchableOpacity onPress={() => router.push('/report_emergency')}>
+            <TouchableOpacity onPress={() => router.push('/user/report_emergency')}>
               <Image source={require('@/assets/images/index_logo.png')} style={styles.panicButton} />
             </TouchableOpacity>
           </View>

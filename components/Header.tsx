@@ -58,7 +58,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
         <Pressable>
           <MaterialCommunityIcons name="bell" size={32} color="#8F8E8D" />
         </Pressable>
-        <Pressable onPress={() => router.push(responder ? '/responder' : '/profile')}>
+        <Pressable onPress={() => router.push(responder ? '/responder' : '/user/profile')}>
           {responder ? (
             <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
           ) : (
@@ -74,7 +74,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
             <AntDesign name="close" size={30} color="black" />
           </TouchableOpacity>
           <View style={styles.burgerProfile}>
-            <Pressable onPress={() => router.push(responder ? '/responder' : '/profile')}>
+            <Pressable onPress={() => router.push(responder ? '/responder' : '/user/profile')}>
               {responder ? (
                 <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
               ) : (
@@ -84,7 +84,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
             </Pressable>
             <Text style={styles.burgerName}>Elizabeth Olsen</Text>
           </View>
-          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/emergency_call')}>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/emergency_call')}>
             <Feather name="phone-call" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Emergency Call</Text>
           </TouchableOpacity>
@@ -92,19 +92,22 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
             <FontAwesome name="send" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Emergency Text</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/report_emergency')}>
+          <TouchableOpacity
+            style={styles.sliderNavItem}
+            onPress={() => handlePress('/user/report_emergency')}
+          >
             <Foundation name="alert" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Report Emergency</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/view_alert')}>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/view_alert')}>
             <Ionicons name="eye-sharp" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>View Alert</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/contacts')}>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/contacts')}>
             <Ionicons name="notifications" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Notifications</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/contacts')}>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/contacts')}>
             <Ionicons name="notifications" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Settings</Text>
           </TouchableOpacity>

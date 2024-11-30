@@ -14,8 +14,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Container from '../../components/Container';
-import { auth, db } from '../../firebaseConfig';
+import Container from '@/components/Container';
+import { auth, db } from '@/firebaseConfig';
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { ref, get } from 'firebase/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -35,9 +35,9 @@ const Login = () => {
       const userId = await AsyncStorage.getItem('userId');
       if (userId) {
         if (role === 'responder') {
-          router.replace('/(tabs)/responder');
+          router.replace('/responder');
         } else {
-          router.replace('/(tabs)');
+          router.replace('/user');
         }
       }
     })();
@@ -80,9 +80,9 @@ const Login = () => {
 
       // Check user role and navigate accordingly
       if (userRole === 'responder') {
-        router.replace('/(tabs)/responder');
+        router.replace('/responder');
       } else {
-        router.replace('/(tabs)');
+        router.replace('/user');
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -114,7 +114,7 @@ const Login = () => {
     }
   };
   // const handleLogin = () => {
-  //   return router.push('/(tabs)');
+  //   return router.push('/user');
   // };
 
   // const handleForgotPassword = () => {

@@ -1,0 +1,23 @@
+import { Stack } from 'expo-router';
+import React from 'react';
+
+export default function UserLayout() {
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="index" />
+      <Stack.Screen name="contacts" />
+      <Stack.Screen name="emergency_call" />
+      <Stack.Screen name="map" />
+      <Stack.Screen name="report_emergency" />
+      <Stack.Screen name="settings" />
+      <Stack.Screen name="view_alert" />
+      <Stack.Screen name="waitingResponder" />
+      <Stack.Screen name="messages" />
+      <Stack.Screen name="profile" />
+    </Stack>
+  );
+}
