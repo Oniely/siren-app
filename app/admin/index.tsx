@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View, FlatList } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, FlatList, ScrollView } from 'react-native';
 
 import FS from 'react-native-vector-icons/FontAwesome';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -39,87 +39,61 @@ const Dashboard = () => {
   return (
     <AdminStyledContainer>
       <AdminHeader />
-      <View style={styles.container}>
-        <View style={styles.wrapper}>
-          {/* <TouchableOpacity style={styles.box} onPress={() => router.push('/')}>
-            <Text style={styles.boxText}>Report Emergency</Text>
-            <MCI size={50} name="alert-circle" color={'#D7F1F7'} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.box} onPress={() => router.push('/')}>
-            <Text style={styles.boxText}>View{'\n'}Alerts</Text>
-            <MCI size={50} name="monitor-eye" color={'#D7F1F7'} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.box,
-              {
-                justifyContent: 'flex-end',
-              },
-            ]}
-          >
-            <MCI size={50} name="phone-ring" color={'#D7F1F7'} />
-            <Text style={styles.boxText}>Emergency Call</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.box,
-              {
-                justifyContent: 'flex-end',
-              },
-            ]}
-            onPress={() => router.push('/')}
-          >
-            <FS size={50} name="telegram" color={'#D7F1F7'} />
-            <Text style={styles.boxText}>Emergency Text</Text>
-          </TouchableOpacity> */}
-          <View style={styles.textWrapper}>
-            <Text style={styles.indexText}>Hi, Elizabeth</Text>
-            <Text style={styles.indexDesc}>Welcome to Siren</Text>
+      <ScrollView style={styles.scrollView}>
+        <View style={styles.container}>
+          <View style={styles.wrapper}>
+            <View style={styles.textWrapper}>
+              <Text style={styles.indexText}>Hi, Elizabeth</Text>
+              <Text style={styles.indexDesc}>Welcome to Siren</Text>
+            </View>
+            <View style={styles.bigCircleContainer}>
+              <TouchableOpacity onPress={() => router.push('/user/report_emergency')}>
+                <Image source={require('@/assets/images/footerSiren.png')} style={styles.panicButton} />
+              </TouchableOpacity>
+            </View>
           </View>
-
-          <View style={styles.bigCircleContainer}>
-            <TouchableOpacity onPress={() => router.push('/user/report_emergency')}>
-              <Image source={require('@/assets/images/footerSiren.png')} style={styles.panicButton} />
+          <View style={styles.buttonWrapper}>
+            <TouchableOpacity onPress={() => router.push('/')}>
+              <Image source={require('@/assets/images/call-logo-admin.png')} style={styles.buttonAdmin} />
+              <Text style={styles.buttonText}>Emergency Call</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/admin/analytics')}>
+              <Image source={require('@/assets/images/view-logo.png')} style={styles.buttonAdmin} />
+              <Text style={styles.buttonText}>View Reports</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/')}>
+              <Image source={require('@/assets/images/message-logo.png')} style={styles.buttonAdmin} />
+              <Text style={styles.buttonText}>Emergency Text</Text>
             </TouchableOpacity>
           </View>
-        </View>
-        <View style={styles.buttonWrapper}>
-          <TouchableOpacity onPress={() => router.push('/')}>
-            <Image source={require('@/assets/images/call-logo-admin.png')} style={styles.buttonAdmin} />
-            <Text style={styles.buttonText}>Emergency Call</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/')}>
-            <Image source={require('@/assets/images/view-logo.png')} style={styles.buttonAdmin} />
-            <Text style={styles.buttonText}>View Reports</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/')}>
-            <Image source={require('@/assets/images/message-logo.png')} style={styles.buttonAdmin} />
-            <Text style={styles.buttonText}>Emergency Text</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.newsAlertWrapper}>
-          <Text style={styles.newsAlertTitle}>News Alert</Text>
-          <Container bg="#e6e6e6" style={{ paddingTop: 25 }}>
-            <View style={styles.newsAlertContainer}>
-              <View style={styles.nearbyAccidents}>
-                <FlatList
-                  data={nearbyAccidents}
-                  renderItem={({ item }) => (
-                    <NewsAlertCard
-                      title={item.title}
-                      dateString={item.dateString}
-                      timeAgo={item.timeAgo}
-                      viewString={item.viewsString}
-                      detailsString={item.detailsString}
-                    />
-                  )}
-                  keyExtractor={(item) => item.id}
-                />
+          <View style={styles.newsAlertWrapper}>
+            <Text style={styles.newsAlertTitle}>News Alert</Text>
+            <Container bg="#e6e6e6" style={{ paddingTop: 25 }}>
+              <View style={styles.newsAlertContainer}>
+                <View style={styles.nearbyAccidents}>
+                  <FlatList
+                    horizontal
+                    snapToInterval={320}
+                    snapToAlignment="center"
+                    data={nearbyAccidents}
+                    renderItem={({ item }) => (
+                      <NewsAlertCard
+                        title={item.title}
+                        dateString={item.dateString}
+                        timeAgo={item.timeAgo}
+                        viewString={item.viewsString}
+                        detailsString={item.detailsString}
+                      />
+                    )}
+                    keyExtractor={(item) => item.id}
+                    ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
+                  />
+                </View>
               </View>
-            </View>
-          </Container>
+            </Container>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </AdminStyledContainer>
   );
 };
@@ -129,11 +103,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'scroll',
+  },
+  scrollView: {
+    flex: 1,
   },
   wrapper: {
     width: '90%',
-    height: '50%',
     position: 'relative',
     flexWrap: 'wrap',
     flexDirection: 'row',

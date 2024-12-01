@@ -85,6 +85,9 @@ const Dashboard = () => {
               <View style={styles.newsAlertContainer}>
                 <View style={styles.nearbyAccidents}>
                   <FlatList
+                    horizontal
+                    snapToInterval={320}
+                    snapToAlignment="center"
                     data={nearbyAccidents}
                     renderItem={({ item }) => (
                       <NewsAlertCard
@@ -96,6 +99,7 @@ const Dashboard = () => {
                       />
                     )}
                     keyExtractor={(item) => item.id}
+                    ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
                   />
                 </View>
               </View>

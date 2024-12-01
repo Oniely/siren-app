@@ -2,12 +2,10 @@ import { Href, usePathname, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Pressable, StyleSheet, TouchableOpacity, View, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import CentralButtonPopup from './CentralButtonPopup';
 
 const Footer = () => {
   const router = useRouter();
   const currentPath = usePathname();
-  const [sirenClicked, setSirenClicked] = useState(false);
 
   const handlePress = (path: Href) => {
     if (currentPath !== path) {
@@ -38,7 +36,6 @@ const Footer = () => {
         <View style={styles.halfCircleWrapper}>
           <View style={styles.halfCircle} />
           <Pressable style={styles.iconContainer} onPress={() => router.push('/user/map')}>
-            {/* <CentralButtonPopup isVisible={sirenClicked} onClose={() => setSirenClicked(false)} /> */}
             <Image source={require('@/assets/images/nav_map.png')} style={styles.panicButton} />
           </Pressable>
         </View>
