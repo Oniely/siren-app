@@ -50,6 +50,7 @@ const Profile = () => {
       router.push(path);
     }
   };
+
   const handleLogout = async () => {
     try {
       await AsyncStorage.clear();
@@ -58,6 +59,7 @@ const Profile = () => {
       console.error('Error during logout:', error);
     }
   };
+
   useEffect(() => {
     async function loadProfileData() {
       try {
@@ -139,7 +141,7 @@ const Profile = () => {
             </View>
             <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.settingButton}>
+          <TouchableOpacity style={styles.settingButton} onPress={handleLogout}>
             <View style={styles.settingContent}>
               <SimpleLineIcons name="logout" size={24} color="#b6b6b7" />
               <Text style={styles.settingText}>Logout</Text>
