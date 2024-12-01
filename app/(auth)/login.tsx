@@ -81,6 +81,9 @@ const Login = () => {
       // Check user role and navigate accordingly
       if (userRole === 'responder') {
         router.replace('/(tabs)/responder');
+      }
+      else if (userRole === 'admin') {
+        router.replace('/(tabs)/admin/');
       } else {
         router.replace('/(tabs)');
       }

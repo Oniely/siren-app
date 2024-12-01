@@ -9,6 +9,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Foundation from '@expo/vector-icons/Foundation';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface HeaderProps {
   responder?: boolean;
@@ -26,7 +27,14 @@ const AdminHeader: React.FC<HeaderProps> = ({ responder = false }) => {
       router.push(path);
     }
   };
-
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.clear();
+      router.navigate('/(auth)/login');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
   const toggleMenu = () => {
     const toValue = menuVisible ? 350 : 0;
     Animated.timing(slideAnimation, {
@@ -93,6 +101,10 @@ const AdminHeader: React.FC<HeaderProps> = ({ responder = false }) => {
         <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/contacts')}>
           <Ionicons name="notifications" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Notifications</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={handleLogout}>
+          <Ionicons name="notifications" size={35} color="#0c0c63" />
+          <Text style={styles.sliderNavItemText}>Logout</Text>
         </TouchableOpacity>
         <Text style={styles.burgerFooter}>All Rights Reserved @Siren2024</Text>
       </Animated.View>

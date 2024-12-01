@@ -5,7 +5,7 @@ import MI from "react-native-vector-icons/MaterialIcons";
 
 // components
 import Container from "../../../components/Container";
-import Footer from "../../../components/Footer";
+import ResponderFooter from "../../../components/responder/responderFooter";
 import Carousel from "../../../components/Carousel"
 
 const ResponderAlert = () => {
