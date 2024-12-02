@@ -91,30 +91,21 @@ const AdminHeader: React.FC<HeaderProps> = ({ responder = false, bg = '#e6e6e6' 
           </Pressable>
           <Text style={styles.burgerName}>Elizabeth Olsen</Text>
         </View>
-
         <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/emergency_call')}>
           <Feather name="phone-call" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Emergency Call</Text>
+          <Text style={styles.sliderNavItemText}>View Reports</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.sliderNavItem}>
           <FontAwesome name="send" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Emergency Text</Text>
+          <Text style={styles.sliderNavItemText}>Manage Accounts</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/report_emergency')}>
           <Foundation name="alert" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Report Emergency</Text>
+          <Text style={styles.sliderNavItemText}>View Analysis</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/view_alert')}>
-          <Ionicons name="eye-sharp" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>View Alert</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/contacts')}>
-          <Ionicons name="notifications" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Notifications</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={handleLogout}>
-          <Ionicons name="notifications" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Logout</Text>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/settings')}>
+          <Ionicons name="settings-sharp" size={35} color="#0c0c63" />
+          <Text style={styles.sliderNavItemText}>Settings</Text>
         </TouchableOpacity>
         <Text style={styles.burgerFooter}>All Rights Reserved @Siren2024</Text>
       </Animated.View>
@@ -131,6 +122,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
+    zIndex: 1000,
   },
   title: {
     fontSize: 18,
@@ -171,13 +163,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     zIndex: 1000,
     height: 900,
-  },
-  navScrollContainer: {
-    flex: 1,
-    flexDirection: 'column',
-    overflow: 'scroll',
-    backgroundColor: '#ffffff',
-    zIndex: 1000,
   },
   sliderNavItem: {
     marginTop: 10,

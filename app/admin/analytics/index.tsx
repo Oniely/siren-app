@@ -1,62 +1,103 @@
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import React from 'react';
-import { ScaledSheet } from 'react-native-size-matters';
+import { scale, ScaledSheet } from 'react-native-size-matters';
 import AdminStyledContainer from '@/components/admin/AdminStyledContainer';
 import AdminHeader from '@/components/admin/AdminHeader';
-import { Bar, CartesianChart } from 'victory-native';
+import {} from 'victory-native';
+import { BarChart } from 'react-native-gifted-charts';
 
 export default function Analytics() {
   const data = [
-    { x: 'Vehicle Collisions', y: 4 },
-    { x: 'Fire Incidents', y: 2 },
-    { x: 'Medical Emergencies', y: 6 },
-    { x: 'Natural Disasters', y: 8 },
-    { x: 'Hazardous Spills', y: 10 },
+    {
+      value: 4,
+      label: 'Vehicle Collisions',
+      frontColor: '#087bb8',
+    },
+    {
+      value: 2,
+      label: 'Fire Incidents',
+      frontColor: '#087bb8',
+    },
+    {
+      value: 6,
+      label: 'Medical Emergencies',
+      frontColor: '#087bb8',
+    },
+    {
+      value: 8,
+      label: 'Natural Disasters',
+      frontColor: '#087bb8',
+    },
+    {
+      value: 10,
+      label: 'Hazardous Spills',
+      frontColor: '#087bb8',
+    },
   ];
 
   return (
     <AdminStyledContainer>
       <AdminHeader bg="#e6e6e6" />
-      <View style={styles.container}>
-        <View>
-          <Text style={styles.headerText}>Analytic Reports</Text>
-          <Text style={styles.headerDesc} numberOfLines={1}>
-            Lorem ipsum dolor sit amet...
-          </Text>
-        </View>
-        <View>
-          <Text>Graph goes here...</Text>
-        </View>
-        <View style={styles.mapDataContainer}>
-          <Text style={styles.textHeader}>Map Data {'(Incident Locations)'}</Text>
-          <View style={styles.dataContainer}>
-            <View style={styles.dataBox}>
-              <Text style={styles.boxName}>Zone 1</Text>
-              <Text style={styles.boxData}>2 incidents</Text>
-            </View>
-            <View style={styles.dataBox}>
-              <Text style={styles.boxName}>Zone 2</Text>
-              <Text style={styles.boxData}>2 incidents</Text>
-            </View>
-            <View style={styles.dataBox}>
-              <Text style={styles.boxName}>Zone 3</Text>
-              <Text style={styles.boxData}>2 incidents</Text>
-            </View>
-            <View style={styles.dataBox}>
-              <Text style={styles.boxName}>Zone 4</Text>
-              <Text style={styles.boxData}>2 incidents</Text>
-            </View>
-            <View style={styles.dataBox}>
-              <Text style={styles.boxName}>Zone 5</Text>
-              <Text style={styles.boxData}>2 incidents</Text>
-            </View>
-            <View style={styles.dataBox}>
-              <Text style={styles.boxName}>Zone 6</Text>
-              <Text style={styles.boxData}>2 incidents</Text>
+      <ScrollView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <View>
+            <Text style={styles.headerText}>Analytic Reports</Text>
+            <Text style={styles.headerDesc} numberOfLines={1}>
+              Lorem ipsum dolor sit amet...
+            </Text>
+          </View>
+          <View style={styles.chartContainer}>
+            <Text style={styles.chartHeaderText}>Incident Type Analysis</Text>
+            <BarChart
+              data={data}
+              autoShiftLabels
+              backgroundColor="#fcfcfd"
+              barWidth={40}
+              dashGap={0}
+              height={scale(200)}
+              width={scale(290)}
+              minHeight={3}
+              barBorderTopLeftRadius={6}
+              barBorderTopRightRadius={6}
+              noOfSections={4}
+              yAxisThickness={0}
+              yAxisTextStyle={{ fontSize: 10, color: 'gray' }}
+              xAxisLabelTextStyle={{ fontSize: 10, color: 'gray' }}
+              spacing={10}
+              isAnimated
+            />
+          </View>
+          <View style={styles.mapDataContainer}>
+            <Text style={styles.textHeader}>Map Data {'(Incident Locations)'}</Text>
+            <View style={styles.dataContainer}>
+              <View style={styles.dataBox}>
+                <Text style={styles.boxName}>Zone 1</Text>
+                <Text style={styles.boxData}>2 incidents</Text>
+              </View>
+              <View style={styles.dataBox}>
+                <Text style={styles.boxName}>Zone 2</Text>
+                <Text style={styles.boxData}>2 incidents</Text>
+              </View>
+              <View style={styles.dataBox}>
+                <Text style={styles.boxName}>Zone 3</Text>
+                <Text style={styles.boxData}>2 incidents</Text>
+              </View>
+              <View style={styles.dataBox}>
+                <Text style={styles.boxName}>Zone 4</Text>
+                <Text style={styles.boxData}>2 incidents</Text>
+              </View>
+              <View style={styles.dataBox}>
+                <Text style={styles.boxName}>Zone 5</Text>
+                <Text style={styles.boxData}>2 incidents</Text>
+              </View>
+              <View style={styles.dataBox}>
+                <Text style={styles.boxName}>Zone 6</Text>
+                <Text style={styles.boxData}>2 incidents</Text>
+              </View>
             </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </AdminStyledContainer>
   );
 }
@@ -78,7 +119,7 @@ const styles = ScaledSheet.create({
     color: '#343434',
   },
   mapDataContainer: {
-    marginTop: '50@s',
+    marginTop: '30@s',
   },
   dataContainer: {
     flexDirection: 'row',
@@ -109,4 +150,19 @@ const styles = ScaledSheet.create({
     fontFamily: 'BeVietnamProSemiBold',
     color: '#343434',
   },
+  chartContainer: {
+    backgroundColor: '#fcfcfd',
+    borderRadius: '10@s',
+    padding: '10@s',
+    overflow: 'hidden',
+    marginTop: '30@s',
+  },
+  chartHeaderText: {
+    fontSize: '16@s',
+    fontFamily: 'BeVietnamProSemiBold',
+    color: '#343434',
+    marginLeft: '10@s',
+    marginBottom: '10@s',
+  },
+  barChart: {},
 });

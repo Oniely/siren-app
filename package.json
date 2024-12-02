@@ -25,6 +25,7 @@
     "expo": "~51.0.28",
     "expo-constants": "~16.0.2",
     "expo-font": "~12.0.9",
+    "expo-linear-gradient": "~13.0.2",
     "expo-linking": "~6.3.1",
     "expo-location": "~17.0.1",
     "expo-router": "~3.5.23",
@@ -38,6 +39,7 @@
     "react-native": "0.74.5",
     "react-native-firebase": "^5.6.0",
     "react-native-gesture-handler": "~2.16.1",
+    "react-native-gifted-charts": "^1.4.47",
     "react-native-image-picker": "^7.2.2",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-maps": "^1.20.0",
@@ -50,8 +52,7 @@
     "react-native-vector-icons": "^10.2.0",
     "react-native-video": "^6.8.0",
     "react-native-web": "~0.19.10",
-    "react-native-webrtc": "^124.0.4",
-    "victory-native": "^41.12.1"
+    "react-native-webrtc": "^124.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
