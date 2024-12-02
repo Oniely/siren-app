@@ -6,6 +6,7 @@ export default function ResponderLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
+        animation: 'fade_from_bottom',
       }}
     >
       <Stack.Screen name="index" />

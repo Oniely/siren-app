@@ -7,21 +7,20 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Entypo from '@expo/vector-icons/Entypo';
 import { useRouter } from 'expo-router';
 import { ScaledSheet } from 'react-native-size-matters';
+import HeaderText from '@/components/app/HeaderText';
 
 export default function Settings() {
   const router = useRouter();
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={30} color="#0c0c63" />
-        </Pressable>
-        <Text style={styles.headerText}>Settings</Text>
-      </View>
+      <HeaderText text="Settings" />
       <ScrollView style={styles.settingsContainer}>
         <Text style={styles.settingHeader}>Emergency Preparedness</Text>
-        <TouchableOpacity style={styles.settingButton}>
+        <TouchableOpacity
+          style={styles.settingButton}
+          onPress={() => router.push('/user/profile/notifications')}
+        >
           <View style={styles.settingContent}>
             <MaterialCommunityIcons name="bell" size={24} color="#b6b6b7" />
             <Text style={styles.settingText}>Notifications</Text>

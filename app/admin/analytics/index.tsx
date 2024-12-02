@@ -24,6 +24,9 @@ export default function Analytics() {
             Lorem ipsum dolor sit amet...
           </Text>
         </View>
+        <View>
+          <Text>Graph goes here...</Text>
+        </View>
         <View style={styles.mapDataContainer}>
           <Text style={styles.textHeader}>Map Data {'(Incident Locations)'}</Text>
           <View style={styles.dataContainer}>

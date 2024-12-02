@@ -28,7 +28,6 @@ interface HeaderProps {
 
 const AdminHeader: React.FC<HeaderProps> = ({ responder = false, bg = '#e6e6e6' }) => {
   const [menuVisible, setMenuVisible] = useState(false);
-  const navigation = useNavigation();
   const slideAnimation = useRef(new Animated.Value(-350)).current;
   const router = useRouter();
   const currentPath = usePathname();
@@ -170,7 +169,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     justifyContent: 'flex-start',
     display: 'flex',
-    zIndex: 100,
+    zIndex: 1000,
     height: 900,
   },
   navScrollContainer: {

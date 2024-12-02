@@ -13,6 +13,7 @@ import { db, auth } from '@/firebaseConfig';
 import { ScaledSheet } from 'react-native-size-matters';
 import Burger from '@/components/Burger';
 import { Feather, FontAwesome6, Ionicons, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons';
+import HeaderText from '@/components/app/HeaderText';
 
 const fetchProfileData = async () => {
   try {
@@ -93,13 +94,7 @@ const Profile = () => {
   return (
     <StyledContainer bg="#faf9f6">
       <View style={styles.container}>
-        <View style={styles.header}>
-          {/* <Burger /> */}
-          <Pressable onPress={() => router.back()}>
-            <Ionicons name="chevron-back" size={30} color="#0c0c63" />
-          </Pressable>
-          <Text style={styles.headerText}>My Profile</Text>
-        </View>
+        <HeaderText text="Your Profile" />
         <View style={styles.profileInfo}>
           <Image source={require('@/assets/images/profile.png')} style={styles.profileImage} />
           <View style={styles.infoContainer}>
@@ -232,6 +227,7 @@ const styles = ScaledSheet.create({
   settingContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'flex-start',
     gap: 10,
   },
   settingText: {

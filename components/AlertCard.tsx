@@ -86,11 +86,12 @@ const styles = StyleSheet.create({
     color: '#0B0C63',
     fontSize: 22,
     padding: 5,
-    fontWeight: 'bold',
+    fontFamily: 'BeVietnamProSemiBold',
   },
   accidentDate: {
     color: '#0B0C63',
-    fontSize: 14,
+    fontSize: 12,
+    fontFamily: 'BeVietnamProRegular',
   },
   accidentViews: {
     flexDirection: 'row',
@@ -124,8 +125,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   address: {
-    fontSize: 16,
+    fontSize: 12,
     color: '#0B0C63',
+    fontFamily: 'BeVietnamProRegular',
   },
   buttons: {
     flex: 1,

@@ -17,7 +17,7 @@ const AdminFooter = () => {
   return (
     <KeyboardAvoidingView style={styles.container}>
       <View style={styles.wrapper}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[styles.iconContainer, isActive('/admin') && styles.activeFooter]}
           onPress={() => handlePress('/admin')}
           disabled={currentPath === '/admin'}
@@ -31,7 +31,7 @@ const AdminFooter = () => {
           disabled={currentPath === '/admin/analytics'}
         >
           <Icon name="contacts" size={40} color={isActive('/admin/analytics') ? '#3998ff' : '#e6e6e6'} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         <View style={styles.halfCircleWrapper}>
           <View style={styles.halfCircle} />
@@ -39,7 +39,7 @@ const AdminFooter = () => {
             <Image source={require('@/assets/images/nav_map.png')} style={styles.panicButton} />
           </Pressable>
         </View>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[styles.iconContainer, isActive('/admin/') && styles.activeFooter]}
           onPress={() => handlePress('/admin/')}
           disabled={currentPath === '/admin/'}
@@ -53,7 +53,7 @@ const AdminFooter = () => {
           disabled={currentPath === '/admin/'}
         >
           <Icon name="account" size={40} color={isActive('/admin/') ? '#3998ff' : '#e6e6e6'} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </KeyboardAvoidingView>
   );
