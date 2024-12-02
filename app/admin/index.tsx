@@ -13,7 +13,7 @@ import AdminHeader from '@/components/admin/AdminHeader';
 
 MCI.loadFont();
 
-const Dashboard = () => {
+const AdminDashboard = () => {
   const router = useRouter();
   const nearbyAccidents = [
     {
@@ -58,7 +58,7 @@ const Dashboard = () => {
               <Image source={require('@/assets/images/call-logo-admin.png')} style={styles.buttonAdmin} />
               <Text style={styles.buttonText}>Reports</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/')}>
+            <TouchableOpacity onPress={() => router.push('/admin/manage_accounts')}>
               <Image source={require('@/assets/images/view-logo.png')} style={styles.buttonAdmin} />
               <Text style={styles.buttonText}>Manage Account</Text>
             </TouchableOpacity>
@@ -217,4 +217,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Dashboard;
+export default AdminDashboard;
