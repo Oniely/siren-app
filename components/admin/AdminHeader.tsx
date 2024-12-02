@@ -1,5 +1,15 @@
 import React, { useState, useRef } from 'react';
-import { Image, Modal, Pressable, StyleSheet, Text, View, Animated, TouchableOpacity } from 'react-native';
+import {
+  Image,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Href, usePathname, useRouter, useNavigation } from 'expo-router';
@@ -13,9 +23,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface HeaderProps {
   responder?: boolean;
+  bg?: string;
 }
 
-const AdminHeader: React.FC<HeaderProps> = ({ responder = false }) => {
+const AdminHeader: React.FC<HeaderProps> = ({ responder = false, bg = '#e6e6e6' }) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const navigation = useNavigation();
   const slideAnimation = useRef(new Animated.Value(-350)).current;
@@ -46,7 +57,7 @@ const AdminHeader: React.FC<HeaderProps> = ({ responder = false }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: bg }]}>
       {/* Left Side: Burger Menu */}
       <Pressable onPress={toggleMenu}>
         <MaterialCommunityIcons name="menu" size={30} color="#8F8E8D" />
@@ -54,7 +65,7 @@ const AdminHeader: React.FC<HeaderProps> = ({ responder = false }) => {
       {/* Right Side: Notifications & Profile */}
       <View style={styles.rightSide}>
         <Pressable>
-          <MaterialCommunityIcons name="bell" size={32} color="#8F8E8D" />
+          <MaterialCommunityIcons name="bell" size={32} color="#016ea6" />
         </Pressable>
         <Pressable>
           {responder ? (
@@ -160,8 +171,14 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     display: 'flex',
     zIndex: 100,
+    height: 900,
+  },
+  navScrollContainer: {
     flex: 1,
-    height: 1250,
+    flexDirection: 'column',
+    overflow: 'scroll',
+    backgroundColor: '#ffffff',
+    zIndex: 1000,
   },
   sliderNavItem: {
     marginTop: 10,

@@ -54,7 +54,7 @@ const responderHeader: React.FC<HeaderProps> = ({ responder = false }) => {
       {/* Right Side: Notifications & Profile */}
       <View style={styles.rightSide}>
         <Pressable>
-          <MaterialCommunityIcons name="bell" size={32} color="#8F8E8D" />
+          <MaterialCommunityIcons name="bell" size={32} color="#016ea6" />
         </Pressable>
         <Pressable>
           {responder ? (

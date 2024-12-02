@@ -2,13 +2,10 @@ import { Href, usePathname, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Pressable, StyleSheet, TouchableOpacity, View, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import CentralButtonPopup from '../CentralButtonPopup';
 
-// THIS IS THE NAV FOOTER FOR ADMIN - CHANGE THE HREF's BELOW
 const AdminFooter = () => {
   const router = useRouter();
   const currentPath = usePathname();
-  const [sirenClicked, setSirenClicked] = useState(false);
 
   const handlePress = (path: Href) => {
     if (currentPath !== path) {
@@ -29,38 +26,33 @@ const AdminFooter = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/admin/emergency_report') && styles.activeFooter]}
-          onPress={() => handlePress('/admin/emergency_report')}
-          disabled={currentPath === '/admin/emergency_report'}
+          style={[styles.iconContainer, isActive('/admin/analytics') && styles.activeFooter]}
+          onPress={() => handlePress('/admin/analytics')}
+          disabled={currentPath === '/admin/analytics'}
         >
-          <Icon
-            name="contacts"
-            size={40}
-            color={isActive('/admin/emergency_report') ? '#3998ff' : '#e6e6e6'}
-          />
+          <Icon name="contacts" size={40} color={isActive('/admin/analytics') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
 
         <View style={styles.halfCircleWrapper}>
           <View style={styles.halfCircle} />
-          <Pressable style={styles.iconContainer} onPress={() => setSirenClicked((prev) => !prev)}>
-            <CentralButtonPopup isVisible={sirenClicked} onClose={() => setSirenClicked(false)} />
-            <Image source={require('@/assets/images/footerSiren.png')} style={styles.panicButton} />
+          <Pressable style={styles.iconContainer} onPress={() => router.push('/admin/map')}>
+            <Image source={require('@/assets/images/nav_map.png')} style={styles.panicButton} />
           </Pressable>
         </View>
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/change_me_for_active_tab') && styles.activeFooter]}
-          onPress={() => handlePress('/admin')}
-          disabled={currentPath === '/admin'}
+          style={[styles.iconContainer, isActive('/admin/') && styles.activeFooter]}
+          onPress={() => handlePress('/admin/')}
+          disabled={currentPath === '/admin/'}
         >
-          <Icon name="message-processing" size={40} color={isActive('/messages') ? '#3998ff' : '#e6e6e6'} />
+          <Icon name="message-processing" size={40} color={isActive('/admin/') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/change_me_for_active_tab') && styles.activeFooter]}
+          style={[styles.iconContainer, isActive('/admin/') && styles.activeFooter]}
           onPress={() => handlePress('/admin')}
-          disabled={currentPath === '/admin'}
+          disabled={currentPath === '/admin/'}
         >
-          <Icon name="account" size={40} color={isActive('/profile') ? '#3998ff' : '#e6e6e6'} />
+          <Icon name="account" size={40} color={isActive('/admin/') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -100,10 +92,11 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   panicButton: {
-    resizeMode: 'center',
-    height: '100%',
-    width: '100%',
+    resizeMode: 'contain',
+    height: 60,
+    width: 60,
     marginHorizontal: 'auto',
+    marginBottom: 10,
   },
   halfCircleWrapper: {
     position: 'relative',
@@ -112,11 +105,11 @@ const styles = StyleSheet.create({
   },
   halfCircle: {
     position: 'absolute',
-    top: -45,
-    width: 80,
+    top: -30,
+    width: 75,
     height: 35,
     backgroundColor: '#ffffff',
-    borderTopLeftRadius: 40,
-    borderTopRightRadius: 40,
+    borderTopLeftRadius: 60,
+    borderTopRightRadius: 60,
   },
 });

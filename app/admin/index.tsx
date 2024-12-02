@@ -78,7 +78,7 @@ const Dashboard = () => {
           </View>
 
           <View style={styles.bigCircleContainer}>
-            <TouchableOpacity onPress={() => router.push('/user/report_emergency')}>
+            <TouchableOpacity onPress={() => router.push('/report_emergency')}>
               <Image source={require('@/assets/images/footerSiren.png')} style={styles.panicButton} />
             </TouchableOpacity>
           </View>

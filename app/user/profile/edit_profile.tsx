@@ -1,4 +1,14 @@
-import { View, Text, Image, TouchableOpacity, Pressable, TextInput } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  Pressable,
+  TextInput,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import React, { useState } from 'react';
 import { ScaledSheet } from 'react-native-size-matters';
 import { Ionicons, Octicons } from '@expo/vector-icons';
@@ -22,50 +32,58 @@ export default function EditProfile() {
         </Pressable>
         <Text style={styles.headerText}>Edit Profile</Text>
       </View>
-      <View>
-        <View style={styles.imageContainer}>
-          <View>
-            <Image source={require('@/assets/images/profile.png')} style={styles.image} />
-            <TouchableOpacity style={styles.editImageBtn}>
-              <Octicons name="upload" size={16} color="black" />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.form}>
-          <Text style={styles.formText}>Name</Text>
-          <TextInput
-            style={styles.formInput}
-            placeholder="Elizabeth Bracken"
-            value={name}
-            onChangeText={setName}
-            secureTextEntry
-          />
-          <Text style={styles.formText}>Email</Text>
-          <TextInput
-            style={styles.formInput}
-            placeholder="@elizabethbracken.php"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <Text style={styles.formText}>Username</Text>
-          <TextInput
-            style={styles.formInput}
-            placeholder="elizabeth69"
-            value={username}
-            onChangeText={setUsername}
-          />
-          <Text style={styles.formText}>Password</Text>
-          <TextInput
-            style={styles.formInput}
-            placeholder="Enter new password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-          <TouchableOpacity style={styles.saveButton}>
-            <Text style={styles.buttonText}>Save</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={{ flex: 1 }}>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={30}
+        >
+          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+            <View style={styles.imageContainer}>
+              <View>
+                <Image source={require('@/assets/images/profile.png')} style={styles.image} />
+                <TouchableOpacity style={styles.editImageBtn}>
+                  <Octicons name="upload" size={16} color="black" />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.form}>
+              <Text style={styles.formText}>Name</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Elizabeth Bracken"
+                value={name}
+                onChangeText={setName}
+                secureTextEntry
+              />
+              <Text style={styles.formText}>Email</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="@elizabethbracken.php"
+                value={email}
+                onChangeText={setEmail}
+              />
+              <Text style={styles.formText}>Username</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="elizabeth69"
+                value={username}
+                onChangeText={setUsername}
+              />
+              <Text style={styles.formText}>Password</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Enter new password"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+              />
+              <TouchableOpacity style={styles.saveButton}>
+                <Text style={styles.buttonText}>Save</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </View>
       <StatusBar style="dark" />
     </SafeAreaView>
@@ -86,7 +104,7 @@ const styles = ScaledSheet.create({
     gap: '10@s',
     position: 'relative',
     borderBottomWidth: 1,
-    borderBottomColor: '#343434',
+    borderBottomColor: '#e4e3e1',
   },
   headerText: {
     fontSize: '20@s',

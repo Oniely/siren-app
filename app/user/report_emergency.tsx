@@ -13,7 +13,6 @@ import MI from 'react-native-vector-icons/MaterialIcons';
 import SLI from 'react-native-vector-icons/SimpleLineIcons';
 
 import Container from '@/components/Container';
-import Footer from '@/components/Footer';
 import MapReport from '@/components/map/MapReport';
 import FilterButton from '@/components/FilterButton';
 import DateTimeInput from '@/components/DateTimeInput';
@@ -29,6 +28,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import { Route } from 'expo-router/build/Route';
+import { Colors } from '@/constants/Colors';
+import { Ionicons } from '@expo/vector-icons';
 
 interface LocationProp {
   longitude: any;
@@ -234,10 +235,10 @@ const ReportEmergency = () => {
   };
 
   return (
-    <Container bg="#e6e6e6" style={{ paddingTop: 20 }}>
+    <Container bg="#e6e6e6" style={{ paddingTop: 20 }} statusBarStyle="dark">
       <View style={styles.back}>
         <TouchableOpacity onPress={() => router.back()}>
-          <MI name="arrow-back-ios" size={30} color={'#0B0C63'} />
+          <Ionicons name="chevron-back" size={30} color="#0c0c63" />
         </TouchableOpacity>
         <Text style={styles.backText}>Report Emergency</Text>
       </View>
@@ -252,7 +253,7 @@ const ReportEmergency = () => {
           <View style={styles.filterRowContainer}>
             <TouchableOpacity style={styles.filter} onPress={showDatePicker}>
               <Text>{selectedDate ? selectedDate.toLocaleString() : 'Date Time'}</Text>
-              <MI name="calendar-month" size={30} color={'#0c0c63'} />
+              <MI name="calendar-month" size={24} color={'#0c0c63'} />
             </TouchableOpacity>
             <DateTimePickerModal
               isVisible={isDatePickerVisible}
@@ -371,8 +372,8 @@ const styles = StyleSheet.create({
   back: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 20,
     paddingLeft: 20,
+    paddingVertical: 30,
   },
   backText: {
     fontSize: 24,
@@ -403,6 +404,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 10,
     position: 'relative',
+    overflow: 'scroll',
   },
   filterCategory: {
     flexDirection: 'row',
@@ -513,7 +515,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '86%',
     marginHorizontal: 'auto',
-    marginVertical: 100,
+    marginVertical: 40,
     zIndex: 10,
   },
   buttonText: {

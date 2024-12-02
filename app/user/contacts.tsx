@@ -256,7 +256,7 @@ const Contact = () => {
       <View style={styles.lightBg} />
       <View style={styles.back}>
         <Text style={styles.backText}>My Contacts</Text>
-        <Pressable>
+        <Pressable onPress={() => router.push('/user/profile')}>
           <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
         </Pressable>
       </View>
