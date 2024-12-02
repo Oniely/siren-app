@@ -53,7 +53,9 @@ const ContactCard = ({ id, name, roomId, email, event, selectedId }: Props) => {
         </View>
         <View style={styles.buttons}>
           <Pressable
-            onPress={() => router.push({ pathname: '/messages', params: { selectedId: id, roomId: roomId } })}
+            onPress={() =>
+              router.push({ pathname: '/user/messages', params: { selectedId: id, roomId: roomId } })
+            }
           >
             <MI name="message" color={'#0B0C63'} size={25} />
           </Pressable>

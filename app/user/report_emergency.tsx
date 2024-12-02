@@ -68,6 +68,7 @@ const ReportEmergency = () => {
     },
   ];
 
+  const [reportId, setreportId] = useState(false);
   const [showCateg, setShowCateg] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<any>(null);
   const [details, setDetails] = useState('');
@@ -78,8 +79,8 @@ const ReportEmergency = () => {
   const [imageUrls, setImageUrls] = useState<{ file: any; url: string }[]>([]);
 
   const [location, setLocation] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
+    latitude: 12.8797,
+    longitude: 121.7740,
   });
 
   const [status, setStatus] = useState('Standby');
@@ -167,8 +168,6 @@ const ReportEmergency = () => {
     category: string
   ) => {
     console.log('Submit function started');
-
-    // Display all data that is going to be submitted
     console.log('Data to be submitted:', {
       date,
       latitude,
@@ -194,7 +193,9 @@ const ReportEmergency = () => {
     console.log('Firebase Reference:', reportRef);
     const newReportRef = push(reportRef);
     console.log('New Report Reference:', newReportRef);
+    const reportId = newReportRef.key; // Retrieve the generated ID
     set(newReportRef, {
+      reportId, 
       status: 'Reported',
       timestamp: new Date(date).getTime(),
       location: { latitude: finalLatitude, longitude: finalLongitude },
@@ -206,6 +207,7 @@ const ReportEmergency = () => {
     })
       .then(() => {
         console.log('Submitting report with the following data:');
+        console.log('Report ID', reportId);
         console.log('Date:', selectedDate);
         console.log('Location:', location);
         console.log('Details:', details);
@@ -352,7 +354,7 @@ const ReportEmergency = () => {
             onPress={() => {
               console.log('Submit button clicked'); // Debugging
               submit(selectedDate, location.latitude, location.longitude, details, imageUrls, selectedCateg);
-              router.navigate('/waitingResponder');
+              router.navigate('/user/waitingResponder');
             }}
           >
             <Text style={styles.buttonText}>Submit Report</Text>

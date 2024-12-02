@@ -1,11 +1,14 @@
+import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
-const Options = ({ path, text }) => (
+const Options = ({ path, text }: any) => (
   <TouchableOpacity style={styles.option}>
-    <Image source={path} style={styles.optionIcon} />
+    <Image source={path} />
     <Text style={styles.optionText}>{text}</Text>
   </TouchableOpacity>
 );
+
+export default Options;
 
 const styles = StyleSheet.create({
   option: {

@@ -82,7 +82,7 @@ const AdminHeader: React.FC<HeaderProps> = ({ responder = false }) => {
           <Text style={styles.burgerName}>Elizabeth Olsen</Text>
         </View>
 
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/emergency_call')}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/emergency_call')}>
           <Feather name="phone-call" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Emergency Call</Text>
         </TouchableOpacity>
@@ -90,15 +90,15 @@ const AdminHeader: React.FC<HeaderProps> = ({ responder = false }) => {
           <FontAwesome name="send" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Emergency Text</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/report_emergency')}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/report_emergency')}>
           <Foundation name="alert" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Report Emergency</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/view_alert')}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/view_alert')}>
           <Ionicons name="eye-sharp" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>View Alert</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/contacts')}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/contacts')}>
           <Ionicons name="notifications" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Notifications</Text>
         </TouchableOpacity>

@@ -113,7 +113,7 @@ const Messaging = () => {
                 style={styles.contactInfo}
                 onPress={() =>
                   router.push({
-                    pathname: '/messages/chat',
+                    pathname: '/user/messages/chat',
                     params: {
                       selectedId: 1,
                       roomId: 1,
@@ -142,7 +142,7 @@ const Messaging = () => {
                     style={styles.contactInfo}
                     onPress={() =>
                       router.push({
-                        pathname: '/messages',
+                        pathname: '/user/messages',
                         params: {
                           selectedId: item.receiverId,
                           roomId: item.id,
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   },
   leftSideMessage: {
     flexShrink: 1,
-    paddingRight: 10, 
+    paddingRight: 10,
   },
   contactNumber: {
     fontSize: 14,

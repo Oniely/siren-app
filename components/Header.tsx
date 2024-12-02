@@ -19,7 +19,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Foundation from '@expo/vector-icons/Foundation';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
-
+import Entypo from '@expo/vector-icons/Entypo';
 interface HeaderProps {
   responder?: boolean;
 }
@@ -58,7 +58,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
         <Pressable>
           <MaterialCommunityIcons name="bell" size={32} color="#8F8E8D" />
         </Pressable>
-        <Pressable>
+        <Pressable onPress={() => router.push(responder ? '/responder' : '/user/profile')}>
           {responder ? (
             <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
           ) : (
@@ -74,7 +74,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
             <AntDesign name="close" size={30} color="black" />
           </TouchableOpacity>
           <View style={styles.burgerProfile}>
-            <Pressable>
+            <Pressable onPress={() => router.push(responder ? '/responder' : '/user/profile')}>
               {responder ? (
                 <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
               ) : (
@@ -84,7 +84,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
             </Pressable>
             <Text style={styles.burgerName}>Elizabeth Olsen</Text>
           </View>
-          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/emergency_call')}>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/emergency_call')}>
             <Feather name="phone-call" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Emergency Call</Text>
           </TouchableOpacity>
@@ -92,20 +92,27 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
             <FontAwesome name="send" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Emergency Text</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/report_emergency')}>
+          <TouchableOpacity
+            style={styles.sliderNavItem}
+            onPress={() => handlePress('/user/report_emergency')}
+          >
             <Foundation name="alert" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Report Emergency</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/view_alert')}>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/view_alert')}>
             <Ionicons name="eye-sharp" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>View Alert</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/contacts')}>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/contacts')}>
             <Ionicons name="notifications" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Notifications</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/contacts')}>
-            <Ionicons name="notifications" size={35} color="#0c0c63" />
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/waitingResponder')}>
+            <Entypo name="map" size={35} color="0c0c63" />
+            <Text style={styles.sliderNavItemText}>Report Map</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/settings')}>
+            <Ionicons name="settings-sharp" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Settings</Text>
           </TouchableOpacity>
           <Text style={styles.burgerFooter}>All Rights Reserved @Siren2024</Text>
@@ -163,7 +170,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     display: 'flex',
     zIndex: 1000,
-    height: 900,
+    height: 1250,
   },
   navScrollContainer: {
     flex: 1,
@@ -173,18 +180,16 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   sliderNavItem: {
-    marginTop: 10,
     paddingVertical: 10,
     left: 50,
     flexDirection: 'row',
     alignItems: 'center',
-    height: 100,
+    height: 90,
     zIndex: 100,
   },
   sliderNavItemText: {
     color: '#000',
     fontSize: 24,
-    marginHorizontal: 10,
     paddingLeft: 30,
     fontFamily: 'BeVietnamProThin',
   },

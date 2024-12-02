@@ -32,9 +32,9 @@ const Register = () => {
         const userId = await AsyncStorage.getItem('userId');
         if (userId) {
           if (role === 'responder') {
-            router.replace('/(tabs)/responder');
+            router.replace('/responder');
           } else {
-            router.replace('/(tabs)/admin');
+            router.replace('/admin');
           }
         }
       } catch (error) {
