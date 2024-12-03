@@ -35,7 +35,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
   const navigation = useNavigation();
   const slideAnimation = useRef(new Animated.Value(-350)).current;
   const router = useRouter();
-  
+
   const currentPath = usePathname();
   const [profileData, setProfileData] = useState<any>(null);
   const [userReports, setUserReports] = useState<Report[]>([]);
@@ -137,8 +137,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
 
       const reportId = await fetchUserReports(userId);
       if (reportId) {
-        handlePress({ pathname: '/user/waitingResponder',   params: { userId, reportId: String(reportId) },
-      });
+        handlePress({ pathname: '/user/waitingResponder', params: { userId, reportId: String(reportId) } });
       } else {
         console.log('No report found for this user');
       }
@@ -154,7 +153,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
       </Pressable>
       {/* Right Side: Notifications & Profile */}
       {/* <View style={styles.rightSide}>
-        <Pressable>
+        w<Pressable>
           <MaterialCommunityIcons name="bell" size={32} color="#8F8E8D" />
         </Pressable>
         <Pressable onPress={() => router.push(responder ? '/responder' : '/user/profile')}>
@@ -202,7 +201,10 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
             <Ionicons name="eye-sharp" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>View Alert</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/contacts')}>
+          <TouchableOpacity
+            style={styles.sliderNavItem}
+            onPress={() => handlePress('/user/profile/notifications')}
+          >
             <Ionicons name="notifications" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Notifications</Text>
           </TouchableOpacity>
@@ -210,7 +212,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
             style={styles.sliderNavItem}
             onPress={handleReportMapPress} // Use the dynamic function for the correct reportId
           >
-            <Entypo name="map" size={35} color="0c0c63" />
+            <Entypo name="map" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Report Map</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/settings')}>

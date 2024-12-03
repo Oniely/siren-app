@@ -18,7 +18,8 @@ import { useRouter } from 'expo-router';
 import HeaderText from '@/components/app/HeaderText';
 
 export default function EditProfile() {
-  const [name, setName] = useState('');
+  const [fname, setFname] = useState('');
+  const [lname, setLname] = useState('');
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -34,7 +35,7 @@ export default function EditProfile() {
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           keyboardVerticalOffset={30}
         >
-          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
             <View style={styles.imageContainer}>
               <View>
                 <Image source={require('@/assets/images/profile.png')} style={styles.image} />
@@ -44,25 +45,26 @@ export default function EditProfile() {
               </View>
             </View>
             <View style={styles.form}>
-              <Text style={styles.formText}>Name</Text>
+              <Text style={styles.formText}>First Name</Text>
               <TextInput
                 style={styles.formInput}
-                placeholder="Elizabeth Bracken"
-                value={name}
-                onChangeText={setName}
-                secureTextEntry
+                placeholder="First Name"
+                value={fname}
+                onChangeText={setFname}
+              />
+              <Text style={styles.formText}>Last Name</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Last Name"
+                value={lname}
+                onChangeText={setLname}
               />
               <Text style={styles.formText}>Email</Text>
-              <TextInput
-                style={styles.formInput}
-                placeholder="@elizabethbracken.php"
-                value={email}
-                onChangeText={setEmail}
-              />
+              <TextInput style={styles.formInput} placeholder="Email" value={email} onChangeText={setEmail} />
               <Text style={styles.formText}>Username</Text>
               <TextInput
                 style={styles.formInput}
-                placeholder="elizabeth69"
+                placeholder="Username"
                 value={username}
                 onChangeText={setUsername}
               />

@@ -115,13 +115,6 @@ const Login = () => {
       }
     }
   };
-  // const handleLogin = () => {
-  //   return router.push('/user');
-  // };
-
-  // const handleForgotPassword = () => {
-  //   return;
-  // };
 
   return (
     <SafeAreaView style={styles.container}>

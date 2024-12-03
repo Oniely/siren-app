@@ -88,6 +88,9 @@ const Dashboard = () => {
               <Image source={require('@/assets/images/index_logo.png')} style={styles.panicButton} />
             </TouchableOpacity>
           </View>
+          <TouchableOpacity onPress={() => router.push('/user/report_emergency')}>
+            <Text style={styles.button}>Report Emergency</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </StyledContainer>
@@ -102,11 +105,9 @@ const styles = ScaledSheet.create({
   },
   wrapper: {
     width: '90%',
-    height: '80%',
     position: 'relative',
     flexWrap: 'wrap',
     flexDirection: 'row',
-    gap: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -129,7 +130,7 @@ const styles = ScaledSheet.create({
     textAlign: 'center',
   },
   indexText: {
-    fontSize: '40@s',
+    fontSize: '40@vs',
     textAlign: 'center',
     color: '#343434',
     fontFamily: 'BeVietnamProBold',
@@ -138,9 +139,7 @@ const styles = ScaledSheet.create({
     width: '100%',
     maxWidth: 500,
     aspectRatio: 1,
-    position: 'absolute',
   },
-
   panicButton: {
     resizeMode: 'center',
     height: '100%',
@@ -179,6 +178,12 @@ const styles = ScaledSheet.create({
   locationIcon: {
     width: 10,
     height: 15,
+  },
+  button: {
+    borderRadius: '10@s',
+    backgroundColor: '#1c85e8',
+    color: '#FFF',
+    padding: '10@s',
   },
 });
 
