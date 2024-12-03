@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import React from 'react';
-import Loading from '@/components/Loading';
+import Loading from '@/components/app/Loading';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -42,6 +42,7 @@ export default function RootLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
+          animation: 'fade_from_bottom',
         }}
       >
         <Stack.Screen name="index" />

@@ -30,6 +30,7 @@ import { useRouter } from 'expo-router';
 import { Route } from 'expo-router/build/Route';
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
+import HeaderText from '@/components/app/HeaderText';
 
 interface LocationProp {
   longitude: any;
@@ -81,7 +82,7 @@ const ReportEmergency = () => {
 
   const [location, setLocation] = useState({
     latitude: 12.8797,
-    longitude: 121.7740,
+    longitude: 121.774,
   });
 
   const [status, setStatus] = useState('Standby');
@@ -196,7 +197,7 @@ const ReportEmergency = () => {
     console.log('New Report Reference:', newReportRef);
     const reportId = newReportRef.key; // Retrieve the generated ID
     set(newReportRef, {
-      reportId, 
+      reportId,
       status: 'Reported',
       timestamp: new Date(date).getTime(),
       location: { latitude: finalLatitude, longitude: finalLongitude },
@@ -236,12 +237,7 @@ const ReportEmergency = () => {
 
   return (
     <Container bg="#e6e6e6" style={{ paddingTop: 20 }} statusBarStyle="dark">
-      <View style={styles.back}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={30} color="#0c0c63" />
-        </TouchableOpacity>
-        <Text style={styles.backText}>Report Emergency</Text>
-      </View>
+      <HeaderText text="Report Emergency" />
       {status === 'Submitted' ? (
         <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
           <Text style={{ color: '#08B6D9', fontSize: 20, fontWeight: 'bold' }}>
@@ -369,17 +365,6 @@ const ReportEmergency = () => {
 export default ReportEmergency;
 
 const styles = StyleSheet.create({
-  back: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingLeft: 20,
-    paddingVertical: 30,
-  },
-  backText: {
-    fontSize: 24,
-    color: '#0c0c63',
-    fontWeight: 'bold',
-  },
   reportContainer: {
     flex: 1,
     marginBottom: 10,

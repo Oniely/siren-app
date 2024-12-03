@@ -28,7 +28,6 @@ interface HeaderProps {
 
 const AdminHeader: React.FC<HeaderProps> = ({ responder = false, bg = '#e6e6e6' }) => {
   const [menuVisible, setMenuVisible] = useState(false);
-  const navigation = useNavigation();
   const slideAnimation = useRef(new Animated.Value(-350)).current;
   const router = useRouter();
   const currentPath = usePathname();
@@ -92,29 +91,24 @@ const AdminHeader: React.FC<HeaderProps> = ({ responder = false, bg = '#e6e6e6' 
           </Pressable>
           <Text style={styles.burgerName}>Elizabeth Olsen</Text>
         </View>
-
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/emergency_call')}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/emergency_report')}>
           <Feather name="phone-call" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Emergency Call</Text>
+          <Text style={styles.sliderNavItemText}>View Reports</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/manage_accounts')}>
           <FontAwesome name="send" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Emergency Text</Text>
+          <Text style={styles.sliderNavItemText}>Manage Accounts</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/report_emergency')}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/analytics')}>
           <Foundation name="alert" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Report Emergency</Text>
+          <Text style={styles.sliderNavItemText}>View Analytics</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/view_alert')}>
-          <Ionicons name="eye-sharp" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>View Alert</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/contacts')}>
-          <Ionicons name="notifications" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Notifications</Text>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/settings')}>
+          <Ionicons name="settings-sharp" size={35} color="#0c0c63" />
+          <Text style={styles.sliderNavItemText}>Settings</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.sliderNavItem} onPress={handleLogout}>
-          <Ionicons name="notifications" size={35} color="#0c0c63" />
+          <Ionicons name="exit" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Logout</Text>
         </TouchableOpacity>
         <Text style={styles.burgerFooter}>All Rights Reserved @Siren2024</Text>
@@ -132,6 +126,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
+    zIndex: 1000,
   },
   title: {
     fontSize: 18,
@@ -170,15 +165,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     justifyContent: 'flex-start',
     display: 'flex',
-    zIndex: 100,
-    height: 900,
-  },
-  navScrollContainer: {
-    flex: 1,
-    flexDirection: 'column',
-    overflow: 'scroll',
-    backgroundColor: '#ffffff',
     zIndex: 1000,
+    height: 900,
   },
   sliderNavItem: {
     marginTop: 10,

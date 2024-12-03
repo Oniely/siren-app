@@ -153,7 +153,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
         <MaterialCommunityIcons name="menu" size={30} color="#8F8E8D" />
       </Pressable>
       {/* Right Side: Notifications & Profile */}
-      <View style={styles.rightSide}>
+      {/* <View style={styles.rightSide}>
         <Pressable>
           <MaterialCommunityIcons name="bell" size={32} color="#8F8E8D" />
         </Pressable>
@@ -164,7 +164,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
             <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
           )}
         </Pressable>
-      </View>
+      </View> */}
 
       {/* Burger Menu Modal */}
       <Animated.View style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }]}>
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     display: 'flex',
     zIndex: 1000,
-    height: 1250,
+    height: 900,
   },
   navScrollContainer: {
     flex: 1,

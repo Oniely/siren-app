@@ -15,6 +15,7 @@ import { Ionicons, Octicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
+import HeaderText from '@/components/app/HeaderText';
 
 export default function EditProfile() {
   const [name, setName] = useState('');
@@ -26,12 +27,7 @@ export default function EditProfile() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Pressable onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={30} color="#0c0c63" />
-        </Pressable>
-        <Text style={styles.headerText}>Edit Profile</Text>
-      </View>
+      <HeaderText text="Edit Profile" />
       <View style={{ flex: 1 }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}

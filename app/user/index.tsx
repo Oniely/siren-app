@@ -1,18 +1,18 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 
-import FS from 'react-native-vector-icons/FontAwesome';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Header from '@/components/Header';
 import StyledContainer from '@/components/StyledContainer';
-import { useRouter } from 'expo-router';
 import { getAuth } from 'firebase/auth';
 import { ref, get } from 'firebase/database';
 import { db } from '@/firebaseConfig';
 const auth = getAuth();
 const currentUser = auth.currentUser;
 const userId = currentUser?.uid;
+import { Link, useRouter } from 'expo-router';
+import { ScaledSheet } from 'react-native-size-matters';
 
 interface User {
   email: string;
@@ -38,11 +38,35 @@ const Dashboard = () => {
   return (
     <StyledContainer>
       <Header />
+      <View style={styles.indexTopBar}>
+        <View style={styles.topBarLeft}>
+          <Image source={require('@/assets/images/profile.png')} style={styles.topBarImage} />
+          <View>
+            <Text style={styles.topBarName}>Elizabeth</Text>
+            <Link href={'/user/profile'}>
+              <Text style={styles.topBarLink}>See profile</Text>
+            </Link>
+          </View>
+        </View>
+        <View>
+          <View>
+            <View style={styles.location}>
+              <Text style={[styles.topBarName, { width: 85 }]} numberOfLines={1}>
+                User's Location goes here
+              </Text>
+              <Image source={require('@/assets/images/location.png')} style={styles.locationIcon} />
+            </View>
+            <Link href={'/user/map'}>
+              <Text style={styles.topBarLink}>Show your location</Text>
+            </Link>
+          </View>
+        </View>
+      </View>
       <View style={styles.container}>
         <View style={styles.wrapper}>
           <Text style={styles.indexText}>Emergency help needed?</Text>
           <View style={styles.bigCircleContainer}>
-            <TouchableOpacity onPress={() => router.push('/user/report_emergency')}>
+            <TouchableOpacity onPress={() => router.push('/user/emergency_call')}>
               <Image source={require('@/assets/images/index_logo.png')} style={styles.panicButton} />
             </TouchableOpacity>
           </View>
@@ -52,7 +76,7 @@ const Dashboard = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -87,7 +111,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   indexText: {
-    fontSize: 40,
+    fontSize: '40@s',
     textAlign: 'center',
     color: '#343434',
     fontFamily: 'BeVietnamProBold',
@@ -104,6 +128,39 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     marginHorizontal: 'auto',
+  },
+  indexTopBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: '20@s',
+  },
+  topBarLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: '5@s',
+  },
+  topBarImage: {
+    width: 45,
+    height: 45,
+    borderWidth: 1,
+    borderColor: '#e6e6e6',
+    borderRadius: 999,
+  },
+  topBarName: {
+    fontFamily: 'BeVietnamProRegular',
+    fontSize: '12@s',
+    color: '#999898',
+  },
+  topBarLink: {
+    fontFamily: 'BeVietnamProRegular',
+    fontSize: '12@s',
+    color: '#3998ff',
+  },
+  location: { flexDirection: 'row', alignItems: 'center', gap: 5 },
+  locationIcon: {
+    width: 10,
+    height: 15,
   },
 });
 

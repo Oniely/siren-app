@@ -96,16 +96,16 @@ const styles = StyleSheet.create({
   profileDesc: {
     justifyContent: 'center',
     alignItems: 'flex-start',
-    rowGap: 3,
+    rowGap: 2,
   },
   profileTextName: {
     color: '#989898',
-    fontFamily: 'BeVietnameProBold',
+    fontFamily: 'BeVietnamProBold',
     fontWeight: '700',
   },
   profileTextAddr: {
     fontSize: 12,
-    fontFamily: 'BeVietnameProBold',
+    fontFamily: 'BeVietnamProMedium',
   },
   topRight: {
     width: 20,

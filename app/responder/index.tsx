@@ -50,58 +50,51 @@ const Dashboard = () => {
     <ResponderStyledContainer>
       <ResponderHeader />
       <View style={styles.container}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}
-        >
-          <View style={styles.wrapper}>
-            <View style={styles.textWrapper}>
-              <Text style={styles.indexText}>Hi, Elizabeth</Text>
-              <Text style={styles.indexDesc}>Welcome to Siren</Text>
-            </View>
-            <View style={styles.bigCircleContainer}>
-              <TouchableOpacity onPress={() => router.push('/responder/responderAlert')}>
-                <Image source={require('@/assets/images/footerSiren.png')} style={styles.panicButton} />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={styles.buttonWrapper}>
-            <TouchableOpacity onPress={() => router.push('/')}>
-              <Image source={require('@/assets/images/call-logo-admin.png')} style={styles.buttonAdmin} />
-              <Text style={styles.buttonText}>Emergency Call</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/responder/responderMap')}>
-              <Image source={require('@/assets/images/view-logo.png')} style={styles.buttonAdmin} />
-              <Text style={styles.buttonText}>View Reports</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/')}>
-              <Image source={require('@/assets/images/message-logo.png')} style={styles.buttonAdmin} />
-              <Text style={styles.buttonText}>Emergency Text</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.newsAlertWrapper}>
-            <Text style={styles.newsAlertTitle}>News Alert</Text>
-            <Container bg="#e6e6e6" style={{ paddingTop: 25 }}>
-              <View style={styles.newsAlertContainer}>
-                <View style={styles.nearbyAccidents}>
-                  <FlatList
-                    data={nearbyAccidents}
-                    renderItem={({ item }) => (
-                      <NewsAlertCard
-                        title={item.title}
-                        dateString={item.dateString}
-                        timeAgo={item.timeAgo}
-                        viewString={item.viewsString}
-                        detailsString={item.detailsString}
-                      />
-                    )}
-                    keyExtractor={(item) => item.id}
-                  />
-                </View>
+        <View style={styles.textWrapper}>
+          <Text style={styles.indexText}>Hi, Elizabeth</Text>
+          <Text style={styles.indexDesc}>Welcome to Siren</Text>
+        </View>
+        <View style={styles.bigCircleContainer}>
+          <TouchableOpacity onPress={() => router.push('/responder/responderAlert')}>
+            <Image source={require('@/assets/images/footerSiren.png')} style={styles.panicButton} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.buttonWrapper}>
+          <TouchableOpacity onPress={() => router.push('/responder')}>
+            <Image source={require('@/assets/images/call-logo-admin.png')} style={styles.buttonAdmin} />
+            <Text style={styles.buttonText}>Emergency Call</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/responder/responderMap')}>
+            <Image source={require('@/assets/images/view-logo.png')} style={styles.buttonAdmin} />
+            <Text style={styles.buttonText}>View Reports</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/')}>
+            <Image source={require('@/assets/images/message-logo.png')} style={styles.buttonAdmin} />
+            <Text style={styles.buttonText}>Emergency Text</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.newsAlertWrapper}>
+          <Text style={styles.newsAlertTitle}>News Alert</Text>
+          <Container bg="#e6e6e6" style={{ paddingTop: 25 }}>
+            <View style={styles.newsAlertContainer}>
+              <View style={styles.nearbyAccidents}>
+                <FlatList
+                  data={nearbyAccidents}
+                  renderItem={({ item }) => (
+                    <NewsAlertCard
+                      title={item.title}
+                      dateString={item.dateString}
+                      timeAgo={item.timeAgo}
+                      viewString={item.viewsString}
+                      detailsString={item.detailsString}
+                    />
+                  )}
+                  keyExtractor={(item) => item.id}
+                />
               </View>
-            </Container>
-          </View>
-        </ScrollView>
+            </View>
+          </Container>
+        </View>
       </View>
     </ResponderStyledContainer>
   );
@@ -147,15 +140,17 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     flex: 1,
     paddingLeft: 5,
+    alignSelf: 'flex-start',
+    marginLeft: 20,
   },
   indexText: {
-    fontSize: 50,
-    textAlign: 'center',
-    color: '#343434',
-    fontWeight: 'bold',
+    fontSize: 40,
+    textAlign: 'left',
+    color: '#000',
+    fontFamily: 'BeVietnamProBold',
   },
   indexDesc: {
-    fontSize: 30,
+    fontSize: 24,
     textAlign: 'center',
     color: '#343434',
   },
@@ -188,11 +183,13 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     paddingHorizontal: 10,
-    fontSize: 16,
+    fontSize: 14,
     width: 100,
     textAlign: 'center',
     flexWrap: 'wrap',
     flex: 1,
+    fontFamily: 'BeVietnamProMedium',
+    color: '#016ea6',
   },
   newsAlertWrapper: {
     flex: 1,

@@ -6,11 +6,14 @@ export default function ResponderLayout() {
     <Stack
       screenOptions={{
         headerShown: false,
+        animation: 'fade_from_bottom',
       }}
     >
       <Stack.Screen name="index" />
       <Stack.Screen name="responderAlert" />
       <Stack.Screen name="responderMap" />
+      <Stack.Screen name="notifications" />
+      <Stack.Screen name="settings" />
     </Stack>
   );
 }

@@ -1,11 +1,9 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View, FlatList } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, FlatList, ScrollView } from 'react-native';
 
-import FS from 'react-native-vector-icons/FontAwesome';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { useRouter } from 'expo-router';
-import AlertCard from '@/components/AlertCard';
 import NewsAlertCard from '@/components/NewsAlertCard';
 import Container from '@/components/Container';
 import AdminStyledContainer from '@/components/admin/AdminStyledContainer';
@@ -13,7 +11,7 @@ import AdminHeader from '@/components/admin/AdminHeader';
 
 MCI.loadFont();
 
-const Dashboard = () => {
+const AdminDashboard = () => {
   const router = useRouter();
   const nearbyAccidents = [
     {
@@ -40,66 +38,32 @@ const Dashboard = () => {
     <AdminStyledContainer>
       <AdminHeader />
       <View style={styles.container}>
-        <View style={styles.wrapper}>
-          {/* <TouchableOpacity style={styles.box} onPress={() => router.push('/')}>
-            <Text style={styles.boxText}>Report Emergency</Text>
-            <MCI size={50} name="alert-circle" color={'#D7F1F7'} />
+        <View style={styles.textWrapper}>
+          <Text style={styles.indexText}>Hi, Elizabeth</Text>
+          <Text style={styles.indexDesc}>Welcome to Siren</Text>
+        </View>
+        <View style={styles.bigCircleContainer}>
+          <TouchableOpacity onPress={() => router.push('/admin/emergency_report')}>
+            <Image source={require('@/assets/images/footerSiren.png')} style={styles.panicButton} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.box} onPress={() => router.push('/')}>
-            <Text style={styles.boxText}>View{'\n'}Alerts</Text>
-            <MCI size={50} name="monitor-eye" color={'#D7F1F7'} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.box,
-              {
-                justifyContent: 'flex-end',
-              },
-            ]}
-          >
-            <MCI size={50} name="phone-ring" color={'#D7F1F7'} />
-            <Text style={styles.boxText}>Emergency Call</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.box,
-              {
-                justifyContent: 'flex-end',
-              },
-            ]}
-            onPress={() => router.push('/')}
-          >
-            <FS size={50} name="telegram" color={'#D7F1F7'} />
-            <Text style={styles.boxText}>Emergency Text</Text>
-          </TouchableOpacity> */}
-          <View style={styles.textWrapper}>
-            <Text style={styles.indexText}>Hi, Elizabeth</Text>
-            <Text style={styles.indexDesc}>Welcome to Siren</Text>
-          </View>
-
-          <View style={styles.bigCircleContainer}>
-            <TouchableOpacity onPress={() => router.push('/report_emergency')}>
-              <Image source={require('@/assets/images/footerSiren.png')} style={styles.panicButton} />
-            </TouchableOpacity>
-          </View>
         </View>
         <View style={styles.buttonWrapper}>
-          <TouchableOpacity onPress={() => router.push('/')}>
+          <TouchableOpacity onPress={() => router.push('/admin/emergency_report')}>
             <Image source={require('@/assets/images/call-logo-admin.png')} style={styles.buttonAdmin} />
-            <Text style={styles.buttonText}>Emergency Call</Text>
+            <Text style={styles.buttonText}>Reports</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/')}>
+          <TouchableOpacity onPress={() => router.push('/admin/manage_accounts')}>
             <Image source={require('@/assets/images/view-logo.png')} style={styles.buttonAdmin} />
-            <Text style={styles.buttonText}>View Reports</Text>
+            <Text style={styles.buttonText}>Manage Account</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/')}>
+          <TouchableOpacity onPress={() => router.push('/admin/analytics')}>
             <Image source={require('@/assets/images/message-logo.png')} style={styles.buttonAdmin} />
-            <Text style={styles.buttonText}>Emergency Text</Text>
+            <Text style={styles.buttonText}>Analytics</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.newsAlertWrapper}>
           <Text style={styles.newsAlertTitle}>News Alert</Text>
-          <Container bg="#e6e6e6" style={{ paddingTop: 25 }}>
+          <Container bg="#e6e6e6">
             <View style={styles.newsAlertContainer}>
               <View style={styles.nearbyAccidents}>
                 <FlatList
@@ -163,15 +127,17 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     flex: 1,
     paddingLeft: 5,
+    alignSelf: 'flex-start',
+    marginLeft: 20,
   },
   indexText: {
-    fontSize: 50,
-    textAlign: 'center',
-    color: '#343434',
-    fontWeight: 'bold',
+    fontSize: 40,
+    textAlign: 'left',
+    color: '#000',
+    fontFamily: 'BeVietnamProBold',
   },
   indexDesc: {
-    fontSize: 30,
+    fontSize: 24,
     textAlign: 'center',
     color: '#343434',
   },
@@ -204,20 +170,24 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     paddingHorizontal: 10,
-    fontSize: 16,
+    fontSize: 14,
     width: 100,
     textAlign: 'center',
     flexWrap: 'wrap',
     flex: 1,
+    fontFamily: 'BeVietnamProMedium',
+    color: '#016ea6',
   },
   newsAlertWrapper: {
     flex: 1,
     width: '100%',
+    paddingVertical: 10,
   },
   newsAlertTitle: {
     fontSize: 30,
     marginLeft: 30,
-    color: '#414753',
+    color: '#aaacb0',
+    fontFamily: 'BeVietnamProSemiBold',
   },
   newsAlertContainer: {
     flex: 1,
@@ -237,4 +207,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Dashboard;
+export default AdminDashboard;

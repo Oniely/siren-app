@@ -4,6 +4,7 @@ import MI from 'react-native-vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
 import Container from '@/components/Container';
 import AlertCard from '@/components/AlertCard';
+import HeaderText from '@/components/app/HeaderText';
 
 const ViewAlert = () => {
   const router = useRouter();
@@ -63,12 +64,7 @@ const ViewAlert = () => {
 
   return (
     <Container bg="#e6e6e6" style={{ paddingTop: 25 }}>
-      <View style={styles.back}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <MI name="arrow-back-ios" size={25} color={'#0B0C63'} />
-        </TouchableOpacity>
-        <Text style={styles.backText}>View Alerts</Text>
-      </View>
+      <HeaderText text="View Alerts" />
 
       <View style={styles.container}>
         <Text style={styles.textInfo}>RIGHT NOW</Text>
@@ -108,32 +104,21 @@ const ViewAlert = () => {
 export default ViewAlert;
 
 const styles = StyleSheet.create({
-  back: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: 20,
-    paddingLeft: 20,
-    paddingBottom: 10,
-  },
-  backText: {
-    fontSize: 24,
-    color: '#0B0C63',
-    fontWeight: 'bold',
-  },
   container: {
     flex: 1,
     marginTop: 10,
     paddingHorizontal: '5%',
   },
   textInfo: {
-    fontSize: 40,
+    fontSize: 36,
     color: '#0c0c63',
-    fontWeight: 'bold',
+    fontFamily: 'BeVietnamProBold',
     marginBottom: 10,
     padding: 3,
   },
   nearbyAccidents: {
     flex: 1,
     marginTop: 10,
+    marginBottom: 10,
   },
 });
