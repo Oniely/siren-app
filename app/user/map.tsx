@@ -97,7 +97,7 @@ const establishments = [
   },
 ];
 const Map = () => {
-  const LATITUDE_DELTA = 0.0922; // Example latitude delta
+  const LATITUDE_DELTA = 0.0922; 
   const LONGITUDE_DELTA = LATITUDE_DELTA * (Dimensions.get('window').width / Dimensions.get('window').height);
 
   const [location, setLocation] = useState<LocationProp | null>(null);

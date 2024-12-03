@@ -10,52 +10,74 @@ import {
   ImageBackground,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import * as Location from 'expo-location';
-import { db } from '@/firebaseConfig'; // Replace with your Firebase config file
-import { ref, update, get } from 'firebase/database';
+import { db, auth } from '@/firebaseConfig';
+import { ref, get } from 'firebase/database';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from 'expo-router';
 
-interface CallerLocationProps {
-  reportId: string;
-}
-
-const WaitingResponder: React.FC<CallerLocationProps> = ({ reportId }) => {
+const WaitingResponder: React.FC = () => {
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [reports, setReports] = useState<any[]>([]);
   const router = useRouter();
+  const [profileData, setProfileData] = useState<any>(null);
+
+  const fetchProfileData = async () => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) throw new Error('No user ID found');
+
+      const userRef = ref(db, `users/${userId}`);
+      const snapshot = await get(userRef);
+
+      if (snapshot.exists()) {
+        setProfileData(snapshot.val());
+      } else {
+        console.log('No profile data available');
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  const fetchUserReports = async () => {
+    try {
+      const userId = auth.currentUser?.uid;
+      if (!userId) throw new Error('No user ID found');
+
+      const reportsRef = ref(db, `reports`);
+      const snapshot = await get(reportsRef);
+
+      if (snapshot.exists()) {
+        const reports = Object.values(snapshot.val());
+        const matchingReports = reports.filter((report: any) => report.senderId === userId);
+
+        if (matchingReports.length > 0) {
+          setReports(matchingReports);
+          setLocation(matchingReports[0]?.location || null);
+        } else {
+          console.error('No matching reports found for this user');
+        }
+      } else {
+        console.error('No reports found in database');
+      }
+    } catch (error) {
+      console.error('Error fetching reports:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchReportLocation = async () => {
-      try {
-        if (!reportId) {
-      console.error('No reportId provided');
-      return;
-    }
-        const reportRef = ref(db, `reports/${reportId}/location`);
-        const snapshot = await get(reportRef);
-        console.log('Report ID:', reportId);
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          console.log('Fetched data:', data);
-          setLocation(data);
-        } else {
-          console.error('Report location not found');
-        }
-      } catch (error) {
-        console.error('Error fetching report location:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchReportLocation();
-  }, [reportId]);
+    fetchProfileData();
+    fetchUserReports();
+  }, []);
 
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Loading map...</Text>
+        <Text>Loading data...</Text>
       </View>
     );
   }
@@ -63,10 +85,12 @@ const WaitingResponder: React.FC<CallerLocationProps> = ({ reportId }) => {
   if (!location) {
     return (
       <View style={styles.errorContainer}>
-        <Text>Unable to fetch location. Please check permissions.</Text>
+        <Text>No location data available for your reports.</Text>
       </View>
     );
   }
+
+  const currentReport = reports.length > 0 ? reports[0] : null;
 
   return (
     <View style={styles.container}>
@@ -76,8 +100,8 @@ const WaitingResponder: React.FC<CallerLocationProps> = ({ reportId }) => {
             <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
           </Pressable>
           <View style={styles.leftText}>
-            <Text style={styles.textNumber}>099938928131</Text>
-            <Text style={styles.textName}>Elizabeth Olsen</Text>
+            <Text style={styles.textNumber}>{profileData?.username || 'Unknown User'}</Text>
+            <Text style={styles.textName}>{profileData?.email || 'No Email Provided'}</Text>
           </View>
         </View>
         <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
@@ -89,17 +113,30 @@ const WaitingResponder: React.FC<CallerLocationProps> = ({ reportId }) => {
         style={styles.mainText}
         resizeMode="cover"
       >
-        <Text style={styles.bigText}>Waiting for Responder</Text>
-        <Text style={styles.smallText}>
-          Your contact persons nearby, ambulance/police contacts will see your request for help.{' '}
-        </Text>
+        {currentReport ? (
+          <>
+            <Text style={styles.bigText}>
+              {currentReport.status === 'Reported' ? 'Waiting for Responder' : 'Responder on the Way'}
+            </Text>
+            <Text style={styles.smallText}>
+              {currentReport.status === 'Reported'
+                ? 'Your contact persons nearby, ambulance/police contacts will see your request for help.'
+                : 'A responder is en route to your location. Please stay safe.'}
+            </Text>
+          </>
+        ) : (
+          <>
+            <Text style={styles.bigText}>No Reports Found</Text>
+            <Text style={styles.smallText}>Please submit a report to get assistance.</Text>
+          </>
+        )}
       </ImageBackground>
       <MapView
         style={styles.map}
         initialRegion={{
           latitude: location.latitude,
           longitude: location.longitude,
-          latitudeDelta: 0.01, // Adjust zoom level
+          latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         }}
       >

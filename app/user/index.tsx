@@ -7,7 +7,29 @@ import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import Header from '@/components/Header';
 import StyledContainer from '@/components/StyledContainer';
 import { useRouter } from 'expo-router';
+import { getAuth } from 'firebase/auth';
+import { ref, get } from 'firebase/database';
+import { db } from '@/firebaseConfig';
+const auth = getAuth();
+const currentUser = auth.currentUser;
+const userId = currentUser?.uid;
 
+interface User {
+  email: string;
+  role: string;
+  username: string;
+}
+
+const fetchUserData = async (userId: string): Promise<User | null> => {
+  const userRef = ref(db, `users/${userId}`);
+  const snapshot = await get(userRef);
+  if (snapshot.exists()) {
+    return snapshot.val();
+  } else {
+    console.error('User not found');
+    return null;
+  }
+};
 MCI.loadFont();
 
 const Dashboard = () => {

@@ -2,33 +2,36 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { db } from '@/firebaseConfig';
-import { ref, onValue, update } from 'firebase/database';
+import { ref, onValue, update } from 'firebase/database'; // Correctly import update function
 import * as Location from 'expo-location';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
+
 const ResponderMap = () => {
   const [responderLocation, setResponderLocation] = useState<any>(null);
   const [reports, setReports] = useState<any[]>([]);
   const [selectedReport, setSelectedReport] = useState<any>(null);
 
+  // Function to handle Accept button press
   const confirmStatus = () => {
-    if (selectedReport) {
-      const reportRef = ref(db, `reports/${selectedReport.id}`);
-      update(reportRef, {
-        status: 'Accepted', // Update status to 'accepted'
-      })
+    if (selectedReport && selectedReport.location) {
+      const reportRef = ref(db, `reports/${selectedReport.reportId}`);
+      update(reportRef, { status: 'Accepted' })
         .then(() => {
           console.log('Report accepted');
-          setSelectedReport(null); // Reset selected report after acceptance
+          setSelectedReport(null);
         })
         .catch((error: Error) => {
           console.error('Error updating status:', error.message);
         });
+    } else {
+      console.error('Selected report or location is undefined');
     }
   };
+  // Function to handle Decline button press
   const declineStatus = () => {
-    if (selectedReport) {
-      const reportRef = ref(db, `reports/${selectedReport.id}`);
+    if (selectedReport && selectedReport.location) {
+      const reportRef = ref(db, `reports/${selectedReport.reportId}`);
       update(reportRef, {
         status: 'Declined', // Update status to 'declined'
       })
@@ -36,11 +39,13 @@ const ResponderMap = () => {
           console.log('Report declined');
           setSelectedReport(null); // Reset selected report after declining
         })
-        .catch((error) => {
-          console.error('Error updating status:', error);
+        .catch((error: Error) => {
+          // Explicitly type the error
+          console.error('Error updating status:', error.message);
         });
     }
   };
+
   useEffect(() => {
     // Watch responder's location
     const startResponderLocationTracking = async () => {
@@ -101,29 +106,41 @@ const ResponderMap = () => {
       <MapView
         style={styles.map}
         region={{
-          latitude: responderLocation?.latitude || 37.78825,
-          longitude: responderLocation?.longitude || -122.4324,
+          latitude: responderLocation?.latitude || 12.8797,
+          longitude: responderLocation?.longitude || 121.774,
           latitudeDelta: 0.1,
           longitudeDelta: 0.00001,
         }}
       >
         {/* Responder Marker */}
-        {responderLocation && <Marker coordinate={responderLocation} title="Responder" pinColor="blue" />}
-
-        {/* Markers for All Reports with Categories */}
-        {reports.map((report) => (
+        {responderLocation && (
           <Marker
-            key={report.id}
-            coordinate={report.location}
-            title={`Report ${report.id}`}
-            description={`Category: ${report.category}, Lat: ${report.location.latitude}, Lng: ${report.location.longitude}`} // Show category in description
-            pinColor="red"
-            onPress={() => setSelectedReport(report)} // Set the selected report on marker click
-          >
-            {/* Custom marker with category displayed */}
-          </Marker>
-        ))}
+            coordinate={{
+              latitude: responderLocation.latitude,
+              longitude: responderLocation.longitude,
+            }}
+            title="Responder"
+            pinColor="blue"
+          />
+        )}
+        {/* Markers for All Reports with Categories */}
+        {reports.map(
+          (report) =>
+            report.location &&
+            typeof report.location.latitude === 'number' &&
+            typeof report.location.longitude === 'number' && (
+              <Marker
+                key={report.id}
+                coordinate={report.location}
+                title={`Report ${report.id}`}
+                description={`Category: ${report.category}, Lat: ${report.location.latitude}, Lng: ${report.location.longitude}`}
+                pinColor="red"
+                onPress={() => setSelectedReport(report)}
+              />
+            )
+        )}
       </MapView>
+
       {/* Bottom Details Container */}
       {selectedReport && (
         <View style={styles.bottomContainer}>
@@ -135,6 +152,7 @@ const ResponderMap = () => {
               <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
             </View>
             <View style={styles.upperText}>
+              <Text style={styles.reportName}>{` ${selectedReport.reportId}`}</Text>
               <Text style={styles.reportName}>{` ${selectedReport.senderName}`}</Text>
               <Text style={styles.reportCategory}>{`Category: ${selectedReport.category}`}</Text>
               <Text style={styles.reportDescription}>{`Details: ${selectedReport.details}`}</Text>
@@ -198,9 +216,13 @@ const styles = StyleSheet.create({
     height: 100,
     marginRight: '5%',
   },
-  upperText: {},
+  upperText: {
+    textAlign: 'left',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+  },
   reportName: {
-    fontSize: 20,
+    fontSize: 24,
     color: '#000',
     marginBottom: 5,
   },
