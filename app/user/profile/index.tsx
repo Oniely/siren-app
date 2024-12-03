@@ -98,7 +98,7 @@ const Profile = () => {
         <View style={styles.profileInfo}>
           <Image source={require('@/assets/images/profile.png')} style={styles.profileImage} />
           <View style={styles.infoContainer}>
-            <Text style={styles.profileName}>{profileData?.username}</Text>
+            <Text style={styles.profileName}>{profileData?.firstname + ' ' + profileData?.lastname}</Text>
             <Text style={styles.profileAt}>{profileData?.email}</Text>
             <TouchableOpacity
               onPress={() => router.push('/user/profile/edit_profile')}

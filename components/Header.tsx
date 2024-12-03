@@ -181,7 +181,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
                 <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
               )}
             </Pressable>
-            <Text style={styles.burgerName}>{profileData?.username}</Text>
+            <Text style={styles.burgerName}>{profileData?.firstname + ' ' + profileData?.lastname}</Text>
           </View>
           <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/emergency_call')}>
             <Feather name="phone-call" size={35} color="#0c0c63" />

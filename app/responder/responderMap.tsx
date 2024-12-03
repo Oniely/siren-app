@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { db } from '@/firebaseConfig';
-import { ref, onValue, update } from 'firebase/database'; // Correctly import update function
+import { ref, onValue, update, onDisconnect } from 'firebase/database'; // Correctly import update function
 import * as Location from 'expo-location';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
@@ -12,7 +12,6 @@ const ResponderMap = () => {
   const [reports, setReports] = useState<any[]>([]);
   const [selectedReport, setSelectedReport] = useState<any>(null);
 
-  // Function to handle Accept button press
   const confirmStatus = () => {
     if (selectedReport && selectedReport.location) {
       const reportRef = ref(db, `reports/${selectedReport.reportId}`);
@@ -45,7 +44,20 @@ const ResponderMap = () => {
         });
     }
   };
+  type LocationCoords = {
+    latitude: number;
+    longitude: number;
+  };
+  async function updateResponderLocation(responderId: string, location: LocationCoords) {
+    const responderRef = ref(db, `responders/${responderId}`);
 
+    update(responderRef, {
+      latitude: location.latitude,
+      longitude: location.longitude,
+      status: 'Active',
+    });
+    onDisconnect(responderRef).update({ status: 'Inactive' });
+  }
   useEffect(() => {
     // Watch responder's location
     const startResponderLocationTracking = async () => {

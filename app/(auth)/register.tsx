@@ -21,6 +21,8 @@ import { ref, set, get } from 'firebase/database';
 const Register = () => {
   const router = useRouter();
 
+  const [firstname, setFirstname] = useState('');
+  const [lastname, setLastname] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -93,9 +95,15 @@ const Register = () => {
           text: 'Yes',
           onPress: async () => {
             await set(ref(db, `users/${userId}`), {
+              firstname,
+              lastname,
               username,
               email,
               role: 'responder',
+            });
+            await set(ref(db, `responders/${userId}`), {
+              status: 'inactive',
+              location: null, 
             });
             router.navigate('/(auth)/login');
           },
@@ -104,6 +112,8 @@ const Register = () => {
           text: 'No',
           onPress: async () => {
             await set(ref(db, `users/${userId}`), {
+              firstname,
+              lastname,
               username,
               email,
               role: 'user',
@@ -125,6 +135,22 @@ const Register = () => {
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={styles.formContainer}>
           <Text style={styles.signupText}>SIGN UP</Text>
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="firstname"
+              style={styles.input}
+              value={firstname}
+              onChangeText={setFirstname}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="lastname"
+              style={styles.input}
+              value={lastname}
+              onChangeText={setLastname}
+            />
+          </View>
           <View style={styles.inputContainer}>
             <TextInput
               placeholder="username"
