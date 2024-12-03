@@ -12,7 +12,7 @@ export default function ReportDetail() {
     <AdminStyledContainer>
       <AdminHeader />
       <View style={styles.header}>
-        <Text style={styles.headerText}>Emergency Reports</Text>
+        <Text style={styles.headerText}>Report Details</Text>
       </View>
       <ScrollView style={styles.container}>
         <View style={styles.reportsContainer}>
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    paddingVertical: 20,
+    paddingVertical: 15,
     backgroundColor: '#e6e6e6',
   },
   headerText: {

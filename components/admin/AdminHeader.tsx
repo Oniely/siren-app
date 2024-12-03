@@ -91,21 +91,25 @@ const AdminHeader: React.FC<HeaderProps> = ({ responder = false, bg = '#e6e6e6' 
           </Pressable>
           <Text style={styles.burgerName}>Elizabeth Olsen</Text>
         </View>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/emergency_call')}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/emergency_report')}>
           <Feather name="phone-call" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>View Reports</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/manage_accounts')}>
           <FontAwesome name="send" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Manage Accounts</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/report_emergency')}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/analytics')}>
           <Foundation name="alert" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>View Analysis</Text>
+          <Text style={styles.sliderNavItemText}>View Analytics</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/settings')}>
           <Ionicons name="settings-sharp" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Settings</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={handleLogout}>
+          <Ionicons name="exit" size={35} color="#0c0c63" />
+          <Text style={styles.sliderNavItemText}>Logout</Text>
         </TouchableOpacity>
         <Text style={styles.burgerFooter}>All Rights Reserved @Siren2024</Text>
       </Animated.View>

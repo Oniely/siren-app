@@ -29,9 +29,9 @@ const WaitingResponder: React.FC<CallerLocationProps> = ({ reportId }) => {
     const fetchReportLocation = async () => {
       try {
         if (!reportId) {
-      console.error('No reportId provided');
-      return;
-    }
+          console.error('No reportId provided');
+          return;
+        }
         const reportRef = ref(db, `reports/${reportId}/location`);
         const snapshot = await get(reportRef);
         console.log('Report ID:', reportId);

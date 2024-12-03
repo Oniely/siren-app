@@ -4,12 +4,7 @@ import { ThemedView } from '../ThemedView';
 import ResponderFooter from './responderFooter';
 
 const responderStyledContainer = ({ children, bg = '#e6e6e6' }: any) => {
-  return (
-    <ThemedView style={[styles.container, { backgroundColor: bg }]}>
-      {children}
-      <ResponderFooter />
-    </ThemedView>
-  );
+  return <ThemedView style={[styles.container, { backgroundColor: bg }]}>{children}</ThemedView>;
 };
 
 export default responderStyledContainer;

@@ -15,6 +15,8 @@ export default function AdminLayout() {
       <Stack.Screen name="emergency_report/report_detail" />
       <Stack.Screen name="analytics/index" />
       <Stack.Screen name="manage_accounts/index" />
+      <Stack.Screen name="notifications" />
+      <Stack.Screen name="settings" />
     </Stack>
   );
 }

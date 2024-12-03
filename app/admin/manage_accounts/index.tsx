@@ -170,6 +170,7 @@ const styles = ScaledSheet.create({
     borderRadius: '15@s',
     height: '240@s',
     padding: '15@s',
+    gap: '10@s',
   },
   account: {
     flexDirection: 'row',

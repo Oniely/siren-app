@@ -1,11 +1,9 @@
 import React from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View, FlatList, ScrollView } from 'react-native';
 
-import FS from 'react-native-vector-icons/FontAwesome';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { useRouter } from 'expo-router';
-import AlertCard from '@/components/AlertCard';
 import NewsAlertCard from '@/components/NewsAlertCard';
 import Container from '@/components/Container';
 import AdminStyledContainer from '@/components/admin/AdminStyledContainer';
@@ -40,56 +38,51 @@ const AdminDashboard = () => {
     <AdminStyledContainer>
       <AdminHeader />
       <View style={styles.container}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}
-        >
-          <View style={styles.textWrapper}>
-            <Text style={styles.indexText}>Hi, Elizabeth</Text>
-            <Text style={styles.indexDesc}>Welcome to Siren</Text>
-          </View>
-          <View style={styles.bigCircleContainer}>
-            <TouchableOpacity onPress={() => router.push('/admin/emergency_report')}>
-              <Image source={require('@/assets/images/footerSiren.png')} style={styles.panicButton} />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.buttonWrapper}>
-            <TouchableOpacity onPress={() => router.push('/admin/emergency_report')}>
-              <Image source={require('@/assets/images/call-logo-admin.png')} style={styles.buttonAdmin} />
-              <Text style={styles.buttonText}>Reports</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/admin/manage_accounts')}>
-              <Image source={require('@/assets/images/view-logo.png')} style={styles.buttonAdmin} />
-              <Text style={styles.buttonText}>Manage Account</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/admin/analytics')}>
-              <Image source={require('@/assets/images/message-logo.png')} style={styles.buttonAdmin} />
-              <Text style={styles.buttonText}>Analytics</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.newsAlertWrapper}>
-            <Text style={styles.newsAlertTitle}>News Alert</Text>
-            <Container bg="#e6e6e6">
-              <View style={styles.newsAlertContainer}>
-                <View style={styles.nearbyAccidents}>
-                  <FlatList
-                    data={nearbyAccidents}
-                    renderItem={({ item }) => (
-                      <NewsAlertCard
-                        title={item.title}
-                        dateString={item.dateString}
-                        timeAgo={item.timeAgo}
-                        viewString={item.viewsString}
-                        detailsString={item.detailsString}
-                      />
-                    )}
-                    keyExtractor={(item) => item.id}
-                  />
-                </View>
+        <View style={styles.textWrapper}>
+          <Text style={styles.indexText}>Hi, Elizabeth</Text>
+          <Text style={styles.indexDesc}>Welcome to Siren</Text>
+        </View>
+        <View style={styles.bigCircleContainer}>
+          <TouchableOpacity onPress={() => router.push('/admin/emergency_report')}>
+            <Image source={require('@/assets/images/footerSiren.png')} style={styles.panicButton} />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.buttonWrapper}>
+          <TouchableOpacity onPress={() => router.push('/admin/emergency_report')}>
+            <Image source={require('@/assets/images/call-logo-admin.png')} style={styles.buttonAdmin} />
+            <Text style={styles.buttonText}>Reports</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/admin/manage_accounts')}>
+            <Image source={require('@/assets/images/view-logo.png')} style={styles.buttonAdmin} />
+            <Text style={styles.buttonText}>Manage Account</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/admin/analytics')}>
+            <Image source={require('@/assets/images/message-logo.png')} style={styles.buttonAdmin} />
+            <Text style={styles.buttonText}>Analytics</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.newsAlertWrapper}>
+          <Text style={styles.newsAlertTitle}>News Alert</Text>
+          <Container bg="#e6e6e6">
+            <View style={styles.newsAlertContainer}>
+              <View style={styles.nearbyAccidents}>
+                <FlatList
+                  data={nearbyAccidents}
+                  renderItem={({ item }) => (
+                    <NewsAlertCard
+                      title={item.title}
+                      dateString={item.dateString}
+                      timeAgo={item.timeAgo}
+                      viewString={item.viewsString}
+                      detailsString={item.detailsString}
+                    />
+                  )}
+                  keyExtractor={(item) => item.id}
+                />
               </View>
-            </Container>
-          </View>
-        </ScrollView>
+            </View>
+          </Container>
+        </View>
       </View>
     </AdminStyledContainer>
   );
@@ -101,9 +94,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'scroll',
-  },
-  scrollView: {
-    flex: 1,
   },
   wrapper: {
     width: '90%',

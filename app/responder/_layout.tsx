@@ -12,6 +12,8 @@ export default function ResponderLayout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="responderAlert" />
       <Stack.Screen name="responderMap" />
+      <Stack.Screen name="notifications" />
+      <Stack.Screen name="settings" />
     </Stack>
   );
 }

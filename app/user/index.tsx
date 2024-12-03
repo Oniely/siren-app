@@ -34,7 +34,7 @@ const Dashboard = () => {
               </Text>
               <Image source={require('@/assets/images/location.png')} style={styles.locationIcon} />
             </View>
-            <Link href={'/user/profile'}>
+            <Link href={'/user/map'}>
               <Text style={styles.topBarLink}>Show your location</Text>
             </Link>
           </View>
