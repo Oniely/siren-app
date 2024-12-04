@@ -1,29 +1,15 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View, FlatList, ScrollView } from 'react-native';
-
-import FS from 'react-native-vector-icons/FontAwesome';
+import { Image, Text, TouchableOpacity, View, FlatList } from 'react-native';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
-
 import { useRouter } from 'expo-router';
-import AlertCard from '@/components/AlertCard';
 import NewsAlertCard from '@/components/NewsAlertCard';
-import Container from '@/components/Container';
 import ResponderStyledContainer from '@/components/responder/responderStyledContainer';
 import ResponderHeader from '@/components/responder/responderHeader';
-import Geolocation from '@react-native-community/geolocation';
-import { db } from '@/firebaseConfig';
-import { getDatabase, ref, onValue, get, set, update, push } from 'firebase/database';
-import {
-  mediaDevices,
-  RTCIceCandidate,
-  RTCPeerConnection,
-  RTCSessionDescription,
-  RTCView,
-} from 'react-native-webrtc';
+import { ScaledSheet } from 'react-native-size-matters';
 
 MCI.loadFont();
 
-const Dashboard = () => {
+const ResponderDashboard = () => {
   const router = useRouter();
   const nearbyAccidents = [
     {
@@ -52,7 +38,7 @@ const Dashboard = () => {
       <View style={styles.container}>
         <View style={styles.textWrapper}>
           <Text style={styles.indexText}>Hi, Elizabeth</Text>
-          <Text style={styles.indexDesc}>Welcome to Siren</Text>
+          <Text style={styles.indexDesc}>Welcome to Siren Responder</Text>
         </View>
         <View style={styles.bigCircleContainer}>
           <TouchableOpacity onPress={() => router.push('/responder/responderAlert')}>
@@ -68,14 +54,14 @@ const Dashboard = () => {
             <Image source={require('@/assets/images/view-logo.png')} style={styles.buttonAdmin} />
             <Text style={styles.buttonText}>View Reports</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/')}>
+          <TouchableOpacity onPress={() => router.push('/responder')}>
             <Image source={require('@/assets/images/message-logo.png')} style={styles.buttonAdmin} />
             <Text style={styles.buttonText}>Emergency Text</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.newsAlertWrapper}>
           <Text style={styles.newsAlertTitle}>News Alert</Text>
-          <Container bg="#e6e6e6" style={{ paddingTop: 25 }}>
+          <View style={{ flex: 1 }}>
             <View style={styles.newsAlertContainer}>
               <View style={styles.nearbyAccidents}>
                 <FlatList
@@ -93,82 +79,51 @@ const Dashboard = () => {
                 />
               </View>
             </View>
-          </Container>
+          </View>
         </View>
       </View>
     </ResponderStyledContainer>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  scrollView: {
-    flex: 1,
-  },
-  wrapper: {
-    width: '90%',
-    position: 'relative',
-    flexWrap: 'wrap',
-    flexDirection: 'row',
-    gap: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  box: {
-    width: '48%',
-    height: '50%',
-    maxWidth: 400,
-    borderRadius: 50,
-    backgroundColor: '#087BB8',
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  boxText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 20,
-    width: '100%',
-    textAlign: 'center',
-  },
   textWrapper: {
     alignItems: 'flex-start',
     flex: 1,
-    paddingLeft: 5,
+    paddingLeft: '5@s',
     alignSelf: 'flex-start',
-    marginLeft: 20,
+    marginLeft: '20@s',
   },
   indexText: {
-    fontSize: 40,
+    fontSize: '36@ms',
     textAlign: 'left',
     color: '#000',
     fontFamily: 'BeVietnamProBold',
   },
   indexDesc: {
-    fontSize: 24,
+    fontSize: '16@ms',
     textAlign: 'center',
     color: '#343434',
   },
   bigCircleContainer: {
     width: '100%',
-    maxWidth: 500,
+    maxWidth: '500@s',
     aspectRatio: 2,
+    marginVertical: '20@vs',
   },
   panicButton: {
     resizeMode: 'center',
     height: '100%',
     width: '100%',
     marginHorizontal: 'auto',
-    top: '40%',
   },
   buttonWrapper: {
     flexDirection: 'row',
-    marginTop: 20,
     flex: 1,
     width: '100%',
     justifyContent: 'space-evenly',
@@ -177,14 +132,16 @@ const styles = StyleSheet.create({
   },
   buttonAdmin: {
     resizeMode: 'center',
-    width: 100,
-    height: 100,
-    paddingHorizontal: 10,
+    width: '100@s',
+    height: '100@s',
+    paddingHorizontal: '10@s',
+    // backgroundColor: '#087bb8',
+    borderRadius: '20@s',
   },
   buttonText: {
-    paddingHorizontal: 10,
-    fontSize: 14,
-    width: 100,
+    paddingHorizontal: '10@s',
+    fontSize: '14@s',
+    width: '100@s',
     textAlign: 'center',
     flexWrap: 'wrap',
     flex: 1,
@@ -194,28 +151,30 @@ const styles = StyleSheet.create({
   newsAlertWrapper: {
     flex: 1,
     width: '100%',
+    marginVertical: '10@s',
   },
   newsAlertTitle: {
-    fontSize: 30,
-    marginLeft: 30,
-    color: '#414753',
+    fontSize: '30@s',
+    marginLeft: '30@s',
+    color: '#aaacb0',
+    fontFamily: 'BeVietnamProSemiBold',
   },
   newsAlertContainer: {
     flex: 1,
-    marginTop: 10,
+    marginTop: '10@s',
     paddingHorizontal: '5%',
   },
   textInfo: {
-    fontSize: 40,
+    fontSize: '40@s',
     color: '#0c0c63',
     fontWeight: 'bold',
-    marginBottom: 10,
-    padding: 3,
+    marginBottom: '10@s',
+    padding: '3@s',
   },
   nearbyAccidents: {
     flex: 1,
-    marginTop: 10,
+    marginTop: '10@s',
   },
 });
 
-export default Dashboard;
+export default ResponderDashboard;

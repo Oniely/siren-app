@@ -1,25 +1,11 @@
 import React, { useState, useRef } from 'react';
-import {
-  Image,
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  Animated,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native';
+import { Image, Pressable, Text, View, Animated, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Href, usePathname, useRouter, useNavigation } from 'expo-router';
-import { FontAwesome5 } from '@expo/vector-icons';
-import Feather from '@expo/vector-icons/Feather';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import Foundation from '@expo/vector-icons/Foundation';
+import { Href, usePathname, useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ScaledSheet } from 'react-native-size-matters';
 
 interface HeaderProps {
   responder?: boolean;
@@ -119,41 +105,41 @@ const AdminHeader: React.FC<HeaderProps> = ({ responder = false, bg = '#e6e6e6' 
 
 export default AdminHeader;
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   container: {
-    paddingVertical: 15,
+    paddingVertical: '15@s',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: '20@s',
     zIndex: 1000,
   },
   title: {
-    fontSize: 18,
+    fontSize: '18@s',
     fontWeight: 'bold',
     color: '#000',
   },
   rightSide: {
     flexDirection: 'row',
-    columnGap: 10,
+    columnGap: '10@s',
     alignItems: 'center',
   },
   police: {
     resizeMode: 'stretch',
-    height: 40,
-    width: 40,
-    borderRadius: 20,
+    height: '40@s',
+    width: '40@s',
+    borderRadius: '20@s',
   },
   burgerProfile: {
-    height: 250,
+    height: '250@s',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FAF9F6',
     width: '100%',
   },
   burgerName: {
-    marginTop: 20,
-    fontSize: 25,
+    marginTop: '20@s',
+    fontSize: '25@s',
     color: '#000',
     fontFamily: 'BeVietnamProThin',
   },
@@ -161,27 +147,27 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: -350,
-    width: 350,
     backgroundColor: '#ffffff',
     justifyContent: 'flex-start',
     display: 'flex',
     zIndex: 1000,
-    height: 900,
+    width: '350@s',
+    height: '900@s',
   },
   sliderNavItem: {
-    marginTop: 10,
-    paddingVertical: 10,
+    marginTop: '10@s',
+    paddingVertical: '10@s',
     left: 50,
     flexDirection: 'row',
     alignItems: 'center',
-    height: 100,
-    zIndex: 100,
+    height: '100@s',
+    zIndex: '100@s',
   },
   sliderNavItemText: {
     color: '#000',
-    fontSize: 24,
-    marginHorizontal: 10,
-    paddingLeft: 30,
+    fontSize: '24@s',
+    marginHorizontal: '10@s',
+    paddingLeft: '30@s',
     fontFamily: 'BeVietnamProThin',
   },
   sliderNavImage: {},
@@ -189,7 +175,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     left: 15,
-    padding: 10,
+    padding: '10@s',
     zIndex: 3,
   },
   closeButtonText: {
@@ -197,13 +183,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     textAlign: 'center',
     color: '#333',
-    fontSize: 50,
+    fontSize: '50@s',
   },
   burgerFooter: {
     textAlign: 'center',
     top: 200,
     bottom: 0,
-    height: 200,
+    height: '200@s',
   },
-  adminSideBarIcon: { width: 40, height: 40, resizeMode: 'center' },
+  adminSideBarIcon: { width: '40@s', height: '40@s', resizeMode: 'center' },
 });

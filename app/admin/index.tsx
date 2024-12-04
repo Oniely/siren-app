@@ -1,13 +1,11 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View, FlatList, ScrollView } from 'react-native';
-
+import { Image, Text, TouchableOpacity, View, FlatList } from 'react-native';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
-
 import { useRouter } from 'expo-router';
 import NewsAlertCard from '@/components/NewsAlertCard';
-import Container from '@/components/Container';
 import AdminStyledContainer from '@/components/admin/AdminStyledContainer';
 import AdminHeader from '@/components/admin/AdminHeader';
+import { ScaledSheet } from 'react-native-size-matters';
 
 MCI.loadFont();
 
@@ -88,55 +86,44 @@ const AdminDashboard = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  wrapper: {
-    width: '90%',
-    height: '100%',
-    position: 'relative',
-    flexWrap: 'wrap',
-    flexDirection: 'row',
-    gap: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },
   textWrapper: {
     alignItems: 'flex-start',
     flex: 1,
-    paddingLeft: 5,
+    paddingLeft: '5@s',
     alignSelf: 'flex-start',
-    marginLeft: 20,
+    marginLeft: '20@s',
   },
   indexText: {
-    fontSize: 40,
+    fontSize: '36@ms',
     textAlign: 'left',
     color: '#000',
     fontFamily: 'BeVietnamProBold',
   },
   indexDesc: {
-    fontSize: 24,
+    fontSize: '16@ms',
     textAlign: 'center',
     color: '#343434',
   },
   bigCircleContainer: {
     width: '100%',
-    maxWidth: 500,
+    maxWidth: '500@s',
     aspectRatio: 2,
+    marginVertical: '20@vs',
   },
   panicButton: {
     resizeMode: 'center',
     height: '100%',
     width: '100%',
     marginHorizontal: 'auto',
-    top: '40%',
   },
   buttonWrapper: {
     flexDirection: 'row',
-    marginTop: 20,
     flex: 1,
     width: '100%',
     justifyContent: 'space-evenly',
@@ -145,16 +132,16 @@ const styles = StyleSheet.create({
   },
   buttonAdmin: {
     resizeMode: 'center',
-    width: 100,
-    height: 100,
-    paddingHorizontal: 10,
+    width: '100@s',
+    height: '100@s',
+    paddingHorizontal: '10@s',
     backgroundColor: '#087bb8',
-    borderRadius: 20,
+    borderRadius: '20@s',
   },
   buttonText: {
-    paddingHorizontal: 10,
-    fontSize: 14,
-    width: 100,
+    paddingHorizontal: '10@s',
+    fontSize: '14@s',
+    width: '100@s',
     textAlign: 'center',
     flexWrap: 'wrap',
     flex: 1,
@@ -164,29 +151,29 @@ const styles = StyleSheet.create({
   newsAlertWrapper: {
     flex: 1,
     width: '100%',
-    paddingVertical: 10,
+    marginVertical: '10@s',
   },
   newsAlertTitle: {
-    fontSize: 30,
-    marginLeft: 30,
+    fontSize: '30@s',
+    marginLeft: '30@s',
     color: '#aaacb0',
     fontFamily: 'BeVietnamProSemiBold',
   },
   newsAlertContainer: {
     flex: 1,
-    marginTop: 10,
+    marginTop: '10@s',
     paddingHorizontal: '5%',
   },
   textInfo: {
-    fontSize: 40,
+    fontSize: '40@s',
     color: '#0c0c63',
     fontWeight: 'bold',
-    marginBottom: 10,
-    padding: 3,
+    marginBottom: '10@s',
+    padding: '3@s',
   },
   nearbyAccidents: {
     flex: 1,
-    marginTop: 10,
+    marginTop: '10@s',
   },
 });
 
