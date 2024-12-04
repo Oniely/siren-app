@@ -40,7 +40,7 @@ const AdminDashboard = () => {
       <View style={styles.container}>
         <View style={styles.textWrapper}>
           <Text style={styles.indexText}>Hi, Elizabeth</Text>
-          <Text style={styles.indexDesc}>Welcome to Siren</Text>
+          <Text style={styles.indexDesc}>Welcome to Siren Admin</Text>
         </View>
         <View style={styles.bigCircleContainer}>
           <TouchableOpacity onPress={() => router.push('/admin/emergency_report')}>
@@ -49,21 +49,21 @@ const AdminDashboard = () => {
         </View>
         <View style={styles.buttonWrapper}>
           <TouchableOpacity onPress={() => router.push('/admin/emergency_report')}>
-            <Image source={require('@/assets/images/call-logo-admin.png')} style={styles.buttonAdmin} />
+            <Image source={require('@/assets/images/reports.png')} style={styles.buttonAdmin} />
             <Text style={styles.buttonText}>Reports</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push('/admin/manage_accounts')}>
-            <Image source={require('@/assets/images/view-logo.png')} style={styles.buttonAdmin} />
+            <Image source={require('@/assets/images/people.png')} style={styles.buttonAdmin} />
             <Text style={styles.buttonText}>Manage Account</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push('/admin/analytics')}>
-            <Image source={require('@/assets/images/message-logo.png')} style={styles.buttonAdmin} />
+            <Image source={require('@/assets/images/analytics.png')} style={styles.buttonAdmin} />
             <Text style={styles.buttonText}>Analytics</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.newsAlertWrapper}>
           <Text style={styles.newsAlertTitle}>News Alert</Text>
-          <Container bg="#e6e6e6">
+          <View style={{ flex: 1 }}>
             <View style={styles.newsAlertContainer}>
               <View style={styles.nearbyAccidents}>
                 <FlatList
@@ -81,7 +81,7 @@ const AdminDashboard = () => {
                 />
               </View>
             </View>
-          </Container>
+          </View>
         </View>
       </View>
     </AdminStyledContainer>
@@ -93,35 +93,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'scroll',
   },
   wrapper: {
     width: '90%',
-    height: '50%',
+    height: '100%',
     position: 'relative',
     flexWrap: 'wrap',
     flexDirection: 'row',
     gap: 5,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  box: {
-    width: '48%',
-    height: '50%',
-    maxWidth: 400,
-    borderRadius: 50,
-    backgroundColor: '#087BB8',
-    paddingVertical: 20,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-  },
-  boxText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 20,
-    width: '100%',
-    textAlign: 'center',
   },
   textWrapper: {
     alignItems: 'flex-start',
@@ -167,6 +148,8 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     paddingHorizontal: 10,
+    backgroundColor: '#087bb8',
+    borderRadius: 20,
   },
   buttonText: {
     paddingHorizontal: 10,
