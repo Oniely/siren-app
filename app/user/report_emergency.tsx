@@ -185,7 +185,7 @@ const ReportEmergency = () => {
     const finalLongitude = longitude ?? defaultLongitude;
     setStatus('Submitting');
     const userId = await AsyncStorage.getItem('userId');
-    console.log('User ID:', userId); // Ensure userId is being fetched correctly
+    console.log('User ID:', userId); 
     if (!userId) {
       console.error('No userId found in AsyncStorage');
       setStatus('Error: User ID not found');

@@ -36,7 +36,11 @@ const Login = () => {
       if (userId) {
         if (role === 'responder') {
           router.replace('/responder');
-        } else {
+        }
+        else if (role === 'admin') {
+          router.replace('/admin');
+        }
+        else {
           router.replace('/user');
         }
       }

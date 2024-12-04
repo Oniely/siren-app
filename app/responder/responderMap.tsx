@@ -1,30 +1,57 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
-import { db } from '@/firebaseConfig';
+import { db, auth } from '@/firebaseConfig';
 import { ref, onValue, update, onDisconnect } from 'firebase/database'; // Correctly import update function
 import * as Location from 'expo-location';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 const ResponderMap = () => {
   const [responderLocation, setResponderLocation] = useState<any>(null);
   const [reports, setReports] = useState<any[]>([]);
   const [selectedReport, setSelectedReport] = useState<any>(null);
+  const [responderId, setResponderId] = useState<string | null>(null);
+  useEffect(() => {
+    const auth = getAuth();
 
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const userRef = ref(db, `users/${user.uid}`);
+
+        // Fetch responder data from the users collection
+        onValue(userRef, (snapshot) => {
+          const userData = snapshot.val();
+          if (userData && userData.role === 'responder') {
+            setResponderId(user.uid); // Save the UID for future updates
+          } else {
+            console.error('Logged-in user is not a responder.');
+          }
+        });
+      } else {
+        console.error('No user is logged in.');
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
   const confirmStatus = () => {
-    if (selectedReport && selectedReport.location) {
+    if (selectedReport && selectedReport.location && responderLocation && responderId) {
       const reportRef = ref(db, `reports/${selectedReport.reportId}`);
+
       update(reportRef, { status: 'Accepted' })
         .then(() => {
           console.log('Report accepted');
-          setSelectedReport(null);
+
+          updateResponderLocation(responderId, responderLocation);
+          setSelectedReport(null); // Reset selected report
         })
         .catch((error: Error) => {
           console.error('Error updating status:', error.message);
         });
     } else {
-      console.error('Selected report or location is undefined');
+      console.error('Selected report or location/responder ID is undefined');
     }
   };
   // Function to handle Decline button press
@@ -49,21 +76,33 @@ const ResponderMap = () => {
     longitude: number;
   };
   async function updateResponderLocation(responderId: string, location: LocationCoords) {
-    const responderRef = ref(db, `responders/${responderId}`);
+    try {
+      const responderRef = ref(db, `responders/${responderId}`);
+      await update(responderRef, {
+        latitude: location.latitude,
+        longitude: location.longitude,
+        status: 'Active',
+      });
 
-    update(responderRef, {
-      latitude: location.latitude,
-      longitude: location.longitude,
-      status: 'Active',
-    });
-    onDisconnect(responderRef).update({ status: 'Inactive' });
+      // Handle disconnection to mark responder as inactive
+      onDisconnect(responderRef).update({ status: 'Inactive' });
+      console.log('Responder location and status updated successfully');
+    } catch (error) {
+      console.error('Error updating responder location:');
+    }
   }
+
   useEffect(() => {
-    // Watch responder's location
     const startResponderLocationTracking = async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         console.error('Permission to access location denied');
+        return;
+      }
+
+      const responderId = auth.currentUser?.uid; 
+      if (!responderId) {
+        console.error('Responder ID is undefined. User might not be logged in.');
         return;
       }
 
@@ -75,7 +114,10 @@ const ResponderMap = () => {
         },
         (newLocation) => {
           const { latitude, longitude } = newLocation.coords;
-          setResponderLocation({ latitude, longitude });
+          const locationCoords = { latitude, longitude };
+          setResponderLocation(locationCoords);
+
+          updateResponderLocation(responderId, locationCoords); // Guaranteed to have a valid responderId here
         }
       );
 
