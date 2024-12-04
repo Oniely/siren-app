@@ -184,6 +184,7 @@ const styles = ScaledSheet.create({
     backgroundColor: '#1c85e8',
     color: '#FFF',
     padding: '10@s',
+    fontFamily: 'BeVietnamProMedium',
   },
 });
 

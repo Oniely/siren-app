@@ -19,6 +19,7 @@ export default function UserLayout() {
       <Stack.Screen name="waitingResponder" />
       <Stack.Screen name="messages" />
       <Stack.Screen name="profile" />
+      <Stack.Screen name="response_review" />
     </Stack>
   );
 }
