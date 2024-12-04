@@ -92,15 +92,15 @@ const AdminHeader: React.FC<HeaderProps> = ({ responder = false, bg = '#e6e6e6' 
           <Text style={styles.burgerName}>Elizabeth Olsen</Text>
         </View>
         <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/emergency_report')}>
-          <Feather name="phone-call" size={35} color="#0c0c63" />
+          <Image source={require('@/assets/images/reports-purple.png')} style={styles.adminSideBarIcon} />
           <Text style={styles.sliderNavItemText}>View Reports</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/manage_accounts')}>
-          <FontAwesome name="send" size={35} color="#0c0c63" />
+          <Image source={require('@/assets/images/people-purple.png')} style={styles.adminSideBarIcon} />
           <Text style={styles.sliderNavItemText}>Manage Accounts</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/analytics')}>
-          <Foundation name="alert" size={35} color="#0c0c63" />
+          <Image source={require('@/assets/images/analytics-purple.png')} style={styles.adminSideBarIcon} />
           <Text style={styles.sliderNavItemText}>View Analytics</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/settings')}>
@@ -205,4 +205,5 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: 200,
   },
+  adminSideBarIcon: { width: 40, height: 40, resizeMode: 'center' },
 });

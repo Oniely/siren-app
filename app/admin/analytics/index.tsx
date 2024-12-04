@@ -1,39 +1,53 @@
 import { View, Text, ScrollView } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { scale, ScaledSheet } from 'react-native-size-matters';
 import AdminStyledContainer from '@/components/admin/AdminStyledContainer';
 import AdminHeader from '@/components/admin/AdminHeader';
-import {} from 'victory-native';
 import { BarChart } from 'react-native-gifted-charts';
+import { get, ref } from 'firebase/database';
+import { db } from '@/firebaseConfig';
 
 export default function Analytics() {
-  const data = [
-    {
-      value: 4,
-      label: 'Vehicle Collisions',
-      frontColor: '#087bb8',
-    },
-    {
-      value: 2,
-      label: 'Fire Incidents',
-      frontColor: '#087bb8',
-    },
-    {
-      value: 6,
-      label: 'Medical Emergencies',
-      frontColor: '#087bb8',
-    },
-    {
-      value: 8,
-      label: 'Natural Disasters',
-      frontColor: '#087bb8',
-    },
-    {
-      value: 10,
-      label: 'Hazardous Spills',
-      frontColor: '#087bb8',
-    },
-  ];
+  const [reports, setReports] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        const reportsRef = ref(db, 'reports');
+        const snapshot = await get(reportsRef);
+
+        if (snapshot.exists()) {
+          const reportsData = snapshot.val();
+          const categoriesCount: any = {};
+
+          for (const key in reportsData) {
+            const report = reportsData[key];
+            const category = report.category;
+
+            if (categoriesCount[category]) {
+              categoriesCount[category]++;
+            } else {
+              categoriesCount[category] = 1;
+            }
+          }
+
+          const chartData = Object.keys(categoriesCount).map((category) => ({
+            value: categoriesCount[category],
+            label: category,
+            frontColor: '#087bb8',
+          }));
+
+          setReports(chartData);
+        } else {
+          console.log('No reports data available');
+        }
+      } catch (error) {
+        console.error('Error fetching reports:', error);
+      }
+    };
+
+    fetchReports();
+  }, []);
 
   return (
     <AdminStyledContainer>
@@ -49,7 +63,7 @@ export default function Analytics() {
           <View style={styles.chartContainer}>
             <Text style={styles.chartHeaderText}>Incident Type Analysis</Text>
             <BarChart
-              data={data}
+              data={reports || []}
               autoShiftLabels
               backgroundColor="#fcfcfd"
               barWidth={40}
@@ -59,7 +73,7 @@ export default function Analytics() {
               minHeight={3}
               barBorderTopLeftRadius={6}
               barBorderTopRightRadius={6}
-              noOfSections={4}
+              noOfSections={5}
               yAxisThickness={0}
               yAxisTextStyle={{ fontSize: 10, color: 'gray' }}
               xAxisLabelTextStyle={{ fontSize: 10, color: 'gray' }}
