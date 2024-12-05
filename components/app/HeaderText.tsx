@@ -35,9 +35,9 @@ const styles = ScaledSheet.create({
     borderBottomColor: '#dcdcdb',
   },
   headerText: {
-    fontSize: '22@s',
+    fontSize: '24@ms',
     fontFamily: 'BeVietnamProBold',
     color: '#0c0c63',
-    marginBottom: 4,
+    marginBottom: 3,
   },
 });

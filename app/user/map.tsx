@@ -1,7 +1,7 @@
 import * as Location from 'expo-location';
 import React, { useEffect, useState } from 'react';
 import { Alert, Dimensions, PermissionsAndroid, Platform, StyleSheet, Text, View } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Callout, Marker } from 'react-native-maps';
 
 import MapContent from '@/components/map/MapContent';
 import { useRouter } from 'expo-router';
@@ -34,7 +34,7 @@ const Map = () => {
       }
 
       let location = await Location.getCurrentPositionAsync({});
-      console.log(location);
+      // console.log(location);
       setLocation(location);
     })();
   }, []);
@@ -71,25 +71,35 @@ const Map = () => {
           title="You are here"
         />
         {/* Establishment Markers */}
-        {establishments.map((establishment) => (
-          <Marker
-            icon={require('@/assets/images/medical_marker.png')}
-            key={establishment.id}
-            coordinate={establishment.coordinates}
-            title={establishment.name}
-            description={establishment.type}
-            pinColor={establishment.type === 'Medical' ? 'green' : 'red'}
-          >
-            {/* <View
-              style={[
-                styles.customMarker,
-                establishment.type === 'Medical' ? styles.medicalMarker : styles.disasterMarker,
-              ]}
+        {establishments.map((establishment) => {
+          let markerIcon = require('@/assets/images/map/m-relief.png');
+
+          if (establishment.category === 'Hospital') {
+            markerIcon = require('@/assets/images/map/m-medical.png');
+          } else if (establishment.category === 'Police Station') {
+            markerIcon = require('@/assets/images/map/m-police.png');
+          } else if (establishment.category === 'Fire Station') {
+            markerIcon = require('@/assets/images/map/m-firefighter.png');
+          }
+
+          return (
+            <Marker
+              icon={markerIcon}
+              key={establishment.id}
+              coordinate={establishment.coordinates}
+              title={establishment.name}
+              description={establishment.type}
+              anchor={{ x: 0.5, y: 1 }}
             >
-              <Text style={styles.markerText}>{establishment.name}</Text>
-            </View> */}
-          </Marker>
-        ))}
+              <Callout tooltip={false}>
+                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                  <Text>{establishment.name}</Text>
+                  <Text>{establishment.type}</Text>
+                </View>
+              </Callout>
+            </Marker>
+          );
+        })}
       </MapView>
       <MapContent />
     </View>
@@ -107,27 +117,5 @@ const styles = StyleSheet.create({
   },
   map: {
     paddingBottom: 100,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  customMarker: {
-    padding: 5,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  medicalMarker: {
-    backgroundColor: 'green',
-  },
-  disasterMarker: {
-    backgroundColor: 'red',
-  },
-  markerText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 10,
   },
 });

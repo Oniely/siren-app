@@ -115,7 +115,7 @@ const styles = ScaledSheet.create({
     gap: '15@s',
   },
   infoContainer: {
-    gap: '5@s',
+    gap: '6@vs',
     alignItems: 'flex-start',
   },
   profileName: {
