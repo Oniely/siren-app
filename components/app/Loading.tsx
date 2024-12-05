@@ -11,5 +11,11 @@ export default function Loading() {
 }
 
 const styles = ScaledSheet.create({
-  container: { flex: 1, backgroundColor: '#faf9f6', justifyContent: 'center', alignItems: 'center' },
+  container: {
+    flex: 1,
+    backgroundColor: '#faf9f6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 5000,
+  },
 });

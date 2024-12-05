@@ -18,7 +18,7 @@ const Dashboard = () => {
 
   return (
     <StyledContainer>
-      <Header />
+      <Header user={user!} />
       <View style={styles.indexTopBar}>
         <View style={styles.topBarLeft}>
           <Image source={require('@/assets/images/profile.png')} style={styles.topBarImage} />

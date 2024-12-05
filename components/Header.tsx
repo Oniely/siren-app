@@ -19,9 +19,10 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
 import { ref, get } from 'firebase/database';
 import { db, auth } from '@/firebaseConfig';
-import useUser from '@/hooks/useUser';
+import { User } from '@/hooks/useUser';
 
 interface HeaderProps {
+  user: User;
   responder?: boolean;
 }
 
@@ -35,13 +36,12 @@ interface Report {
   status: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ responder = false }) => {
+const Header: React.FC<HeaderProps> = ({ user, responder = false }) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const slideAnimation = useRef(new Animated.Value(-350)).current;
   const router = useRouter();
 
   const currentPath = usePathname();
-  const { user } = useUser();
   const [userReports, setUserReports] = useState<Report[]>([]);
 
   const handlePress = (path: Href) => {
@@ -134,7 +134,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
                 <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
               )}
             </Pressable>
-            <Text style={styles.burgerName}>{user?.firstname + ' ' + user?.lastname}</Text>
+            <Text style={styles.burgerName}>{user.firstname + ' ' + user.lastname}</Text>
           </View>
           <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/emergency_call')}>
             <Feather name="phone-call" size={35} color="#0c0c63" />

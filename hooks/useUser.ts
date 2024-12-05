@@ -37,6 +37,7 @@ const useUser = () => {
           setError('No user data found');
         }
       } catch (err: any) {
+        console.error('Error fetching user profile:', err);
         setError(err.message);
       } finally {
         setLoading(false);

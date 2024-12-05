@@ -16,6 +16,9 @@ import { StatusBar } from 'expo-status-bar';
 import HeaderText from '@/components/app/HeaderText';
 import useUser from '@/hooks/useUser';
 import Loading from '@/components/app/Loading';
+import { getAuth, updateEmail, updatePassword, updateProfile } from 'firebase/auth';
+import { getDatabase, ref, update } from 'firebase/database';
+import LoadingOverlay from '@/components/app/LoadingOverlay';
 
 export default function EditProfile() {
   const { user, loading } = useUser();
@@ -25,6 +28,7 @@ export default function EditProfile() {
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [updateLoading, setUpdateLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -37,9 +41,57 @@ export default function EditProfile() {
 
   if (loading) return <Loading />;
 
+  async function handleUpdateProfile() {
+    const auth = getAuth();
+    const db = getDatabase();
+
+    if (!auth.currentUser) return;
+
+    try {
+      setUpdateLoading(true);
+
+      if (!fname || !lname || !email || !username) {
+        alert('Please fill all fields');
+        return;
+      }
+
+      // Update display name in Firebase Authentication
+      await updateProfile(auth?.currentUser!, {
+        displayName: `${fname} ${lname}`,
+      });
+
+      // Update email if changed
+      if (email !== user?.email) {
+        await updateEmail(auth.currentUser, email);
+      }
+
+      // Update password if provided
+      if (password) {
+        await updatePassword(auth.currentUser, password);
+      }
+
+      // Update user data in Realtime Database
+      const userRef = ref(db, 'users/' + auth.currentUser.uid);
+      await update(userRef, {
+        firstname: fname,
+        lastname: lname,
+        email: email,
+        username: username,
+      });
+
+      alert('Profile updated successfully!');
+    } catch (error) {
+      console.error('Error updating profile: ', error);
+      alert('An error occurred while updating the profile');
+    } finally {
+      setUpdateLoading(false);
+    }
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <HeaderText text="Edit Profile" />
+      <LoadingOverlay visible={updateLoading} />
       <View style={{ flex: 1 }}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
@@ -87,7 +139,7 @@ export default function EditProfile() {
                 onChangeText={setPassword}
                 secureTextEntry
               />
-              <TouchableOpacity style={styles.saveButton}>
+              <TouchableOpacity style={styles.saveButton} activeOpacity={0.7} onPress={handleUpdateProfile}>
                 <Text style={styles.buttonText}>Save</Text>
               </TouchableOpacity>
             </View>
