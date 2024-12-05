@@ -31,44 +31,32 @@ import { Route } from 'expo-router/build/Route';
 import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import HeaderText from '@/components/app/HeaderText';
+import Loading from '@/components/app/Loading';
 
 interface LocationProp {
-  longitude: any;
-  latitude: any;
+  coords: {
+    longitude: any;
+    latitude: any;
+  };
 }
 
-// Custom hook for location
-const useLocation = (setLocation: (location: LocationProp) => void) => {
-  useEffect(() => {
-    (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        return;
-      }
-
-      let location: any = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-    })();
-  }, [setLocation]);
-};
+const category = [
+  {
+    name: 'Natural Disaster',
+    img: require('@/assets/images/flood.png'),
+  },
+  {
+    name: 'Fires and Explotions',
+    img: require('@/assets/images/fire.png'),
+  },
+  {
+    name: 'Road Accidents',
+    img: require('@/assets/images/road.png'),
+  },
+];
 
 const ReportEmergency = () => {
   const router = useRouter();
-
-  const category = [
-    {
-      name: 'Natural Disaster',
-      img: require('@/assets/images/flood.png'),
-    },
-    {
-      name: 'Fires and Explotions',
-      img: require('@/assets/images/fire.png'),
-    },
-    {
-      name: 'Road Accidents',
-      img: require('@/assets/images/road.png'),
-    },
-  ];
 
   const [reportId, setreportId] = useState(false);
   const [showCateg, setShowCateg] = useState(false);
@@ -80,14 +68,23 @@ const ReportEmergency = () => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [imageUrls, setImageUrls] = useState<{ file: any; url: string }[]>([]);
 
-  const [location, setLocation] = useState({
-    latitude: 12.8797,
-    longitude: 121.774,
-  });
-
+  const [location, setLocation] = useState<LocationProp | null>(null);
   const [status, setStatus] = useState('Standby');
 
-  useLocation(setLocation);
+  useEffect(() => {
+    (async () => {
+      const { status: STATUS } = await Location.requestForegroundPermissionsAsync();
+      if (STATUS !== 'granted') {
+        router.back();
+      }
+
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      console.log(currentLocation);
+      setLocation(currentLocation);
+    })();
+  }, []);
+
+  if (!location) return <Loading />;
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -135,8 +132,10 @@ const ReportEmergency = () => {
       try {
         const snapshot = await uploadBytes(storageRef, blob); // Upload file
         console.log('File uploaded successfully:', snapshot);
+
         const downloadURL = await getDownloadURL(snapshot.ref);
         uploadedUrls.push({ file: file, url: downloadURL });
+
         console.log(downloadURL);
         setStatus('Uploaded');
       } catch (error) {
@@ -178,19 +177,24 @@ const ReportEmergency = () => {
       assets,
       category,
     });
+
     const defaultLatitude = 37.7749; // Example: San Francisco latitude
     const defaultLongitude = -122.4194; // Example: San Francisco longitude
 
     const finalLatitude = latitude ?? defaultLatitude;
     const finalLongitude = longitude ?? defaultLongitude;
+
     setStatus('Submitting');
+
     const userId = await AsyncStorage.getItem('userId');
-    console.log('User ID:', userId); 
+    console.log('User ID:', userId);
+
     if (!userId) {
       console.error('No userId found in AsyncStorage');
       setStatus('Error: User ID not found');
       return;
     }
+
     const reportRef = ref(db, 'reports/');
     console.log('Firebase Reference:', reportRef);
     const newReportRef = push(reportRef);
@@ -223,6 +227,7 @@ const ReportEmergency = () => {
         setStatus('Submitted error');
         console.error('Error writing document: ', error);
       });
+
     // if (!selectedDate || !location.latitude || !location.longitude || !details || !selectedCateg) {
     //   console.error('All fields must be filled');
     //   setStatus('Error: Missing fields');
@@ -236,8 +241,8 @@ const ReportEmergency = () => {
   };
 
   return (
-    <Container bg="#e6e6e6" style={{ paddingTop: 20 }} statusBarStyle="dark">
-      <HeaderText text="Report Emergency" />
+    <Container bg="#faf9f6" statusBarStyle="light">
+      <HeaderText text="Report Emergency" bg="#e6e6e6" />
       {status === 'Submitted' ? (
         <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
           <Text style={{ color: '#08B6D9', fontSize: 20, fontWeight: 'bold' }}>
@@ -290,10 +295,6 @@ const ReportEmergency = () => {
             </View>
           </View>
 
-          <View style={styles.location}>
-            <Text>Location</Text>
-            <MI name={'my-location'} size={30} color={'#0B0C63'} />
-          </View>
           <MapReport location={location} handleLocation={setLocation} />
           <View style={styles.emergencyDetails}>
             <Text style={styles.emergencyDetailsText}>Emergency Details</Text>
@@ -350,7 +351,14 @@ const ReportEmergency = () => {
             disabled={status === 'Submitting' || status === 'Uploading'}
             onPress={() => {
               console.log('Submit button clicked'); // Debugging
-              submit(selectedDate, location.latitude, location.longitude, details, imageUrls, selectedCateg);
+              submit(
+                selectedDate,
+                location.coords.latitude,
+                location.coords.longitude,
+                details,
+                imageUrls,
+                selectedCateg
+              );
               router.navigate('/user/waitingResponder');
             }}
           >
@@ -367,7 +375,7 @@ export default ReportEmergency;
 const styles = StyleSheet.create({
   reportContainer: {
     flex: 1,
-    marginBottom: 10,
+    gap: 20,
   },
   filterRowContainer: {
     flexDirection: 'row',
@@ -450,18 +458,20 @@ const styles = StyleSheet.create({
     height: '20%',
   },
   emergencyDetailsText: {
-    fontWeight: 'bold',
     color: '#0B0C63',
+    fontFamily: 'BeVietnamProRegular',
+    fontSize: 18,
   },
   emergencyUpload: {
     width: '86%',
     marginHorizontal: 'auto',
-    marginTop: 20,
+    marginTop: 30,
     height: '20%',
   },
   emergencyUploadText: {
-    fontWeight: 'bold',
     color: '#0B0C63',
+    fontFamily: 'BeVietnamProRegular',
+    fontSize: 18,
   },
   uploadDetails: {
     display: 'flex',
@@ -469,7 +479,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 5,
     marginVertical: 5,
-
     backgroundColor: '#e6e6e6',
     marginTop: 10,
   },
@@ -479,7 +488,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#e6e6e6',
     borderRadius: 10,
     marginTop: 10,
-    padding: 20,
+    padding: 10,
   },
   iconUpload: {
     borderWidth: 1,
@@ -507,6 +516,6 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 16,
     textAlign: 'center',
-    fontWeight: 'bold',
+    fontFamily: 'BeVietnamProSemiBold',
   },
 });

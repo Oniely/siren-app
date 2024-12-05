@@ -11,10 +11,11 @@ import Loading from '@/components/app/Loading';
 MCI.loadFont();
 
 const Dashboard = () => {
-  const { user, loading } = useUser();
+  const { user, loading, error } = useUser();
   const router = useRouter();
 
   if (loading) return <Loading />;
+  if (error) throw new Error(error.message);
 
   return (
     <StyledContainer>

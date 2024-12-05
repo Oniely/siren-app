@@ -5,7 +5,7 @@ import { ScaledSheet } from 'react-native-size-matters';
 export default function Loading() {
   return (
     <View style={styles.container}>
-      <ActivityIndicator size="large" />
+      <ActivityIndicator size="large" color="#3998ff" />
     </View>
   );
 }

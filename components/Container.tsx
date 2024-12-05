@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, ViewStyle } from 'react-native';
+import { Platform, StyleSheet, ViewStyle, StatusBar as STATUSBAR } from 'react-native';
 import { ThemedView } from './ThemedView';
 import React from 'react';
 
@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
   // },
   container: {
     flex: 1,
+    marginTop: Platform.OS == 'android' ? STATUSBAR.currentHeight : 0,
     position: 'relative',
     overflow: 'hidden',
   },

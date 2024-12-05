@@ -66,7 +66,7 @@ const Header: React.FC<HeaderProps> = ({ user, responder = false }) => {
   const fetchUserReports = async (userId: string): Promise<Report[]> => {
     const reportsRef = ref(db, `reports`);
     const snapshot = await get(reportsRef);
-    console.log(snapshot);
+    // console.log(snapshot);
     if (snapshot.exists()) {
       const reports: Record<string, Report> = snapshot.val();
       const userReports = Object.entries(reports)
@@ -134,7 +134,7 @@ const Header: React.FC<HeaderProps> = ({ user, responder = false }) => {
                 <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
               )}
             </Pressable>
-            <Text style={styles.burgerName}>{user.firstname + ' ' + user.lastname}</Text>
+            <Text style={styles.burgerName}>{user?.firstname + ' ' + user?.lastname}</Text>
           </View>
           <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/emergency_call')}>
             <Feather name="phone-call" size={35} color="#0c0c63" />

@@ -7,6 +7,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { ScaledSheet } from 'react-native-size-matters';
@@ -51,7 +52,7 @@ export default function EditProfile() {
       setUpdateLoading(true);
 
       if (!fname || !lname || !email || !username) {
-        alert('Please fill all fields');
+        Alert.alert('Please fill all fields');
         return;
       }
 

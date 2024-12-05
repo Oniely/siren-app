@@ -36,6 +36,7 @@ const Profile = () => {
             <TouchableOpacity
               onPress={() => router.push('/user/profile/edit_profile')}
               style={styles.editButton}
+              activeOpacity={0.7}
             >
               <Feather name="edit" size={24} color="#FFF" />
               <Text style={styles.editText}>Edit Profile</Text>
@@ -45,6 +46,7 @@ const Profile = () => {
         <View style={styles.profileSettings}>
           <TouchableOpacity
             style={styles.settingButton}
+            activeOpacity={0.7}
             onPress={() => router.push('/user/profile/notifications')}
           >
             <View style={styles.settingContent}>
@@ -53,21 +55,25 @@ const Profile = () => {
             </View>
             <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.settingButton}>
+          <TouchableOpacity style={styles.settingButton} activeOpacity={0.8}>
             <View style={styles.settingContent}>
               <SimpleLineIcons name="globe" size={24} color="#b6b6b7" />
               <Text style={styles.settingText}>Language</Text>
             </View>
             <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.settingButton}>
+          <TouchableOpacity
+            style={styles.settingButton}
+            onPress={() => router.push('/user/map')}
+            activeOpacity={0.8}
+          >
             <View style={styles.settingContent}>
               <FontAwesome6 name="location-dot" size={24} color="#b6b6b7" />
               <Text style={styles.settingText}>Location</Text>
             </View>
             <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.settingButton} onPress={handleLogout}>
+          <TouchableOpacity style={styles.settingButton} onPress={handleLogout} activeOpacity={0.8}>
             <View style={styles.settingContent}>
               <SimpleLineIcons name="logout" size={24} color="#b6b6b7" />
               <Text style={styles.settingText}>Logout</Text>
