@@ -1,17 +1,28 @@
 import StyledContainer from '@/components/StyledContainer';
 import { useRouter, usePathname, Href } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScaledSheet } from 'react-native-size-matters';
-import { Feather, FontAwesome6, Ionicons, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons';
+import {
+  Feather,
+  FontAwesome6,
+  Ionicons,
+  MaterialCommunityIcons as MCI,
+  SimpleLineIcons,
+} from '@expo/vector-icons';
 import HeaderText from '@/components/app/HeaderText';
 import useUser from '@/hooks/useUser';
 import Loading from '@/components/app/Loading';
+import ConfirmModal from '@/components/ConfirmModal';
+
+MCI.loadFont();
 
 const Profile = () => {
   const { user, loading } = useUser();
   const router = useRouter();
+
+  const [showModal, setShowModal] = useState(false);
 
   if (loading) return <Loading />;
 
@@ -50,7 +61,7 @@ const Profile = () => {
             onPress={() => router.push('/user/profile/notifications')}
           >
             <View style={styles.settingContent}>
-              <MaterialCommunityIcons name="bell" size={24} color="#b6b6b7" />
+              <MCI name="bell" size={24} color="#b6b6b7" />
               <Text style={styles.settingText}>Notifications</Text>
             </View>
             <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
@@ -73,7 +84,11 @@ const Profile = () => {
             </View>
             <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.settingButton} onPress={handleLogout} activeOpacity={0.8}>
+          <TouchableOpacity
+            style={styles.settingButton}
+            onPress={() => setShowModal(true)}
+            activeOpacity={0.8}
+          >
             <View style={styles.settingContent}>
               <SimpleLineIcons name="logout" size={24} color="#b6b6b7" />
               <Text style={styles.settingText}>Logout</Text>
@@ -81,6 +96,16 @@ const Profile = () => {
           </TouchableOpacity>
         </View>
       </View>
+      <ConfirmModal
+        visible={showModal}
+        onConfirm={() => {
+          setShowModal(false);
+          handleLogout();
+        }}
+        onCancel={() => setShowModal(false)}
+        title="Logout Confirmation"
+        message="Are you sure you want to log out?"
+      />
     </StyledContainer>
   );
 };

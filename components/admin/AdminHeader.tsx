@@ -6,6 +6,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScaledSheet } from 'react-native-size-matters';
+import ConfirmModal from '../ConfirmModal';
 
 interface HeaderProps {
   responder?: boolean;
@@ -14,6 +15,8 @@ interface HeaderProps {
 
 const AdminHeader: React.FC<HeaderProps> = ({ responder = false, bg = '#e6e6e6' }) => {
   const [menuVisible, setMenuVisible] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+
   const slideAnimation = useRef(new Animated.Value(-350)).current;
   const router = useRouter();
   const currentPath = usePathname();
@@ -93,12 +96,22 @@ const AdminHeader: React.FC<HeaderProps> = ({ responder = false, bg = '#e6e6e6' 
           <Ionicons name="settings-sharp" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Settings</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={handleLogout}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => setShowModal(true)}>
           <Ionicons name="exit" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Logout</Text>
         </TouchableOpacity>
         <Text style={styles.burgerFooter}>All Rights Reserved @Siren2024</Text>
       </Animated.View>
+      <ConfirmModal
+        visible={showModal}
+        onConfirm={() => {
+          setShowModal(false);
+          handleLogout();
+        }}
+        onCancel={() => setShowModal(false)}
+        title="Logout Confirmation"
+        message="Are you sure you want to log out?"
+      />
     </View>
   );
 };
