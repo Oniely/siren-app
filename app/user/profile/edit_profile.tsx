@@ -3,28 +3,39 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  Pressable,
   TextInput,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScaledSheet } from 'react-native-size-matters';
-import { Ionicons, Octicons } from '@expo/vector-icons';
+import { Octicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { useRouter } from 'expo-router';
 import HeaderText from '@/components/app/HeaderText';
+import useUser from '@/hooks/useUser';
+import Loading from '@/components/app/Loading';
 
 export default function EditProfile() {
+  const { user, loading } = useUser();
+
   const [fname, setFname] = useState('');
   const [lname, setLname] = useState('');
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const router = useRouter();
+  useEffect(() => {
+    if (user) {
+      setFname(user.firstname || '');
+      setLname(user.lastname || '');
+      setEmail(user.email || '');
+      setUsername(user.username || '');
+    }
+  }, [user]);
+
+  if (loading) return <Loading />;
 
   return (
     <SafeAreaView style={styles.container}>

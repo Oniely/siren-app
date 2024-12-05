@@ -1,57 +1,22 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Header from '@/components/Header';
 import StyledContainer from '@/components/StyledContainer';
-import { getAuth } from 'firebase/auth';
-import { ref, get } from 'firebase/database';
-import { db, auth } from '@/firebaseConfig';
 import { Link, useRouter } from 'expo-router';
 import { ScaledSheet } from 'react-native-size-matters';
+import useUser from '@/hooks/useUser';
+import Loading from '@/components/app/Loading';
+
+MCI.loadFont();
+
 const Dashboard = () => {
   const router = useRouter();
+  const { user, loading } = useUser();
 
-  interface User {
-    email: string;
-    role: string;
-    username: string;
-  }
-  const [profileData, setProfileData] = useState<any>(null);
-
-  const fetchProfileData = async () => {
-    try {
-      const userId = auth.currentUser?.uid;
-      if (!userId) throw new Error('No user ID found');
-
-      const userRef = ref(db, `users/${userId}`);
-      const snapshot = await get(userRef);
-
-      if (snapshot.exists()) {
-        return snapshot.val();
-      } else {
-        console.log('No data available');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  };
-
-  useEffect(() => {
-    async function loadProfileData() {
-      try {
-        const data = await fetchProfileData();
-        setProfileData(data);
-      } catch (error) {
-        console.error('Error loading profile:', error);
-      }
-    }
-
-    loadProfileData();
-  }, []);
-  MCI.loadFont();
+  if (loading) return <Loading />;
 
   return (
     <StyledContainer>
@@ -60,7 +25,7 @@ const Dashboard = () => {
         <View style={styles.topBarLeft}>
           <Image source={require('@/assets/images/profile.png')} style={styles.topBarImage} />
           <View>
-            <Text style={styles.topBarName}>{profileData?.firstname + ' ' + profileData?.lastname}</Text>
+            <Text style={styles.topBarName}>{user?.firstname + ' ' + user?.lastname}</Text>
             <Link href={'/user/profile'}>
               <Text style={styles.topBarLink}>See profile</Text>
             </Link>

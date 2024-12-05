@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import React from 'react';
-import Loading from '@/components/app/Loading';
+import SplashScreenLoading from '@/components/app/SplashScreen';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -32,7 +32,7 @@ export default function RootLayout() {
   }, [loaded]);
 
   if (!loaded) {
-    return <Loading />;
+    return <SplashScreenLoading />;
   }
 
   console.log('Route:', pathname);

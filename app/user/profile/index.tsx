@@ -1,56 +1,20 @@
 import StyledContainer from '@/components/StyledContainer';
 import { useRouter, usePathname, Href } from 'expo-router';
 import React from 'react';
-import { useEffect, useState } from 'react';
-import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { get, ref } from 'firebase/database';
-// import { db } from '../firebase';
-import { ref, get } from 'firebase/database';
-import { db, auth } from '@/firebaseConfig';
 import { ScaledSheet } from 'react-native-size-matters';
-import Burger from '@/components/Burger';
 import { Feather, FontAwesome6, Ionicons, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons';
 import HeaderText from '@/components/app/HeaderText';
-
-const fetchProfileData = async () => {
-  try {
-    const userId = auth.currentUser?.uid;
-    if (!userId) throw new Error('No user ID found');
-
-    const userRef = ref(db, `users/${userId}`);
-    const snapshot = await get(userRef);
-
-    if (snapshot.exists()) {
-      return snapshot.val();
-    } else {
-      console.log('No data available');
-      return null;
-    }
-  } catch (error) {
-    console.error('Error fetching user data:', error);
-  }
-};
-
-interface User {
-  username: string;
-  email: string;
-  role: string;
-}
+import useUser from '@/hooks/useUser';
+import Loading from '@/components/app/Loading';
 
 const Profile = () => {
+  const { user, loading } = useUser();
   const router = useRouter();
-  const currentPath = usePathname();
-  const [user, setUser] = useState<User | null>(null);
-  const [profileData, setProfileData] = useState<any>(null);
 
-  const handlePress = (path: Href) => {
-    if (currentPath !== path) {
-      router.push(path);
-    }
-  };
+  if (loading) return <Loading />;
+
   const handleLogout = async () => {
     try {
       await AsyncStorage.clear();
@@ -59,37 +23,6 @@ const Profile = () => {
       console.error('Error during logout:', error);
     }
   };
-  useEffect(() => {
-    async function loadProfileData() {
-      try {
-        const data = await fetchProfileData();
-        setProfileData(data);
-      } catch (error) {
-        console.error('Error loading profile:', error);
-      }
-    }
-
-    loadProfileData();
-  }, []);
-
-  // useEffect(() => {
-  //   init();
-  // }, []);
-
-  // async function init() {
-  //   const userId = await AsyncStorage.getItem('userId');
-  //   console.log(userId);
-  //   const userRef = ref(db, `users/${userId}`);
-
-  //   const userSnapshot = await get(userRef);
-  //   console.log(userSnapshot.val());
-  //   const userVal = userSnapshot.val();
-  //   setUser({
-  //     role: userVal.role,
-  //     email: userVal.email,
-  //     username: userVal.username,
-  //   });
-  // }
 
   return (
     <StyledContainer bg="#faf9f6">
@@ -98,8 +31,8 @@ const Profile = () => {
         <View style={styles.profileInfo}>
           <Image source={require('@/assets/images/profile.png')} style={styles.profileImage} />
           <View style={styles.infoContainer}>
-            <Text style={styles.profileName}>{profileData?.firstname + ' ' + profileData?.lastname}</Text>
-            <Text style={styles.profileAt}>{profileData?.email}</Text>
+            <Text style={styles.profileName}>{user?.firstname + ' ' + user?.lastname}</Text>
+            <Text style={styles.profileAt}>{user?.email}</Text>
             <TouchableOpacity
               onPress={() => router.push('/user/profile/edit_profile')}
               style={styles.editButton}

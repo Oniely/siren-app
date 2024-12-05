@@ -1,22 +1,15 @@
-import { View, Image } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import React from 'react';
 import { ScaledSheet } from 'react-native-size-matters';
 
 export default function Loading() {
   return (
     <View style={styles.container}>
-      <Image source={require('@/assets/images/app/splash-siren.png')} style={styles.image} />
+      <ActivityIndicator size="large" />
     </View>
   );
 }
 
 const styles = ScaledSheet.create({
-  container: {
-    flex: 1,
-  },
-  image: {
-    resizeMode: 'cover',
-    width: '100%',
-    height: '100%',
-  },
+  container: { flex: 1, backgroundColor: '#faf9f6', justifyContent: 'center', alignItems: 'center' },
 });
