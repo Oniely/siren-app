@@ -140,7 +140,7 @@ const ResponderMap = () => {
                 const userData = userSnapshot.exists() ? userSnapshot.val() : { name: 'Unknown' };
                 resolve({
                   ...report,
-                  senderName: userData.username,
+                  senderName: userData.firstname + ' ' + userData.lastname,
                 });
               });
             });
@@ -288,6 +288,9 @@ const styles = StyleSheet.create({
   reportDescription: {
     fontSize: 18,
     color: '#b0adad',
+    flexWrap: 'wrap',
+    flex: 1,
+    width: '75%',
   },
   reportLocation: {
     fontSize: 18,

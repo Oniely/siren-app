@@ -5,13 +5,14 @@ import { ScaledSheet } from 'react-native-size-matters';
 import { AntDesign } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { db, auth } from '@/firebaseConfig';
-import { ref, get, onValue, push, set } from 'firebase/database';
+import { ref, get, onValue, push, set, update } from 'firebase/database';
 
 export default function ResponseReview() {
   const [defaultRating, setDefaultRating] = useState(0);
   const [maxRating, setMaxRating] = useState([1, 2, 3, 4, 5]);
   const [comment, setComment] = useState('');
   const [profileData, setProfileData] = useState<any>(null);
+  const [reportId, setReportId] = useState<string | null>(null);
 
   const starImgFilled = <AntDesign name="star" size={40} color="#1f86e8" />;
   const starImgCorner = <AntDesign name="staro" size={40} color="#1074d2" />;
@@ -20,19 +21,45 @@ export default function ResponseReview() {
     try {
       const userId = auth.currentUser?.uid;
       if (!userId) throw new Error('No user ID found');
-
+  
+      // Fetch user profile
       const userRef = ref(db, `users/${userId}`);
-      const snapshot = await get(userRef);
-
-      if (snapshot.exists()) {
-        setProfileData(snapshot.val());
+      const userSnapshot = await get(userRef);
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.val();
+        setProfileData(userData);
       } else {
         console.log('No profile data available');
       }
+  
+      // Fetch user's reports and filter
+      const reportsRef = ref(db, `reports`);
+      const reportsSnapshot = await get(reportsRef);
+  
+      if (reportsSnapshot.exists()) {
+        const reports = reportsSnapshot.val();
+        const userReports = Object.entries(reports).filter(
+          ([, reportData]: [string, any]) => reportData.senderId === userId && reportData.status === 'Accepted'
+        );
+  
+        if (userReports.length > 0) {
+          // Assuming you want to handle the first matching report
+          const [firstReportId] = userReports[0];
+          setReportId(firstReportId);
+        } else {
+          console.log('No accepted reports found for this user.');
+        }
+      } else {
+        console.log('No reports data available');
+      }
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      console.error('Error fetching profile or reports data:', error);
     }
   };
+  
+  useEffect(() => {
+    fetchProfileData();
+  }, []);
   function handleSubmit() {
     if (defaultRating === 0) {
       alert('Select a rating');
@@ -43,34 +70,36 @@ export default function ResponseReview() {
       alert('User not authenticated');
       return;
     }
-
-    const reportId = 'your-report-id';
+    if (!reportId) {
+      alert('No report ID found. Cannot submit feedback.');
+      return;
+    }
     const reportRef = ref(db, `reports/${reportId}`);
     const reviewRef = ref(db, 'review/');
     const newReviewRef = push(reviewRef); // Generate a new review ID
-    set(reportRef, { status: 'Reviewed' })
+    update(reportRef, { status: 'Reviewed' })
     .then(() => {
-      console.log('Report status updated to Reviewed.');
+        console.log('Report status updated to Reviewed.');
 
-      // Insert the review data
-      return set(newReviewRef, {
-        senderId: userId,
-        reportId: reportId,
-        rating: defaultRating,
-        comment: comment || '',
+        // Insert the review data
+        return set(newReviewRef, {
+          senderId: userId,
+          reportId: reportId,
+          rating: defaultRating,
+          comment: comment || '',
+        });
+      })
+      .then(() => {
+        console.log('Review submitted successfully!');
+        alert('Thank you for your feedback!');
+        setDefaultRating(0);
+        setComment('');
+      })
+      .catch((error) => {
+        console.error('Error submitting review:', error);
+        alert('Something went wrong. Please try again.');
       });
-    })
-    .then(() => {
-      console.log('Review submitted successfully!');
-      alert('Thank you for your feedback!');
-      setDefaultRating(0);
-      setComment('');
-    })
-    .catch((error) => {
-      console.error('Error submitting review:', error);
-      alert('Something went wrong. Please try again.');
-    });
-}
+  }
 
   const CustomRatingBar = () => {
     return (
@@ -85,9 +114,9 @@ export default function ResponseReview() {
       </View>
     );
   };
- useEffect(() => {
-    fetchProfileData();
- });
+  //  useEffect(() => {
+  //     fetchProfileData();
+  //  });
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.headText} numberOfLines={1}>
