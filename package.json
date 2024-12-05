@@ -52,8 +52,7 @@
     "react-native-vector-icons": "^10.2.0",
     "react-native-video": "^6.8.0",
     "react-native-web": "~0.19.10",
-    "react-native-webrtc": "^124.0.4",
-    "victory-native": "^41.12.2"
+    "react-native-webrtc": "^124.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

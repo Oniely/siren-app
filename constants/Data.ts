@@ -34,7 +34,6 @@ export const establishments = [
     type: 'Medical',
     coordinates: { latitude: 7.0943, longitude: 125.6132 },
   },
-
   // Disaster Relief Centers
   {
     id: 6,
@@ -90,14 +89,14 @@ export const establishments = [
     id: 13,
     name: 'Bacolod City Police Station 1',
     category: 'Police Station',
-    type: 'Emergency Service',
+    type: 'Disaster',
     coordinates: { latitude: 10.6843, longitude: 122.9555 }, // Corrected coordinates
   },
   {
     id: 14,
     name: 'Bacolod City Fire Station',
     category: 'Fire Station',
-    type: 'Emergency Service',
+    type: 'Disaster',
     coordinates: { latitude: 10.6839, longitude: 122.9575 }, // Corrected coordinates
   },
 
@@ -113,17 +112,16 @@ export const establishments = [
     id: 16,
     name: 'Kabankalan City Police Station',
     category: 'Police Station',
-    type: 'Emergency Service',
+    type: 'Disaster',
     coordinates: { latitude: 10.2379, longitude: 122.814 },
   },
   {
     id: 17,
     name: 'Kabankalan City Fire Station',
     category: 'Fire Station',
-    type: 'Emergency Service',
+    type: 'Disaster',
     coordinates: { latitude: 10.2382, longitude: 122.8125 },
   },
-
   // Cauayan Emergency Centers
   {
     id: 18,
@@ -136,14 +134,14 @@ export const establishments = [
     id: 19,
     name: 'Cauayan Municipal Police Station',
     category: 'Police Station',
-    type: 'Emergency Service',
+    type: 'Disaster',
     coordinates: { latitude: 10.5445, longitude: 122.9275 },
   },
   {
     id: 20,
     name: 'Cauayan Fire Station',
     category: 'Fire Station',
-    type: 'Emergency Service',
-    coordinates: { latitude: 10.5446, longitude: 122.9275 }, // Corrected coordinates
+    type: 'Disaster',
+    coordinates: { latitude: 10.5446, longitude: 122.9275 },
   },
 ];
