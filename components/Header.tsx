@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Image,
-  Modal,
   Pressable,
   StyleSheet,
   Text,
@@ -11,9 +10,7 @@ import {
   ScrollView,
 } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Href, usePathname, useRouter, useNavigation } from 'expo-router';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { Href, usePathname, useRouter } from 'expo-router';
 import Feather from '@expo/vector-icons/Feather';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Foundation from '@expo/vector-icons/Foundation';
@@ -22,22 +19,29 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
 import { ref, get } from 'firebase/database';
 import { db, auth } from '@/firebaseConfig';
+import useUser from '@/hooks/useUser';
+
 interface HeaderProps {
   responder?: boolean;
 }
-interface User {
-  email: string;
-  role: string;
-  username: string;
+
+interface Report {
+  reportId: string;
+  senderId: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  status: string;
 }
+
 const Header: React.FC<HeaderProps> = ({ responder = false }) => {
   const [menuVisible, setMenuVisible] = useState(false);
-  const navigation = useNavigation();
   const slideAnimation = useRef(new Animated.Value(-350)).current;
   const router = useRouter();
 
   const currentPath = usePathname();
-  const [profileData, setProfileData] = useState<any>(null);
+  const { user } = useUser();
   const [userReports, setUserReports] = useState<Report[]>([]);
 
   const handlePress = (path: Href) => {
@@ -55,58 +59,20 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
     }).start();
     setMenuVisible(!menuVisible);
   };
-  const fetchProfileData = async () => {
-    try {
-      const userId = auth.currentUser?.uid;
-      if (!userId) throw new Error('No user ID found');
 
-      const userRef = ref(db, `users/${userId}`);
-      const snapshot = await get(userRef);
-
-      if (snapshot.exists()) {
-        return snapshot.val();
-      } else {
-        console.log('No data available');
-        return null;
-      }
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  };
-
-  useEffect(() => {
-    async function loadProfileData() {
-      try {
-        const data = await fetchProfileData();
-        setProfileData(data);
-      } catch (error) {
-        console.error('Error loading profile:', error);
-      }
-    }
-
-    loadProfileData();
-  }, []);
-  interface Report {
-    reportId: string;
-    senderId: string;
-    location: {
-      latitude: number;
-      longitude: number;
-    };
-    status: string;
-  }
   const reportIds: string[] = userReports.map((report) => report.reportId);
   console.log(reportIds);
+
   const fetchUserReports = async (userId: string): Promise<Report[]> => {
     const reportsRef = ref(db, `reports`);
     const snapshot = await get(reportsRef);
     console.log(snapshot);
     if (snapshot.exists()) {
-      const reports: Record<string, Report> = snapshot.val(); // Explicitly type reports
+      const reports: Record<string, Report> = snapshot.val();
       const userReports = Object.entries(reports)
-        .filter(([key, value]) => value.senderId === userId) // Filter reports by userId
+        .filter(([key, value]) => value.senderId === userId)
         .map(([key, value]) => ({
-          reportId: key, // Add a custom field here
+          reportId: key,
           senderId: value.senderId,
           location: value.location,
           status: value.status,
@@ -117,6 +83,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
       return [];
     }
   };
+
   useEffect(() => {
     const loadUserReports = async () => {
       const userId = auth.currentUser?.uid;
@@ -129,7 +96,6 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
     loadUserReports();
   }, []);
 
-  // Extract reportIds as a string array
   const handleReportMapPress = async () => {
     try {
       const userId = auth.currentUser?.uid;
@@ -145,25 +111,13 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
       console.error('Error fetching reportId:', error);
     }
   };
+
   return (
     <View style={styles.container}>
       {/* Left Side: Burger Menu */}
       <Pressable onPress={toggleMenu}>
         <MaterialCommunityIcons name="menu" size={30} color="#8F8E8D" />
       </Pressable>
-      {/* Right Side: Notifications & Profile */}
-      {/* <View style={styles.rightSide}>
-        w<Pressable>
-          <MaterialCommunityIcons name="bell" size={32} color="#8F8E8D" />
-        </Pressable>
-        <Pressable onPress={() => router.push(responder ? '/responder' : '/user/profile')}>
-          {responder ? (
-            <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
-          ) : (
-            <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
-          )}
-        </Pressable>
-      </View> */}
 
       {/* Burger Menu Modal */}
       <Animated.View style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }]}>
@@ -180,7 +134,7 @@ const Header: React.FC<HeaderProps> = ({ responder = false }) => {
                 <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
               )}
             </Pressable>
-            <Text style={styles.burgerName}>{profileData?.firstname + ' ' + profileData?.lastname}</Text>
+            <Text style={styles.burgerName}>{user?.firstname + ' ' + user?.lastname}</Text>
           </View>
           <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/emergency_call')}>
             <Feather name="phone-call" size={35} color="#0c0c63" />

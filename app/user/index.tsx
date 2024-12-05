@@ -1,8 +1,6 @@
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
-
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
-
 import Header from '@/components/Header';
 import StyledContainer from '@/components/StyledContainer';
 import { Link, useRouter } from 'expo-router';
@@ -13,8 +11,8 @@ import Loading from '@/components/app/Loading';
 MCI.loadFont();
 
 const Dashboard = () => {
-  const router = useRouter();
   const { user, loading } = useUser();
+  const router = useRouter();
 
   if (loading) return <Loading />;
 
