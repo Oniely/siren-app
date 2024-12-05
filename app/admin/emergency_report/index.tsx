@@ -1,12 +1,55 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import React from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import AdminStyledContainer from '@/components/admin/AdminStyledContainer';
 import AdminHeader from '@/components/admin/AdminHeader';
 import { useRouter } from 'expo-router';
+import { get, ref } from 'firebase/database';
+import { db } from '@/firebaseConfig';
 
 export default function Reports() {
-  // use router to go to view report: router.push()
   const router = useRouter();
+  const [reports, setReports] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      try {
+        // Fetch all reports
+        const reportsRef = ref(db, 'reports');
+        const reportsSnapshot = await get(reportsRef);
+
+        if (reportsSnapshot.exists()) {
+          const reportsData = reportsSnapshot.val();
+          const reportsArray: any[] = [];
+
+          for (const key in reportsData) {
+            const report = reportsData[key];
+            const { senderId } = report;
+
+            // Fetch reporter details using senderId
+            const userRef = ref(db, `users/${senderId}`);
+            const userSnapshot = await get(userRef);
+
+            const reporter = userSnapshot.exists() ? userSnapshot.val() : null;
+
+            // Combine report and reporter details
+            reportsArray.push({
+              ...report,
+              reporterName: reporter?.firstname + ' ' + reporter?.lastname || 'Unknown',
+              reporterProfile: reporter?.profilePicture || null,
+            });
+          }
+
+          setReports(reportsArray);
+        } else {
+          console.log('No reports found');
+        }
+      } catch (error) {
+        console.error('Error fetching reports:', error);
+      }
+    };
+
+    fetchReports();
+  }, []);
 
   return (
     <AdminStyledContainer>
@@ -14,36 +57,35 @@ export default function Reports() {
       <View style={styles.header}>
         <Text style={styles.headerText}>Emergency Reports</Text>
       </View>
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.reportsContainer}>
-          <TouchableOpacity
-            style={styles.report}
-            onPress={() => router.push('/admin/emergency_report/report_detail')}
-          >
-            <Image source={require('@/assets/images/profile.png')} style={styles.reportImage} />
-            <View style={styles.reportDesc}>
-              <Text style={styles.descTime}>12:01AM</Text>
-              <Text style={styles.descName}>Lorem Ipsum</Text>
-              <Text numberOfLines={1} style={styles.descMessage}>
-                Lorem ipsum dolor sit amet consectetur
-              </Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.report}
-            onPress={() => router.push('/admin/emergency_report/report_detail')}
-          >
-            <Image source={require('@/assets/images/profile.png')} style={styles.reportImage} />
-            <View style={styles.reportDesc}>
-              <Text style={styles.descTime}>12:01AM</Text>
-              <Text style={styles.descName}>Lorem Ipsum</Text>
-              <Text numberOfLines={1} style={styles.descMessage}>
-                Lorem ipsum dolor sit amet consectetur
-              </Text>
-            </View>
-          </TouchableOpacity>
+          {reports.map((report, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.report}
+              onPress={() =>
+                router.navigate(`/admin/emergency_report/report_detail?${report.id}`)
+              }
+            >
+              <Image
+                source={
+                  report.reporterProfile
+                    ? { uri: report.reporterProfile }
+                    : require('@/assets/images/profile.png')
+                }
+                style={styles.reportImage}
+              />
+              <View style={styles.reportDesc}>
+                <Text style={styles.descTime}>{report.time}</Text>
+                <Text style={styles.descName}>{report.reporterName}</Text>
+                <Text numberOfLines={1} style={styles.descMessage}>
+                  {report.details}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
         </View>
-      </View>
+      </ScrollView>
     </AdminStyledContainer>
   );
 }

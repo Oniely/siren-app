@@ -22,7 +22,7 @@ export default function Analytics() {
 
           for (const key in reportsData) {
             const report = reportsData[key];
-            const category = report.category;
+            const category = report.category || 'Unknown'; // Handle undefined categories
 
             if (categoriesCount[category]) {
               categoriesCount[category]++;

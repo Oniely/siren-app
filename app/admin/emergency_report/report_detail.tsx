@@ -1,13 +1,56 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
-import React from 'react';
+import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import AdminStyledContainer from '@/components/admin/AdminStyledContainer';
 import AdminHeader from '@/components/admin/AdminHeader';
 import { useRouter } from 'expo-router';
+import { get, ref } from 'firebase/database';
+import { db } from '@/firebaseConfig';
 
 export default function ReportDetail() {
-  // use router to go to view report: router.push()
   const router = useRouter();
+  const { reportId } = router.params; // Fetch dynamic parameter from route
+  const [report, setReport] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const fetchReportDetails = async () => {
+      try {
+        if (reportId) {
+          const reportRef = ref(db, `reports/${reportId}`);
+          const reportSnapshot = await get(reportRef);
 
+          if (reportSnapshot.exists()) {
+            setReport(reportSnapshot.val());
+          } else {
+            console.error('Report not found');
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching report details:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReportDetails();
+  }, [reportId]);
+
+  if (loading) {
+    return (
+      <AdminStyledContainer>
+        <AdminHeader />
+        <Text style={{ textAlign: 'center', marginTop: 20 }}>Loading report details...</Text>
+      </AdminStyledContainer>
+    );
+  }
+
+  if (!report) {
+    return (
+      <AdminStyledContainer>
+        <AdminHeader />
+        <Text style={{ textAlign: 'center', marginTop: 20 }}>Report not found.</Text>
+      </AdminStyledContainer>
+    );
+  }
   return (
     <AdminStyledContainer>
       <AdminHeader />
@@ -17,35 +60,40 @@ export default function ReportDetail() {
       <ScrollView style={styles.container}>
         <View style={styles.reportsContainer}>
           <View style={styles.reportDesc}>
-            <Text style={styles.descName}>Lorem Ipsum</Text>
-            <Text style={styles.descMessage}>Lorem ipsum dolor sit amet, consec...</Text>
-            <Text style={styles.descTime}>12:01AM</Text>
+          <Text style={styles.descName}>{report.reporterName || 'Unknown Reporter'}</Text>
+          <Text style={styles.descMessage}>{report.details}</Text>
+          <Text style={styles.descTime}>{report.time}</Text>
           </View>
-          <Image source={require('@/assets/images/profile.png')} style={styles.reportImage} />
+          <Image
+            source={
+              report.reporterProfile
+                ? { uri: report.reporterProfile }
+                : require('@/assets/images/profile.png')
+            }
+            style={styles.reportImage}
+          />
         </View>
         <View style={styles.information}>
           <Text style={styles.infoText}>Information</Text>
           <View style={styles.infoContainer}>
             <View style={styles.info}>
               <Text style={styles.infoHeaderText}>Date:</Text>
-              <Text style={styles.infoDesc}>December 08, 2024</Text>
+              <Text style={styles.infoDesc}>{report.date || 'N/A'}</Text>
             </View>
             <View style={styles.info}>
               <Text style={styles.infoHeaderText}>Category:</Text>
-              <Text style={styles.infoDesc}>Fire and Explosion</Text>
+              <Text style={styles.infoDesc}>{report.category || 'N/A'}</Text>
             </View>
             <View style={styles.info}>
               <Text style={styles.infoHeaderText}>Location:</Text>
-              <Text style={styles.infoDesc}>Brgy Concepcion, San Pablo City</Text>
+              <Text style={styles.infoDesc}>{report.location || 'N/A'}</Text>
             </View>
             <View style={styles.mapContainer}>
               <Text>Map here</Text>
             </View>
             <View style={styles.infoColumn}>
               <Text style={[styles.infoHeaderText, styles.pad]}>Emergency Details</Text>
-              <Text style={styles.infoDesc}>
-                Hello this is a description please add the emergency details here
-              </Text>
+              <Text style={styles.infoDesc}>{report.details || 'No details available.'}</Text>
             </View>
             <View style={styles.infoColumn}>
               <Text style={[styles.infoHeaderText, styles.pad]}>Images</Text>
