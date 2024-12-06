@@ -1,5 +1,5 @@
 import { Href, usePathname, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import { KeyboardAvoidingView, Pressable, StyleSheet, TouchableOpacity, View, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 

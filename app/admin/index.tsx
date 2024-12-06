@@ -1,7 +1,7 @@
 import React from 'react';
-import { Image, Text, TouchableOpacity, View, FlatList } from 'react-native';
+import { Image, Text, TouchableOpacity, View, FlatList, ScrollView } from 'react-native';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useRouter } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import NewsAlertCard from '@/components/NewsAlertCard';
 import AdminStyledContainer from '@/components/admin/AdminStyledContainer';
 import AdminHeader from '@/components/admin/AdminHeader';
@@ -35,53 +35,59 @@ const AdminDashboard = () => {
   return (
     <AdminStyledContainer>
       <AdminHeader />
-      <View style={styles.container}>
-        <View style={styles.textWrapper}>
-          <Text style={styles.indexText}>Hi, Elizabeth</Text>
-          <Text style={styles.indexDesc}>Welcome to Siren Admin</Text>
-        </View>
-        <View style={styles.bigCircleContainer}>
-          <TouchableOpacity onPress={() => router.push('/admin/emergency_report')}>
-            <Image source={require('@/assets/images/footerSiren.png')} style={styles.panicButton} />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttonWrapper}>
-          <TouchableOpacity onPress={() => router.push('/admin/emergency_report')}>
-            <Image source={require('@/assets/images/reports.png')} style={styles.buttonAdmin} />
-            <Text style={styles.buttonText}>Reports</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/admin/manage_accounts')}>
-            <Image source={require('@/assets/images/people.png')} style={styles.buttonAdmin} />
-            <Text style={styles.buttonText}>Manage Account</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/admin/analytics')}>
-            <Image source={require('@/assets/images/analytics.png')} style={styles.buttonAdmin} />
-            <Text style={styles.buttonText}>Analytics</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.newsAlertWrapper}>
-          <Text style={styles.newsAlertTitle}>News Alert</Text>
-          <View style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <View style={styles.textWrapper}>
+            <Text style={styles.indexText}>Hi, Elizabeth</Text>
+            <Text style={styles.indexDesc}>Welcome to Siren Admin</Text>
+          </View>
+          <View style={styles.bigCircleContainer}>
+            <TouchableOpacity onPress={() => router.push('/admin/emergency_report')}>
+              <Image source={require('@/assets/images/footerSiren.png')} style={styles.panicButton} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.buttonWrapper}>
+            <TouchableOpacity onPress={() => router.push('/admin/emergency_report')}>
+              <Image source={require('@/assets/images/reports.png')} style={styles.buttonAdmin} />
+              <Text style={styles.buttonText}>Reports</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/admin/manage_accounts')}>
+              <Image source={require('@/assets/images/people.png')} style={styles.buttonAdmin} />
+              <Text style={styles.buttonText}>Manage Account</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/admin/analytics')}>
+              <Image source={require('@/assets/images/analytics.png')} style={styles.buttonAdmin} />
+              <Text style={styles.buttonText}>Analytics</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.newsAlertWrapper}>
+            <View style={styles.titleWrapper}>
+              <Text style={styles.newsAlertTitle}>News Alert</Text>
+              <Link href={'/'}>
+                <Text style={styles.viewAll}>View All</Text>
+              </Link>
+            </View>
             <View style={styles.newsAlertContainer}>
-              <View style={styles.nearbyAccidents}>
-                <FlatList
-                  data={nearbyAccidents}
-                  renderItem={({ item }) => (
-                    <NewsAlertCard
-                      title={item.title}
-                      dateString={item.dateString}
-                      timeAgo={item.timeAgo}
-                      viewString={item.viewsString}
-                      detailsString={item.detailsString}
-                    />
-                  )}
-                  keyExtractor={(item) => item.id}
-                />
-              </View>
+              <FlatList
+                horizontal
+                snapToAlignment="center"
+                data={nearbyAccidents}
+                renderItem={({ item }) => (
+                  <NewsAlertCard
+                    title={item.title}
+                    dateString={item.dateString}
+                    timeAgo={item.timeAgo}
+                    viewString={item.viewsString}
+                    detailsString={item.detailsString}
+                  />
+                )}
+                keyExtractor={(item) => item.id}
+                ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
+              />
             </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </AdminStyledContainer>
   );
 };
@@ -91,6 +97,7 @@ const styles = ScaledSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingBottom: '30@vs',
   },
   textWrapper: {
     alignItems: 'flex-start',
@@ -150,19 +157,27 @@ const styles = ScaledSheet.create({
   },
   newsAlertWrapper: {
     flex: 1,
-    width: '100%',
-    marginVertical: '10@s',
+    paddingVertical: '10@vs',
+    paddingHorizontal: '20@s',
+  },
+  titleWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   newsAlertTitle: {
-    fontSize: '30@s',
-    marginLeft: '30@s',
+    fontSize: '24@ms',
     color: '#aaacb0',
     fontFamily: 'BeVietnamProSemiBold',
   },
+  viewAll: {
+    color: '#a4a2a0',
+    fontSize: '14@ms',
+    fontFamily: 'BeVietnamProRegular',
+    textDecorationLine: 'underline',
+  },
   newsAlertContainer: {
-    flex: 1,
     marginTop: '10@s',
-    paddingHorizontal: '5%',
   },
   textInfo: {
     fontSize: '40@s',

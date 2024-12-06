@@ -28,7 +28,7 @@ const MapContent = () => {
         <Options path={warn} text={'Evacuation'} />
       </View>
       <View style={styles.mapContent} />
-      <Footer />
+      {/* <Footer /> */}
     </View>
   );
 };

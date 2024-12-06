@@ -100,7 +100,7 @@ const ResponderMap = () => {
         return;
       }
 
-      const responderId = auth.currentUser?.uid; 
+      const responderId = auth.currentUser?.uid;
       if (!responderId) {
         console.error('Responder ID is undefined. User might not be logged in.');
         return;
@@ -179,12 +179,12 @@ const ResponderMap = () => {
         )}
         {/* Markers for All Reports with Categories */}
         {reports.map(
-          (report) =>
+          (report, idx) =>
             report.location &&
             typeof report.location.latitude === 'number' &&
             typeof report.location.longitude === 'number' && (
               <Marker
-                key={report.id}
+                key={idx}
                 coordinate={report.location}
                 title={`Report ${report.id}`}
                 description={`Category: ${report.category}, Lat: ${report.location.latitude}, Lng: ${report.location.longitude}`}
