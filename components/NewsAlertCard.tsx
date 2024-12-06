@@ -6,10 +6,13 @@ import {
   Image,
   Pressable,
   ImageSourcePropType,
+  DimensionValue,
+  Dimensions,
 } from 'react-native';
 import React from 'react';
 
 import MI from 'react-native-vector-icons/MaterialIcons';
+import { scale } from 'react-native-size-matters';
 
 interface Props {
   title: string;
@@ -17,11 +20,20 @@ interface Props {
   timeAgo: string;
   viewString: string;
   detailsString: string;
+  width?: DimensionValue;
 }
+const screenWidth = Dimensions.get('window').width - scale(40);
 
-const newsAlertCard = ({ title, dateString, timeAgo, viewString, detailsString }: Props) => {
+const newsAlertCard = ({
+  title,
+  dateString,
+  timeAgo,
+  viewString,
+  detailsString,
+  width = screenWidth,
+}: Props) => {
   return (
-    <View style={styles.cardContainer}>
+    <View style={[styles.cardContainer, { width }]}>
       <Pressable style={styles.button}>
         <Text style={styles.seeMore}>View More ➤</Text>
         <View style={styles.accidentViews}>
@@ -48,7 +60,6 @@ const styles = StyleSheet.create({
     margin: 5,
     marginHorizontal: 0,
     backgroundColor: '#acb8c0',
-    width: 320,
   },
   cardMoreInfo: {
     gap: 5,

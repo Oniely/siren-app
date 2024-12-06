@@ -12,11 +12,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ConfirmModal from '../ConfirmModal';
 
-interface HeaderProps {
-  responder?: boolean;
-}
-
-const responderHeader: React.FC<HeaderProps> = ({ responder = false }) => {
+const ResponderHeader = () => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -55,15 +51,11 @@ const responderHeader: React.FC<HeaderProps> = ({ responder = false }) => {
       </Pressable>
       {/* Right Side: Notifications & Profile */}
       <View style={styles.rightSide}>
-        <Pressable>
+        <Pressable onPress={() => router.push('/responder/profile/notifications')}>
           <MaterialCommunityIcons name="bell" size={32} color="#016ea6" />
         </Pressable>
-        <Pressable>
-          {responder ? (
-            <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
-          ) : (
-            <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
-          )}
+        <Pressable onPress={() => router.push('/responder/profile')}>
+          <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
         </Pressable>
       </View>
 
@@ -74,12 +66,7 @@ const responderHeader: React.FC<HeaderProps> = ({ responder = false }) => {
         </TouchableOpacity>
         <View style={styles.burgerProfile}>
           <Pressable>
-            {responder ? (
-              <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
-            ) : (
-              // <Icon name="user-circle" size={70} color="#8F8E8D" />
-              <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
-            )}
+            <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
           </Pressable>
           <Text style={styles.burgerName}>Responders</Text>
         </View>
@@ -94,7 +81,7 @@ const responderHeader: React.FC<HeaderProps> = ({ responder = false }) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.sliderNavItem}
-          onPress={() => handlePress('/responder/notifications')}
+          onPress={() => handlePress('/responder/profile/notifications')}
         >
           <Ionicons name="notifications" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Notifications</Text>
@@ -123,7 +110,7 @@ const responderHeader: React.FC<HeaderProps> = ({ responder = false }) => {
   );
 };
 
-export default responderHeader;
+export default ResponderHeader;
 
 const styles = StyleSheet.create({
   container: {

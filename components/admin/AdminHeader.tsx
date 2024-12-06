@@ -190,7 +190,7 @@ const styles = ScaledSheet.create({
     left: 15,
     padding: 10,
     zIndex: 3,
-  },  
+  },
   closeButtonText: {
     alignItems: 'center',
     justifyContent: 'center',

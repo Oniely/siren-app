@@ -15,7 +15,6 @@ const Dashboard = () => {
   const router = useRouter();
 
   if (loading) return <Loading />;
-  if (error) router.push('/');
 
   return (
     <StyledContainer>

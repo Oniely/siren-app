@@ -10,8 +10,8 @@ export interface User {
   role: string;
 }
 
-const useUser = () => {
-  const [user, setUser] = useState<User | null>(null);
+const useResponder = () => {
+  const [responder, setResponder] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<any>(null);
 
@@ -32,12 +32,12 @@ const useUser = () => {
       try {
         const snapshot = await get(dbRef);
         if (snapshot.exists()) {
-          setUser(snapshot.val());
+          setResponder(snapshot.val());
         } else {
           setError('404');
         }
       } catch (err: any) {
-        console.error('Error fetching user profile:', err);
+        console.error('Error fetching responder profile:', err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -47,7 +47,7 @@ const useUser = () => {
     fetchUserProfile();
   }, []);
 
-  return { user, loading, error };
+  return { responder, loading, error };
 };
 
-export default useUser;
+export default useResponder;

@@ -23,7 +23,6 @@ import { User } from '@/hooks/useUser';
 
 interface HeaderProps {
   user: User;
-  responder?: boolean;
 }
 
 interface Report {
@@ -36,7 +35,7 @@ interface Report {
   status: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ user, responder = false }) => {
+const Header: React.FC<HeaderProps> = ({ user }) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const slideAnimation = useRef(new Animated.Value(-350)).current;
   const router = useRouter();
@@ -126,13 +125,8 @@ const Header: React.FC<HeaderProps> = ({ user, responder = false }) => {
             <AntDesign name="close" size={30} color="black" />
           </TouchableOpacity>
           <View style={styles.burgerProfile}>
-            <Pressable onPress={() => router.push(responder ? '/responder' : '/user/profile')}>
-              {responder ? (
-                <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
-              ) : (
-                // <Icon name="user-circle" size={70} color="#8F8E8D" />
-                <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
-              )}
+            <Pressable onPress={() => router.push('/user/profile')}>
+              <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
             </Pressable>
             <Text style={styles.burgerName}>{user?.firstname + ' ' + user?.lastname}</Text>
           </View>

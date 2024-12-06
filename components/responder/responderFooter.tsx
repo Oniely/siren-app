@@ -1,14 +1,11 @@
 import { Href, usePathname, useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React from 'react';
 import { KeyboardAvoidingView, Pressable, StyleSheet, TouchableOpacity, View, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import CentralButtonPopup from '../CentralButtonPopup';
 
-// THIS IS THE NAV FOOTER FOR ADMIN - CHANGE THE HREF's BELOW
-const responderFooter = () => {
+const ResponderFooter = () => {
   const router = useRouter();
   const currentPath = usePathname();
-  const [sirenClicked, setSirenClicked] = useState(false);
 
   const handlePress = (path: Href) => {
     if (currentPath !== path) {
@@ -21,53 +18,48 @@ const responderFooter = () => {
     <KeyboardAvoidingView style={styles.container}>
       <View style={styles.wrapper}>
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/admin') && styles.activeFooter]}
-          onPress={() => handlePress('/admin')}
-          disabled={currentPath === '/admin'}
+          style={[styles.iconContainer, isActive('/responder') && styles.activeFooter]}
+          onPress={() => handlePress('/responder')}
+          disabled={currentPath === '/responder'}
         >
-          <Icon name="home" size={40} color={isActive('/admin') ? '#3998ff' : '#e6e6e6'} />
+          <Icon name="home" size={40} color={isActive('/responder') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/admin/emergency_report') && styles.activeFooter]}
-          onPress={() => handlePress('/admin/emergency_report')}
-          disabled={currentPath === '/admin/emergency_report'}
+          style={[styles.iconContainer, isActive('/responder/') && styles.activeFooter]}
+          onPress={() => handlePress('/responder/')}
+          disabled={currentPath === '/responder/'}
         >
-          <Icon
-            name="contacts"
-            size={40}
-            color={isActive('/admin/emergency_report') ? '#3998ff' : '#e6e6e6'}
-          />
+          <Icon name="contacts" size={40} color={isActive('/responder/') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
 
         <View style={styles.halfCircleWrapper}>
           <View style={styles.halfCircle} />
-          <Pressable style={styles.iconContainer} onPress={() => setSirenClicked((prev) => !prev)}>
-            <CentralButtonPopup isVisible={sirenClicked} onClose={() => setSirenClicked(false)} />
-            <Image source={require('@/assets/images/footerSiren.png')} style={styles.panicButton} />
+          <Pressable style={styles.iconContainer} onPress={() => router.push('/responder/responderMap')}>
+            <Image source={require('@/assets/images/nav_map.png')} style={styles.panicButton} />
           </Pressable>
         </View>
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/change_me_for_active_tab') && styles.activeFooter]}
-          onPress={() => handlePress('/admin')}
-          disabled={currentPath === '/admin'}
+          style={[styles.iconContainer, isActive('/responder/') && styles.activeFooter]}
+          onPress={() => handlePress('/responder/')}
+          disabled={currentPath === '/responder/'}
         >
-          <Icon name="message-processing" size={40} color={isActive('/messages') ? '#3998ff' : '#e6e6e6'} />
+          <Icon name="message-processing" size={40} color={isActive('/responder/') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/change_me_for_active_tab') && styles.activeFooter]}
-          onPress={() => handlePress('/admin')}
-          disabled={currentPath === '/admin'}
+          style={[styles.iconContainer, isActive('/responder/profile') && styles.activeFooter]}
+          onPress={() => handlePress('/responder/profile')}
+          disabled={currentPath === '/responder/profile'}
         >
-          <Icon name="account" size={40} color={isActive('/profile') ? '#3998ff' : '#e6e6e6'} />
+          <Icon name="account" size={40} color={isActive('/responder/profile') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
 };
 
-export default responderFooter;
+export default ResponderFooter;
 
 const styles = StyleSheet.create({
   container: {
@@ -100,10 +92,11 @@ const styles = StyleSheet.create({
     paddingTop: 4,
   },
   panicButton: {
-    resizeMode: 'center',
-    height: '100%',
-    width: '100%',
+    resizeMode: 'contain',
+    height: 60,
+    width: 60,
     marginHorizontal: 'auto',
+    marginBottom: 10,
   },
   halfCircleWrapper: {
     position: 'relative',
@@ -112,11 +105,11 @@ const styles = StyleSheet.create({
   },
   halfCircle: {
     position: 'absolute',
-    top: -45,
-    width: 80,
+    top: -30,
+    width: 75,
     height: 35,
     backgroundColor: '#ffffff',
-    borderTopLeftRadius: 40,
-    borderTopRightRadius: 40,
+    borderTopLeftRadius: 60,
+    borderTopRightRadius: 60,
   },
 });

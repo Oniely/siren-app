@@ -2,7 +2,6 @@ import * as Location from 'expo-location';
 import React, { useEffect, useState } from 'react';
 import { Alert, Dimensions, PermissionsAndroid, Platform, StyleSheet, Text, View } from 'react-native';
 import MapView, { Callout, Marker } from 'react-native-maps';
-
 import MapContent from '@/components/map/MapContent';
 import { useRouter } from 'expo-router';
 import Loading from '@/components/app/Loading';
