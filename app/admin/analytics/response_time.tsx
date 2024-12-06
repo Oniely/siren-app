@@ -3,12 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { scale, ScaledSheet } from 'react-native-size-matters';
 import AdminStyledContainer from '@/components/admin/AdminStyledContainer';
 import AdminHeader from '@/components/admin/AdminHeader';
-import { BarChart } from 'react-native-gifted-charts';
+import { LineChart } from 'react-native-gifted-charts';
 import { get, ref } from 'firebase/database';
 import { db } from '@/firebaseConfig';
 import { useRouter } from 'expo-router';
 
-export default function Analytics() {
+// NEED REAL DATA
+export default function ResponseAnalytics() {
   const [reports, setReports] = useState<any>(null);
   const router = useRouter();
 
@@ -63,29 +64,21 @@ export default function Analytics() {
             </Text>
           </View>
           <View style={styles.buttonContainer}>
-            <TouchableOpacity activeOpacity={0.95}>
-              <Text style={[styles.button, styles.active]}>Incident Type</Text>
+            <TouchableOpacity onPress={() => router.push('/admin/analytics')} activeOpacity={0.7}>
+              <Text style={styles.button}>Incident Type</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => router.push('/admin/analytics/response_time')}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.button}>Average Response</Text>
+            <TouchableOpacity activeOpacity={0.95}>
+              <Text style={[styles.button, styles.active]}>Average Response</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.chartContainer}>
-            <Text style={styles.chartHeaderText}>Incident Type Analysis</Text>
-            <BarChart
+            <Text style={styles.chartHeaderText}>Average Response Time</Text>
+            <LineChart
               data={reports || []}
-              autoShiftLabels
               backgroundColor="#fcfcfd"
-              barWidth={40}
               dashGap={0}
               height={scale(200)}
               width={scale(290)}
-              minHeight={3}
-              barBorderTopLeftRadius={6}
-              barBorderTopRightRadius={6}
               noOfSections={5}
               yAxisThickness={0}
               yAxisTextStyle={{ fontSize: 10, color: 'gray' }}
@@ -191,7 +184,6 @@ const styles = ScaledSheet.create({
     marginLeft: '10@s',
     marginBottom: '10@s',
   },
-  barChart: {},
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
