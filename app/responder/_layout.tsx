@@ -14,6 +14,8 @@ export default function ResponderLayout() {
       <Stack.Screen name="responderMap" />
       <Stack.Screen name="settings" />
       <Stack.Screen name="profile" />
+      <Stack.Screen name="messages" />
+      <Stack.Screen name="contacts" />
     </Stack>
   );
 }

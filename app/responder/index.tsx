@@ -3,14 +3,17 @@ import { Image, Text, TouchableOpacity, View, FlatList, ScrollView } from 'react
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Link, useRouter } from 'expo-router';
 import NewsAlertCard from '@/components/NewsAlertCard';
-import ResponderStyledContainer from '@/components/responder/responderStyledContainer';
-import ResponderHeader from '@/components/responder/responderHeader';
+import ResponderStyledContainer from '@/components/responder/ResponderStyledContainer';
+import ResponderHeader from '@/components/responder/ResponderHeader';
 import { ScaledSheet } from 'react-native-size-matters';
+import { getAuth } from 'firebase/auth';
 
 MCI.loadFont();
 
 const ResponderDashboard = () => {
+  const user = getAuth().currentUser;
   const router = useRouter();
+
   const nearbyAccidents = [
     {
       id: '1',
@@ -32,13 +35,15 @@ const ResponderDashboard = () => {
     },
   ];
 
+  // if (loading) return <Loading />;
+
   return (
     <ResponderStyledContainer>
-      <ResponderHeader />
+      <ResponderHeader user={user!} />
       <ScrollView style={{ flex: 1 }}>
         <View style={styles.container}>
           <View style={styles.textWrapper}>
-            <Text style={styles.indexText}>Hi, Elizabeth</Text>
+            <Text style={styles.indexText}>Hi, {user?.displayName || 'Elizabeth'}</Text>
             <Text style={styles.indexDesc}>Welcome to Siren Responder</Text>
           </View>
           <View style={styles.bigCircleContainer}>
@@ -47,7 +52,7 @@ const ResponderDashboard = () => {
             </TouchableOpacity>
           </View>
           <View style={styles.buttonWrapper}>
-            <TouchableOpacity onPress={() => router.push('/responder')}>
+            <TouchableOpacity onPress={() => router.push('/responder/contacts')}>
               <Image source={require('@/assets/images/call-logo-admin.png')} style={styles.buttonAdmin} />
               <Text style={styles.buttonText}>Emergency Call</Text>
             </TouchableOpacity>
@@ -55,7 +60,7 @@ const ResponderDashboard = () => {
               <Image source={require('@/assets/images/view-logo.png')} style={styles.buttonAdmin} />
               <Text style={styles.buttonText}>View Reports</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => router.push('/responder')}>
+            <TouchableOpacity onPress={() => router.push('/responder/messages')}>
               <Image source={require('@/assets/images/message-logo.png')} style={styles.buttonAdmin} />
               <Text style={styles.buttonText}>Emergency Text</Text>
             </TouchableOpacity>

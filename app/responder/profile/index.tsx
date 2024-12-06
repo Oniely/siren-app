@@ -13,18 +13,16 @@ import {
 import HeaderText from '@/components/app/HeaderText';
 import Loading from '@/components/app/Loading';
 import ConfirmModal from '@/components/ConfirmModal';
-import useResponder from '@/hooks/useResponder';
-import ResponderStyledContainer from '@/components/responder/responderStyledContainer';
+import ResponderStyledContainer from '@/components/responder/ResponderStyledContainer';
+import { getAuth } from 'firebase/auth';
 
 MCI.loadFont();
 
 const Profile = () => {
-  const { responder, loading, error } = useResponder();
+  const user = getAuth().currentUser;
   const router = useRouter();
 
   const [showModal, setShowModal] = useState(false);
-
-  if (loading) return <Loading />;
 
   const handleLogout = async () => {
     try {
@@ -40,10 +38,13 @@ const Profile = () => {
       <View style={styles.container}>
         <HeaderText text="Your Profile" />
         <View style={styles.profileInfo}>
-          <Image source={require('@/assets/images/profile.png')} style={styles.profileImage} />
+          <Image
+            source={user?.photoURL ? { uri: user.photoURL } : require('@/assets/images/profile.png')}
+            style={styles.profileImage}
+          />
           <View style={styles.infoContainer}>
-            <Text style={styles.profileName}>{responder?.firstname + ' ' + responder?.lastname}</Text>
-            <Text style={styles.profileAt}>{responder?.email}</Text>
+            <Text style={styles.profileName}>{user?.displayName}</Text>
+            <Text style={styles.profileAt}>{user?.email}</Text>
             <TouchableOpacity
               onPress={() => router.push('/responder/profile/edit_profile')}
               style={styles.editButton}

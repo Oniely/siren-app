@@ -6,10 +6,12 @@ export interface User {
   username: string;
   firstname: string;
   lastname: string;
+  profileImage: string;
   email: string;
   role: string;
 }
 
+// hook for User & Responder since they share the same database document structure
 const useUser = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -21,7 +23,7 @@ const useUser = () => {
       const currentUser = auth.currentUser;
 
       if (!currentUser) {
-        setError('404');
+        setError('User is not logged in');
         setLoading(false);
         return;
       }
@@ -34,7 +36,7 @@ const useUser = () => {
         if (snapshot.exists()) {
           setUser(snapshot.val());
         } else {
-          setError('404');
+          setError('User not found');
         }
       } catch (err: any) {
         console.error('Error fetching user profile:', err);

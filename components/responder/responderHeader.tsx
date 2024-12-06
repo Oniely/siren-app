@@ -1,18 +1,16 @@
 import React, { useState, useRef } from 'react';
-import { Image, Modal, Pressable, StyleSheet, Text, View, Animated, TouchableOpacity } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View, Animated, TouchableOpacity } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Href, usePathname, useRouter, useNavigation } from 'expo-router';
-import { FontAwesome5 } from '@expo/vector-icons';
+import { Href, usePathname, useRouter } from 'expo-router';
 import Feather from '@expo/vector-icons/Feather';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import Foundation from '@expo/vector-icons/Foundation';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ConfirmModal from '../ConfirmModal';
+import { FontAwesome } from '@expo/vector-icons';
+import { User } from 'firebase/auth';
 
-const ResponderHeader = () => {
+const ResponderHeader = ({ user }: { user: User }) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -55,7 +53,10 @@ const ResponderHeader = () => {
           <MaterialCommunityIcons name="bell" size={32} color="#016ea6" />
         </Pressable>
         <Pressable onPress={() => router.push('/responder/profile')}>
-          <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
+          <Image
+            source={user?.photoURL ? { uri: user.photoURL } : require('@/assets/images/profile-logo.png')}
+            style={styles.police}
+          />
         </Pressable>
       </View>
 
@@ -65,19 +66,26 @@ const ResponderHeader = () => {
           <AntDesign name="close" size={30} color="black" />
         </TouchableOpacity>
         <View style={styles.burgerProfile}>
-          <Pressable>
-            <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
+          <Pressable onPress={() => router.push('/responder/profile')}>
+            <Image
+              source={user?.photoURL ? { uri: user.photoURL } : require('@/assets/images/profile-logo.png')}
+              style={styles.sliderNavImage}
+            />
           </Pressable>
-          <Text style={styles.burgerName}>Responders</Text>
+          <Text style={styles.burgerName}>{user.displayName}</Text>
         </View>
 
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/responder')}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/responder/contacts')}>
           <Feather name="phone-call" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Emergency Call</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/responder/messages')}>
+          <FontAwesome name="send" size={35} color="#0c0c63" />
+          <Text style={styles.sliderNavItemText}>Emergency Text</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/responder/responderMap')}>
           <Ionicons name="eye-sharp" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>View Alert</Text>
+          <Text style={styles.sliderNavItemText}>View Alerts</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.sliderNavItem}
@@ -177,7 +185,12 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
     fontFamily: 'BeVietnamProThin',
   },
-  sliderNavImage: {},
+  sliderNavImage: {
+    resizeMode: 'cover',
+    width: 125,
+    height: 125,
+    borderRadius: 999,
+  },
   closeButton: {
     position: 'absolute',
     top: 10,

@@ -63,7 +63,7 @@ const ViewAlert = () => {
   ];
 
   return (
-    <Container bg="#e6e6e6" style={{ paddingTop: 25 }}>
+    <Container bg="#e6e6e6">
       <HeaderText text="View Alerts" />
 
       <View style={styles.container}>

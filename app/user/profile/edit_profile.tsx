@@ -20,10 +20,13 @@ import Loading from '@/components/app/Loading';
 import { getAuth, updateEmail, updatePassword, updateProfile } from 'firebase/auth';
 import { getDatabase, ref, update } from 'firebase/database';
 import LoadingOverlay from '@/components/app/LoadingOverlay';
+import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 
 export default function EditProfile() {
   const { user, loading } = useUser();
+  const currentUser = getAuth().currentUser;
 
+  const [profileImage, setProfileImage] = useState<any>(currentUser?.photoURL || '');
   const [fname, setFname] = useState('');
   const [lname, setLname] = useState('');
   const [email, setEmail] = useState('');
@@ -59,6 +62,7 @@ export default function EditProfile() {
       // Update display name in Firebase Authentication
       await updateProfile(auth?.currentUser!, {
         displayName: `${fname} ${lname}`,
+        photoURL: profileImage,
       });
 
       // Update email if changed
@@ -78,6 +82,7 @@ export default function EditProfile() {
         lastname: lname,
         email: email,
         username: username,
+        profileImage: profileImage,
       });
 
       alert('Profile updated successfully!');
@@ -88,6 +93,19 @@ export default function EditProfile() {
       setUpdateLoading(false);
     }
   }
+
+  const pickImage = async () => {
+    let result = await launchImageLibraryAsync({
+      mediaTypes: MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setProfileImage(result.assets[0].uri);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -102,8 +120,11 @@ export default function EditProfile() {
           <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
             <View style={styles.imageContainer}>
               <View>
-                <Image source={require('@/assets/images/profile.png')} style={styles.image} />
-                <TouchableOpacity style={styles.editImageBtn}>
+                <Image
+                  source={profileImage ? { uri: profileImage } : require('@/assets/images/profile.png')}
+                  style={styles.image}
+                />
+                <TouchableOpacity style={styles.editImageBtn} onPress={pickImage}>
                   <Octicons name="upload" size={16} color="black" />
                 </TouchableOpacity>
               </View>
@@ -203,6 +224,7 @@ const styles = ScaledSheet.create({
     resizeMode: 'cover',
     width: '120@s',
     height: '120@s',
+    borderRadius: 999,
   },
   editImageBtn: {
     position: 'absolute',

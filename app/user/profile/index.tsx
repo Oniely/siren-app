@@ -15,16 +15,15 @@ import HeaderText from '@/components/app/HeaderText';
 import useUser from '@/hooks/useUser';
 import Loading from '@/components/app/Loading';
 import ConfirmModal from '@/components/ConfirmModal';
+import { getAuth } from 'firebase/auth';
 
 MCI.loadFont();
 
 const Profile = () => {
-  const { user, loading } = useUser();
+  const user = getAuth().currentUser;
   const router = useRouter();
 
   const [showModal, setShowModal] = useState(false);
-
-  if (loading) return <Loading />;
 
   const handleLogout = async () => {
     try {
@@ -40,9 +39,12 @@ const Profile = () => {
       <View style={styles.container}>
         <HeaderText text="Your Profile" />
         <View style={styles.profileInfo}>
-          <Image source={require('@/assets/images/profile.png')} style={styles.profileImage} />
+          <Image
+            source={user?.photoURL ? { uri: user.photoURL } : require('@/assets/images/profile.png')}
+            style={styles.profileImage}
+          />
           <View style={styles.infoContainer}>
-            <Text style={styles.profileName}>{user?.firstname + ' ' + user?.lastname}</Text>
+            <Text style={styles.profileName}>{user?.displayName}</Text>
             <Text style={styles.profileAt}>{user?.email}</Text>
             <TouchableOpacity
               onPress={() => router.push('/user/profile/edit_profile')}

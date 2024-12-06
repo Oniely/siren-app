@@ -5,25 +5,25 @@ import Header from '@/components/Header';
 import StyledContainer from '@/components/StyledContainer';
 import { Link, useRouter } from 'expo-router';
 import { ScaledSheet } from 'react-native-size-matters';
-import useUser from '@/hooks/useUser';
-import Loading from '@/components/app/Loading';
+import { getAuth } from 'firebase/auth';
 
 MCI.loadFont();
 
 const Dashboard = () => {
-  const { user, loading, error } = useUser();
+  const user = getAuth().currentUser;
   const router = useRouter();
-
-  if (loading) return <Loading />;
 
   return (
     <StyledContainer>
       <Header user={user!} />
       <View style={styles.indexTopBar}>
         <View style={styles.topBarLeft}>
-          <Image source={require('@/assets/images/profile.png')} style={styles.topBarImage} />
+          <Image
+            source={user?.photoURL ? { uri: user.photoURL } : require('@/assets/images/profile.png')}
+            style={styles.topBarImage}
+          />
           <View>
-            <Text style={styles.topBarName}>{user?.firstname + ' ' + user?.lastname}</Text>
+            <Text style={styles.topBarName}>{user?.displayName}</Text>
             <Link href={'/user/profile'}>
               <Text style={styles.topBarLink}>See profile</Text>
             </Link>

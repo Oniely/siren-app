@@ -26,11 +26,11 @@ const ResponderFooter = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/responder/') && styles.activeFooter]}
-          onPress={() => handlePress('/responder/')}
-          disabled={currentPath === '/responder/'}
+          style={[styles.iconContainer, isActive('/responder/contacts') && styles.activeFooter]}
+          onPress={() => handlePress('/responder/contacts')}
+          disabled={currentPath === '/responder/contacts'}
         >
-          <Icon name="contacts" size={40} color={isActive('/responder/') ? '#3998ff' : '#e6e6e6'} />
+          <Icon name="contacts" size={40} color={isActive('/responder/contacts') ? '#3998ff' : '#e6e6e6'} />
         </TouchableOpacity>
 
         <View style={styles.halfCircleWrapper}>
@@ -40,11 +40,15 @@ const ResponderFooter = () => {
           </Pressable>
         </View>
         <TouchableOpacity
-          style={[styles.iconContainer, isActive('/responder/') && styles.activeFooter]}
-          onPress={() => handlePress('/responder/')}
-          disabled={currentPath === '/responder/'}
+          style={[styles.iconContainer, isActive('/responder/messages') && styles.activeFooter]}
+          onPress={() => handlePress('/responder/messages')}
+          disabled={currentPath === '/responder/messages'}
         >
-          <Icon name="message-processing" size={40} color={isActive('/responder/') ? '#3998ff' : '#e6e6e6'} />
+          <Icon
+            name="message-processing"
+            size={40}
+            color={isActive('/responder/messages') ? '#3998ff' : '#e6e6e6'}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity

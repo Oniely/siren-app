@@ -19,7 +19,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
 import { ref, get } from 'firebase/database';
 import { db, auth } from '@/firebaseConfig';
-import { User } from '@/hooks/useUser';
+import { User } from 'firebase/auth';
 
 interface HeaderProps {
   user: User;
@@ -126,15 +126,18 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
           </TouchableOpacity>
           <View style={styles.burgerProfile}>
             <Pressable onPress={() => router.push('/user/profile')}>
-              <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
+              <Image
+                source={user?.photoURL ? { uri: user.photoURL } : require('@/assets/images/profile-logo.png')}
+                style={styles.sliderNavImage}
+              />
             </Pressable>
-            <Text style={styles.burgerName}>{user?.firstname + ' ' + user?.lastname}</Text>
+            <Text style={styles.burgerName}>{user.displayName}</Text>
           </View>
-          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/emergency_call')}>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/contacts')}>
             <Feather name="phone-call" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Emergency Call</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sliderNavItem}>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/messages')}>
             <FontAwesome name="send" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Emergency Text</Text>
           </TouchableOpacity>
@@ -245,7 +248,12 @@ const styles = StyleSheet.create({
     paddingLeft: 30,
     fontFamily: 'BeVietnamProThin',
   },
-  sliderNavImage: {},
+  sliderNavImage: {
+    resizeMode: 'cover',
+    width: 125,
+    height: 125,
+    borderRadius: 999,
+  },
   closeButton: {
     position: 'absolute',
     top: 10,
