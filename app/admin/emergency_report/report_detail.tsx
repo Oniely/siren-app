@@ -5,12 +5,15 @@ import AdminHeader from '@/components/admin/AdminHeader';
 import { useRouter } from 'expo-router';
 import { get, ref } from 'firebase/database';
 import { db } from '@/firebaseConfig';
+import MapView, { Marker } from 'react-native-maps';
 
 export default function ReportDetail() {
   const router = useRouter();
-  const { reportId } = router.params; // Fetch dynamic parameter from route
+  const { reportId } = router.params;
+
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchReportDetails = async () => {
       try {
@@ -60,9 +63,9 @@ export default function ReportDetail() {
       <ScrollView style={styles.container}>
         <View style={styles.reportsContainer}>
           <View style={styles.reportDesc}>
-          <Text style={styles.descName}>{report.reporterName || 'Unknown Reporter'}</Text>
-          <Text style={styles.descMessage}>{report.details}</Text>
-          <Text style={styles.descTime}>{report.time}</Text>
+            <Text style={styles.descName}>{report.reporterName || 'Unknown Reporter'}</Text>
+            <Text style={styles.descMessage}>{report.details}</Text>
+            <Text style={styles.descTime}>{report.time}</Text>
           </View>
           <Image
             source={
@@ -89,7 +92,23 @@ export default function ReportDetail() {
               <Text style={styles.infoDesc}>{report.location || 'N/A'}</Text>
             </View>
             <View style={styles.mapContainer}>
-              <Text>Map here</Text>
+              <MapView
+                style={{ flex: 1 }}
+                initialRegion={{
+                  latitude: 0, // add coordinates
+                  longitude: 0, // add coordinates
+                  latitudeDelta: 0.1,
+                  longitudeDelta: 0.00001,
+                }}
+              >
+                <Marker
+                  coordinate={{
+                    latitude: 0, // add coordinates
+                    longitude: 0, // add coordinates
+                  }}
+                  pinColor="red"
+                />
+              </MapView>
             </View>
             <View style={styles.infoColumn}>
               <Text style={[styles.infoHeaderText, styles.pad]}>Emergency Details</Text>

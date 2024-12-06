@@ -1,18 +1,72 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  StatusBar as STATUSBAR,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Platform,
+  Dimensions,
+} from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { db, auth } from '@/firebaseConfig';
-import { ref, onValue, update, onDisconnect } from 'firebase/database'; // Correctly import update function
+import { ref, onValue, update, onDisconnect } from 'firebase/database';
 import * as Location from 'expo-location';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import Entypo from '@expo/vector-icons/Entypo';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { Modalize } from 'react-native-modalize';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { ScaledSheet } from 'react-native-size-matters';
+import { FontAwesome6 } from '@expo/vector-icons';
+import EmergencyMarker from '@/components/map/EmergencyMarker';
+import { useRouter } from 'expo-router';
+import { formatDate } from '@/constants/Date';
+import { mapStyle } from '@/constants/Map';
+import { StatusBar } from 'expo-status-bar';
+import { LinearGradient } from 'expo-linear-gradient';
+
+interface Report {
+  reportId: string;
+  senderId: string;
+  senderName: string;
+  category: string;
+  details: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  createdAt: number;
+  timestamp: number;
+  status: string;
+}
+
+type LocationCoords = {
+  latitude: number;
+  longitude: number;
+};
 
 const ResponderMap = () => {
   const [responderLocation, setResponderLocation] = useState<any>(null);
   const [reports, setReports] = useState<any[]>([]);
-  const [selectedReport, setSelectedReport] = useState<any>(null);
+  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [responderId, setResponderId] = useState<string | null>(null);
+
+  const router = useRouter();
+  const modalizeRef = useRef(null);
+
+  const onOpen = () => {
+    // @ts-ignore
+    modalizeRef.current?.open();
+  };
+
+  const resetSelectedReport = () => setSelectedReport(null);
+  const handleMarkerPress = (report: any, event: any) => {
+    event.persist();
+    setSelectedReport(report);
+    onOpen();
+
+    console.log(report);
+  };
+
   useEffect(() => {
     const auth = getAuth();
 
@@ -20,11 +74,10 @@ const ResponderMap = () => {
       if (user) {
         const userRef = ref(db, `users/${user.uid}`);
 
-        // Fetch responder data from the users collection
         onValue(userRef, (snapshot) => {
           const userData = snapshot.val();
           if (userData && userData.role === 'responder') {
-            setResponderId(user.uid); // Save the UID for future updates
+            setResponderId(user.uid);
           } else {
             console.error('Logged-in user is not a responder.');
           }
@@ -36,45 +89,41 @@ const ResponderMap = () => {
 
     return () => unsubscribe();
   }, []);
+
   const confirmStatus = () => {
-    if (selectedReport && selectedReport.location && responderLocation && responderId) {
-      const reportRef = ref(db, `reports/${selectedReport.reportId}`);
-
-      update(reportRef, { status: 'Accepted' })
-        .then(() => {
-          console.log('Report accepted');
-
-          updateResponderLocation(responderId, responderLocation);
-          setSelectedReport(null); // Reset selected report
-        })
-        .catch((error: Error) => {
-          console.error('Error updating status:', error.message);
-        });
-    } else {
-      console.error('Selected report or location/responder ID is undefined');
+    if (!selectedReport || !responderLocation || !responderId) {
+      console.error('Invalid state for confirming status');
+      return;
     }
-  };
-  // Function to handle Decline button press
-  const declineStatus = () => {
-    if (selectedReport && selectedReport.location) {
-      const reportRef = ref(db, `reports/${selectedReport.reportId}`);
-      update(reportRef, {
-        status: 'Declined', // Update status to 'declined'
+    const reportRef = ref(db, `reports/${selectedReport.reportId}`);
+
+    update(reportRef, { status: 'Accepted' })
+      .then(() => {
+        console.log('Report accepted');
+        updateResponderLocation(responderId, responderLocation);
+        resetSelectedReport();
       })
-        .then(() => {
-          console.log('Report declined');
-          setSelectedReport(null); // Reset selected report after declining
-        })
-        .catch((error: Error) => {
-          // Explicitly type the error
-          console.error('Error updating status:', error.message);
-        });
+      .catch((error: Error) => {
+        console.error('Error updating status:', error.message);
+      });
+  };
+
+  const declineStatus = () => {
+    if (!selectedReport) {
+      console.error('No report selected');
+      return;
     }
+    const reportRef = ref(db, `reports/${selectedReport.reportId}`);
+    update(reportRef, { status: 'Declined' })
+      .then(() => {
+        console.log('Report declined');
+        resetSelectedReport();
+      })
+      .catch((error: Error) => {
+        console.error('Error updating status:', error.message);
+      });
   };
-  type LocationCoords = {
-    latitude: number;
-    longitude: number;
-  };
+
   async function updateResponderLocation(responderId: string, location: LocationCoords) {
     try {
       const responderRef = ref(db, `responders/${responderId}`);
@@ -84,7 +133,6 @@ const ResponderMap = () => {
         status: 'Active',
       });
 
-      // Handle disconnection to mark responder as inactive
       onDisconnect(responderRef).update({ status: 'Inactive' });
       console.log('Responder location and status updated successfully');
     } catch (error) {
@@ -97,7 +145,7 @@ const ResponderMap = () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         console.error('Permission to access location denied');
-        return;
+        router.back();
       }
 
       const responderId = auth.currentUser?.uid;
@@ -116,20 +164,16 @@ const ResponderMap = () => {
           const { latitude, longitude } = newLocation.coords;
           const locationCoords = { latitude, longitude };
           setResponderLocation(locationCoords);
-
-          updateResponderLocation(responderId, locationCoords); // Guaranteed to have a valid responderId here
+          updateResponderLocation(responderId, locationCoords);
         }
       );
 
       return () => locationSubscription?.remove();
     };
 
-    startResponderLocationTracking();
-
-    // Fetch all reports
     const fetchReportsWithSenderNames = async () => {
       const reportsRef = ref(db, 'reports');
-      const usersRef = ref(db, 'users');
+      // const usersRef = ref(db, 'users');
 
       onValue(reportsRef, (snapshot) => {
         if (snapshot.exists()) {
@@ -152,206 +196,383 @@ const ResponderMap = () => {
       });
     };
 
+    startResponderLocationTracking();
     fetchReportsWithSenderNames();
   }, []);
 
   return (
-    <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        region={{
-          latitude: responderLocation?.latitude || 12.8797,
-          longitude: responderLocation?.longitude || 121.774,
-          latitudeDelta: 0.1,
-          longitudeDelta: 0.00001,
-        }}
-      >
-        {/* Responder Marker */}
-        {responderLocation && (
-          <Marker
-            coordinate={{
-              latitude: responderLocation.latitude,
-              longitude: responderLocation.longitude,
-            }}
-            title="Responder"
-            pinColor="blue"
-          />
-        )}
-        {/* Markers for All Reports with Categories */}
-        {reports.map(
-          (report, idx) =>
-            report.location &&
-            typeof report.location.latitude === 'number' &&
-            typeof report.location.longitude === 'number' && (
-              <Marker
-                key={idx}
-                coordinate={report.location}
-                title={`Report ${report.id}`}
-                description={`Category: ${report.category}, Lat: ${report.location.latitude}, Lng: ${report.location.longitude}`}
-                pinColor="red"
-                onPress={() => setSelectedReport(report)}
-              />
-            )
-        )}
-      </MapView>
-
-      {/* Bottom Details Container */}
-      {selectedReport && (
-        <View style={styles.bottomContainer}>
-          <TouchableOpacity style={styles.closeButton} onPress={() => setSelectedReport(null)}>
-            <AntDesign name="close" size={35} color="black" />
-          </TouchableOpacity>
-          <View style={styles.upperContainer}>
-            <View style={styles.upperImage}>
-              <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <LinearGradient colors={['#e6e6e6', 'rgba(0, 0, 255, 0)']} style={styles.gradient} />
+        <View style={styles.headers}>
+          <View style={styles.indexTopBar}>
+            <View style={styles.topBarLeft}>
+              <Image source={require('@/assets/images/profile.png')} style={styles.topBarImage} />
+              <View>
+                <Text style={styles.topBarName}>RESPONDER</Text>
+                <Text style={styles.topBarLink}>0912309123</Text>
+              </View>
             </View>
-            <View style={styles.upperText}>
-              <Text style={styles.reportName}>{` ${selectedReport.reportId}`}</Text>
-              <Text style={styles.reportName}>{` ${selectedReport.senderName}`}</Text>
-              <Text style={styles.reportCategory}>{`Category: ${selectedReport.category}`}</Text>
-              <Text style={styles.reportDescription}>{`Details: ${selectedReport.details}`}</Text>
-            </View>
+            <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
+              <Image source={require('@/assets/images/close_btn.png')} style={styles.closeBtn} />
+            </TouchableOpacity>
           </View>
-          <View style={styles.centerContent}>
-            <Entypo name="location-pin" size={60} color="#343434" />
-            <Text style={styles.reportLocation}>
-              {`Lat: ${selectedReport.location.latitude}, Lng: ${selectedReport.location.longitude}`}
+          <View style={styles.bigTextContainer}>
+            <Text style={styles.bigText}>Emergency Response</Text>
+            <Text style={styles.smallText}>
+              Displays a live map view showing ongoing emergency responses for individuals in need of
+              assistance.
             </Text>
           </View>
-          <View style={styles.bottomContent}>
-            <TouchableOpacity style={styles.declineButton} onPress={declineStatus}>
-              <Text style={styles.declineButtonText}>Decline</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.acceptButton} onPress={confirmStatus}>
-              <Text style={styles.acceptButtonText}>Accept</Text>
-            </TouchableOpacity>
-          </View>
         </View>
-      )}
-    </View>
+        <MapView
+          style={styles.map}
+          customMapStyle={mapStyle}
+          initialRegion={{
+            latitude: responderLocation?.latitude || 12.8797,
+            longitude: responderLocation?.longitude || 121.774,
+            latitudeDelta: 0.1,
+            longitudeDelta: 0.00001,
+          }}
+        >
+          {/* Responder Marker */}
+          {responderLocation && (
+            <Marker
+              coordinate={{
+                latitude: responderLocation.latitude,
+                longitude: responderLocation.longitude,
+              }}
+              title="Responder"
+              pinColor="blue"
+            />
+          )}
+          {/* Markers for All Reports with Categories */}
+          {reports.map(
+            (report, idx) =>
+              report.location &&
+              typeof report.location.latitude === 'number' &&
+              typeof report.location.longitude === 'number' && (
+                <Marker
+                  key={idx}
+                  coordinate={report.location}
+                  title={`Report ${report.id}`}
+                  description={`Category: ${report.category}, Lat: ${report.location.latitude}, Lng: ${report.location.longitude}`}
+                  pinColor="red"
+                  onPress={(e) => handleMarkerPress(report, e)}
+                >
+                  {/* <EmergencyMarker /> */}
+                </Marker>
+              )
+          )}
+        </MapView>
+        <Modalize ref={modalizeRef} snapPoint={300} onClose={resetSelectedReport}>
+          <View style={styles.modal}>
+            <View style={[styles.flexRowCenter, styles.borderBottom, { paddingTop: 15 }]}>
+              <Image source={require('@/assets/images/profile.png')} />
+              <View>
+                <Text style={styles.profileName}>{selectedReport?.senderName || ''}</Text>
+                <Text style={styles.emergency}>Emergency Type: {selectedReport?.category || ''}</Text>
+              </View>
+            </View>
+            <View style={[styles.flexRowCenter, { paddingHorizontal: 5 }]}>
+              <FontAwesome6 name="location-dot" size={50} color="#343434" />
+              <Text style={styles.location}>
+                {selectedReport?.location.latitude}, {selectedReport?.location.longitude}
+              </Text>
+            </View>
+            <TouchableOpacity style={styles.borderBottom} onPress={confirmStatus}>
+              <Text style={styles.primaryButton}>Respond to Emergency</Text>
+            </TouchableOpacity>
+            <Text style={[styles.headerText, styles.borderBottom]}>Emergency Details</Text>
+          </View>
+          <View style={styles.bottomContainer}>
+            <View style={[styles.reportsContainer, styles.borderBottom]}>
+              <View style={styles.reportDesc}>
+                <Text style={styles.descName}>{selectedReport?.senderName}</Text>
+                <Text style={styles.descMessage} numberOfLines={2}>
+                  {selectedReport?.details}
+                </Text>
+                <Text style={styles.descTime}>12:01AM</Text>
+              </View>
+              <Image source={require('@/assets/images/profile.png')} style={styles.reportImage} />
+            </View>
+            <View style={styles.information}>
+              <Text style={styles.infoText}>Information</Text>
+              <View style={styles.infoContainer}>
+                <View style={styles.info}>
+                  <Text style={styles.infoHeaderText}>Date:</Text>
+                  <Text style={styles.infoDesc}>{formatDate(selectedReport?.createdAt!)}</Text>
+                </View>
+                <View style={styles.info}>
+                  <Text style={styles.infoHeaderText}>Category:</Text>
+                  <Text style={styles.infoDesc}>{selectedReport?.category}</Text>
+                </View>
+                <View style={styles.info}>
+                  <Text style={styles.infoHeaderText}>Location:</Text>
+                  <Text style={styles.infoDesc}>
+                    {selectedReport?.location.latitude}, {selectedReport?.location.longitude}
+                  </Text>
+                </View>
+                <View style={styles.mapContainer}>
+                  <MapView
+                    style={{ flex: 1 }}
+                    initialRegion={{
+                      latitude: selectedReport?.location.latitude!,
+                      longitude: selectedReport?.location.longitude!,
+                      latitudeDelta: 0.1,
+                      longitudeDelta: 0.00001,
+                    }}
+                  >
+                    <Marker
+                      coordinate={{
+                        latitude: selectedReport?.location.latitude!,
+                        longitude: selectedReport?.location.longitude!,
+                      }}
+                      pinColor="red"
+                    />
+                  </MapView>
+                </View>
+                <View style={styles.infoColumn}>
+                  <Text style={[styles.infoHeaderText, styles.pad]}>Emergency Details</Text>
+                  <Text style={styles.infoDesc}>{selectedReport?.details}</Text>
+                </View>
+                <View style={styles.infoColumn}>
+                  <Text style={[styles.infoHeaderText, styles.pad]}>Images</Text>
+                  <View style={styles.imageContainer}>
+                    <Image source={require('@/assets/images/policeman.png')} style={styles.image} />
+                    <Image source={require('@/assets/images/policeman.png')} style={styles.image} />
+                    <Image source={require('@/assets/images/policeman.png')} style={styles.image} />
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+        </Modalize>
+      </View>
+      <StatusBar style="dark" />
+    </GestureHandlerRootView>
   );
 };
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   container: {
     flex: 1,
   },
   map: {
     flex: 1,
   },
-  bottomContainer: {
-    justifyContent: 'center',
-    textAlign: 'center',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'white',
-    borderTopLeftRadius: 45,
-    borderTopRightRadius: 45,
-    padding: 20,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
+  modal: {
+    flex: 1,
+    padding: '20@ms',
+    borderRadius: '30@ms',
+    gap: '30@vs',
   },
-  upperContainer: {
+  flexRowCenter: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    marginHorizontal: '10%',
-    paddingVertical: '5%',
+    gap: '15@s',
+  },
+  borderBottom: {
+    paddingBottom: '30@vs',
     borderBottomWidth: 1,
+    borderBottomColor: '#f1f1f1',
+  },
+  profileName: {
+    fontSize: '16@ms',
+    fontFamily: 'BeVietnamProSemiBold',
+    color: '#343434',
+  },
+  emergency: {
+    fontSize: '14@ms',
+    fontFamily: 'BeVietnamProRegular',
+    color: '#b0adad',
+  },
+  location: {
+    fontSize: '15@ms',
+    fontFamily: 'BeVietnamProBold',
+    color: '#087bb8',
+  },
+  primaryButton: {
+    fontSize: '16@ms',
+    fontFamily: 'BeVietnamProMedium',
+    color: '#FFF',
+    backgroundColor: '#0c0c63',
+    textAlign: 'center',
+    paddingVertical: '15@s',
+    borderRadius: '10@ms',
+  },
+  headerText: {
+    fontSize: '24@ms',
+    fontFamily: 'BeVietnamProBold',
+  },
+  bottomContainer: {
+    flex: 1,
+    position: 'relative',
+    overflow: 'scroll',
+    paddingBottom: 50,
+  },
+  reportsContainer: {
+    padding: '20@s',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: '10@s',
+    paddingVertical: '20@s',
+    paddingHorizontal: '20@s',
+    paddingRight: '60@s',
+    overflow: 'hidden',
+  },
+  reportImage: {
+    resizeMode: 'cover',
+    width: '90@s',
+    height: '90@s',
+    borderRadius: 999,
+    borderWidth: 1,
     borderColor: '#343434',
   },
-  upperImage: {
-    width: 100,
-    height: 100,
-    marginRight: '5%',
+  reportDesc: {
+    flex: 1,
   },
-  upperText: {
-    textAlign: 'left',
+  descTime: {
+    fontSize: '14@ms',
+    fontFamily: 'BeVietnamProRegular',
+    color: '#646b79',
+  },
+  descName: {
+    fontSize: '16@ms',
+    fontFamily: 'BeVietnamProSemiBold',
+    color: '#016ea6',
+  },
+  descMessage: {
+    fontSize: '14@ms',
+    fontFamily: 'BeVietnamProMedium',
+    width: '95%',
+    color: '#b0adad',
+  },
+  information: {
+    flex: 1,
+    padding: '24@s',
+  },
+  infoText: {
+    fontSize: '24@ms',
+    fontFamily: 'BeVietnamProBold',
+    color: '#016ea6',
+  },
+  infoContainer: {
+    flex: 1,
+    gap: '5@s',
+    paddingVertical: '8@vs',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
   },
-  reportName: {
-    fontSize: 24,
-    color: '#000',
-    marginBottom: 5,
-  },
-  reportCategory: {
-    fontSize: 18,
-    color: '#b0adad',
-    marginBottom: 5,
-  },
-  reportDescription: {
-    fontSize: 18,
-    color: '#b0adad',
-    flexWrap: 'wrap',
-    flex: 1,
-    width: '75%',
-  },
-  reportLocation: {
-    fontSize: 18,
-    color: '#087bb8',
-    flexWrap: 'wrap',
-    flex: 1,
-  },
-  acceptButton: {
-    marginTop: 10,
-    alignSelf: 'center',
-    backgroundColor: '#0c0c63',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 20,
-    width: '30%',
-  },
-  declineButton: {
-    marginTop: 10,
-    alignSelf: 'center',
-    backgroundColor: '#f0f1f2',
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 20,
-    width: '30%',
-  },
-  centerContent: {
+  info: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    gap: '5@s',
+  },
+  infoColumn: {
+    width: '100%',
+  },
+  infoHeaderText: {
+    fontSize: '16@ms',
+    fontFamily: 'BeVietnamProSemiBold',
+    color: '#b0adad',
+  },
+  infoDesc: {
+    fontSize: '16@ms',
+    fontFamily: 'BeVietnamProMedium',
+    color: '#343434',
+  },
+  pad: {
+    paddingTop: '25@vs',
+  },
+  imageContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    paddingVertical: '30@vs',
+    gap: '5@s',
+    justifyContent: 'space-around',
     alignItems: 'center',
-    marginLeft: '15%',
-    paddingVertical: '5%',
+    paddingBottom: '220@vs', //change this if the space below of scroll view is too big/small
   },
-  bottomContent: {
+  image: {
+    resizeMode: 'cover',
+    width: '90@s',
+    height: '90@s',
+  },
+  mapContainer: {
+    width: '100%',
+    height: '30%',
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 10,
+    marginTop: '10@vs',
+  },
+  indexTopBar: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  topBarLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: '5@s',
+  },
+  topBarImage: {
+    width: 45,
+    height: 45,
+    borderWidth: 1,
+    borderColor: '#e6e6e6',
+    borderRadius: 999,
+  },
+  topBarName: {
+    fontFamily: 'BeVietnamProRegular',
+    fontSize: '12@s',
+    color: '#343434',
+  },
+  topBarLink: {
+    fontFamily: 'BeVietnamProRegular',
+    fontSize: '12@s',
+    color: '#3998ff',
+  },
+  headers: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
+    marginTop: Platform.OS == 'android' ? STATUSBAR.currentHeight : 0,
+    paddingHorizontal: '20@s',
+  },
+  closeBtn: {
+    width: '20@s',
+    height: '20@s',
+  },
+  bigTextContainer: {
+    padding: '10@s',
     justifyContent: 'center',
-    alignContent: 'center',
-    gap: 10,
-    marginBottom: 10,
+    alignItems: 'center',
+    gap: '5@vs',
+    marginTop: '5@vs',
   },
-  closeButton: {
-    alignSelf: 'flex-end',
+  bigText: {
+    fontSize: '20@ms',
+    fontFamily: 'BeVietnamProMedium',
+    color: '#0b0c63',
   },
-  ButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  acceptButtonText: {
-    color: '#f0f1f2',
-    fontWeight: 'bold',
+  smallText: {
+    fontSize: '12@ms',
+    fontFamily: 'BeVietnamProRegular',
+    color: '#231f20',
     textAlign: 'center',
   },
-  declineButtonText: {
-    color: '#0c0c63',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  police: {
-    resizeMode: 'stretch',
-    height: 100,
-    width: 100,
-    borderRadius: 20,
+  gradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
+    width: Dimensions.get('window').width,
+    height: '200@vs',
   },
 });
 
