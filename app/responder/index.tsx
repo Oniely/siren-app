@@ -3,8 +3,8 @@ import { Image, Text, TouchableOpacity, View, FlatList, ScrollView } from 'react
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Link, useRouter } from 'expo-router';
 import NewsAlertCard from '@/components/NewsAlertCard';
-import ResponderStyledContainer from '@/components/responder/ResponderStyledContainer';
-import ResponderHeader from '@/components/responder/ResponderHeader';
+import ResponderStyledContainer from '@/components/responder/responderStyledContainer';
+import ResponderHeader from '@/components/responder/responderHeader';
 import { ScaledSheet } from 'react-native-size-matters';
 
 MCI.loadFont();

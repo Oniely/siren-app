@@ -10,12 +10,22 @@ import {
   ImageBackground,
   Modal,
   Button,
+  Platform,
+  StatusBar as STATUSBAR,
+  Dimensions,
 } from 'react-native';
 import MapView, { Marker, LatLng } from 'react-native-maps';
 import { db, auth } from '@/firebaseConfig';
 import { ref, get, onValue } from 'firebase/database';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from 'expo-router';
+import { formatDate } from '@/constants/Date';
+import { mapStyle } from '@/constants/Map';
+import { StatusBar } from 'expo-status-bar';
+import { ScaledSheet } from 'react-native-size-matters';
+import { LinearGradient } from 'expo-linear-gradient';
+
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 interface Report {
   senderId: string;
@@ -52,75 +62,62 @@ const WaitingResponder: React.FC = () => {
     }
   };
 
-  const fetchUserReports = async () => {
-    try {
-      const userId = auth.currentUser?.uid;
-      if (!userId) throw new Error('No user ID found');
-
-      const reportsRef = ref(db, `reports`);
-      const snapshot = await get(reportsRef);
-
-      if (snapshot.exists()) {
-        const reportsData: Record<string, Report> = snapshot.val();
-        const matchingReports = Object.values(reportsData).filter(
-          (report) => report.senderId === userId && report.location
-        );
-        setReports(matchingReports);
-        if (matchingReports.length > 0) {
-          setReports(matchingReports);
-          setLocation(matchingReports[0]?.location || null);
-        } else {
-          console.error('No matching reports found for this user');
-        }
-      } else {
-        console.error('No reports found in database');
-      }
-    } catch (error) {
-      console.error('Error fetching reports:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (location && responderLocation) {
-      const coordinates: LatLng[] = [
-        { latitude: location.latitude, longitude: location.longitude },
-        { latitude: responderLocation.latitude, longitude: responderLocation.longitude },
-      ];
-
-      mapRef.current?.fitToCoordinates(coordinates, {
-        edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
-        animated: true,
-      });
-    }
-  }, [location, responderLocation]);
   useEffect(() => {
     fetchProfileData();
-    fetchUserReports();
+    const fetchUserReports = async () => {
+      try {
+        const userId = auth.currentUser?.uid;
+        if (!userId) throw new Error('No user ID found');
 
-    const responderId = 'responder-unique-id'; // Replace with actual responder ID
-    const responderRef = ref(db, `responders/${responderId}`);
+        const reportsRef = ref(db, `reports`);
+        const snapshot = await get(reportsRef);
 
-    const unsubscribe = onValue(responderRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        setResponderLocation({
-          latitude: data.latitude,
-          longitude: data.longitude,
-        });
+        if (snapshot.exists()) {
+          const reportsData: Record<string, Report> = snapshot.val();
+          const matchingReports = Object.values(reportsData).filter(
+            (report) => report.senderId === userId && report.location
+          );
+          setReports(matchingReports);
+          if (matchingReports.length > 0) {
+            const latestReport = matchingReports[0];
+            setLocation(latestReport?.location || null);
+
+            // Set up live responder tracking if status is "Accepted"
+            if (latestReport.status === 'Accepted') {
+              const responderId = 'responder-unique-id'; // Replace with actual responder ID
+              const responderRef = ref(db, `responders/${responderId}`);
+              const unsubscribeResponder = onValue(responderRef, (snapshot) => {
+                if (snapshot.exists()) {
+                  setModalVisible(true);
+                  const data = snapshot.val();
+                  setResponderLocation({
+                    latitude: data.latitude,
+                    longitude: data.longitude,
+                  });
+                }
+              });
+
+              // Clean up the listener
+              return () => {
+                unsubscribeResponder();
+              };
+            }
+          } else {
+            console.error('No matching reports found for this user');
+          }
+        } else {
+          console.error('No reports found in database');
+        }
+      } catch (error) {
+        console.error('Error fetching reports:', error);
+      } finally {
+        setLoading(false);
       }
-    });
+    };
+    fetchUserReports();
+  }, [reports]);
 
-    const timer = setTimeout(() => {
-      setModalVisible(true);
-    }, 5000); // 1 minute = 60000 ms
-
-    return () => {
-      clearTimeout(timer);
-      unsubscribe();
-    };  }, []);
-
+  // Ensure map only updates when both responder and report data are present
   useEffect(() => {
     if (reports.length > 0 && responderLocation) {
       const coordinates: LatLng[] = [
@@ -161,43 +158,31 @@ const WaitingResponder: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.leftSide}>
-          <Pressable>
-            <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
-          </Pressable>
-          <View style={styles.leftText}>
-            <Text style={styles.textNumber}>{profileData?.username || 'Unknown User'}</Text>
-            <Text style={styles.textName}>{profileData?.email || 'No Email Provided'}</Text>
+      <LinearGradient colors={['#e6e6e6', 'rgba(0, 0, 255, 0)']} style={styles.gradient} />
+      <View style={styles.headers}>
+        <View style={styles.indexTopBar}>
+          <View style={styles.topBarLeft}>
+            <Image source={require('@/assets/images/profile.png')} style={styles.topBarImage} />
+            <View>
+              <Text style={styles.topBarName}>{profileData?.username || 'Unknown User'}</Text>
+              <Text style={styles.topBarLink}>0912309123</Text>
+            </View>
           </View>
+          <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
+            <Image source={require('@/assets/images/close_btn.png')} style={styles.closeBtn} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
-          <AntDesign name="close" size={30} color="black" />
-        </TouchableOpacity>
+        <View style={styles.bigTextContainer}>
+          <Text style={styles.bigText}>
+            {currentReport.status === 'Reported' ? 'Waiting for Responder' : 'Responder on the Way'}
+          </Text>
+          <Text style={styles.smallText}>
+            {currentReport.status === 'Reported'
+              ? 'Your contact persons nearby, ambulance/police contacts will see your request for help.'
+              : 'A responder is en route to your location. Please stay safe.'}
+          </Text>
+        </View>
       </View>
-      <ImageBackground
-        source={require('@/assets/images/gradient_background.png')}
-        style={styles.mainText}
-        resizeMode="cover"
-      >
-        {currentReport ? (
-          <>
-            <Text style={styles.bigText}>
-              {currentReport.status === 'Reported' ? 'Waiting for Responder' : 'Responder on the Way'}
-            </Text>
-            <Text style={styles.smallText}>
-              {currentReport.status === 'Reported'
-                ? 'Your contact persons nearby, ambulance/police contacts will see your request for help.'
-                : 'A responder is en route to your location. Please stay safe.'}
-            </Text>
-          </>
-        ) : (
-          <>
-            <Text style={styles.bigText}>No Reports Found</Text>
-            <Text style={styles.smallText}>Please submit a report to get assistance.</Text>
-          </>
-        )}
-      </ImageBackground>
       <MapView
         ref={mapRef}
         style={styles.map}
@@ -246,14 +231,23 @@ const WaitingResponder: React.FC = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalText}>Is the emergency responded?</Text>
             <View style={styles.modalButtons}>
-              <Button title="Not yet" onPress={() => setModalVisible(false)} />
-              <Button
-                title="Review"
+              <Pressable
+                style={[styles.declineModalButtons, styles.modalButton]}
+                onPress={() => {
+                  setModalVisible(false);
+                }}
+              >
+                <Text style={styles.buttonTextNo}>Not Yet</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.confirmModalButtons, styles.modalButton]}
                 onPress={() => {
                   setModalVisible(false);
                   router.push('/user/response_review'); // Replace with the actual review page route
                 }}
-              />
+              >
+                <Text style={styles.buttonTextYes}>Review</Text>
+              </Pressable>
             </View>
           </View>
         </View>
@@ -314,17 +308,6 @@ const styles = StyleSheet.create({
     width: '100%',
     flex: 1,
   },
-  bigText: {
-    color: '#0b0c63',
-    fontSize: 40,
-    bottom: '15%',
-    textAlign: 'center',
-  },
-  smallText: {
-    bottom: '15%',
-    textAlign: 'center',
-    fontSize: 24,
-  },
   map: {
     flex: 1,
   },
@@ -341,9 +324,9 @@ const styles = StyleSheet.create({
 
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+    bottom: 10,
   },
   modalContent: {
     width: 300,
@@ -361,5 +344,100 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
+  },
+  indexTopBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  topBarLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  topBarImage: {
+    width: 45,
+    height: 45,
+    borderWidth: 1,
+    borderColor: '#e6e6e6',
+    borderRadius: 999,
+  },
+  topBarName: {
+    fontFamily: 'BeVietnamProRegular',
+    fontSize: 12,
+    color: '#343434',
+  },
+  topBarLink: {
+    fontFamily: 'BeVietnamProRegular',
+    fontSize: 12,
+    color: '#3998ff',
+  },
+  headers: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
+    marginTop: Platform.OS == 'android' ? STATUSBAR.currentHeight : 0,
+    paddingHorizontal: 20,
+  },
+  closeBtn: {
+    width: 20,
+    height: 20,
+  },
+  bigTextContainer: {
+    padding: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 5,
+    marginTop: 5,
+  },
+  bigText: {
+    fontSize: 20,
+    fontFamily: 'BeVietnamProMedium',
+    color: '#0b0c63',
+  },
+  smallText: {
+    fontSize: 12,
+    fontFamily: 'BeVietnamProRegular',
+    color: '#231f20',
+    textAlign: 'center',
+  },
+  gradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 1000,
+    width: Dimensions.get('window').width,
+    height: 200,
+  },
+  modalButton: {
+    paddingVertical: 10,
+    borderRadius: 5,
+    width: '45%',
+    alignItems: 'center',
+  },
+  confirmModalButtons: {
+    backgroundColor: '#fff', // Green for Yes
+    borderWidth: 1,
+    borderColor: '#0c0c63',
+  },
+  declineModalButtons: {
+    backgroundColor: '#fff', // Green for Yes
+    borderWidth: 1,
+    borderColor: '#F44336',
+  },
+  buttonTextYes: {
+    fontSize: 16,
+    fontFamily: 'BeVietnamProRegular',
+    color: '#0c0c63',
+    fontWeight: 'bold',
+  },
+  buttonTextNo: {
+    fontSize: 16,
+    fontFamily: 'BeVietnamProRegular',
+    color: '#F44336',
+    fontWeight: 'bold',
   },
 });
