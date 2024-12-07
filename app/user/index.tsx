@@ -1,17 +1,42 @@
-import React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import React, { useRef } from 'react';
+import { Animated, Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import Header from '@/components/Header';
 import StyledContainer from '@/components/StyledContainer';
 import { Link, useRouter } from 'expo-router';
-import { ScaledSheet } from 'react-native-size-matters';
+import { scale, ScaledSheet } from 'react-native-size-matters';
 import { getAuth } from 'firebase/auth';
+import NewsAlertCard from '@/components/NewsAlertCard';
 
 MCI.loadFont();
+
+const itemWidth = Dimensions.get('screen').width * 0.9;
 
 const Dashboard = () => {
   const user = getAuth().currentUser;
   const router = useRouter();
+  const scrollX = useRef(new Animated.Value(0)).current;
+
+  const nearbyAccidents = [
+    {
+      id: '1',
+      title: 'Truck and Jeep Accident',
+      dateString: '24 Feb 2024',
+      timeAgo: '2m ago',
+      viewsString: '560',
+      detailsString:
+        'On November 20, 2024, severe flooding struck the Northern Province after three days of torrential rain. Rivers overflowed, submerging villages and cutting off roads, leaving over 50,000 residents stranded. Emergency services reported 15 fatalities and over 200 injuries.',
+    },
+    {
+      id: '2',
+      title: 'Fire Alert',
+      dateString: '24 Feb 2024',
+      timeAgo: '25m ago',
+      viewsString: '568',
+      detailsString:
+        'On November 20, 2024, severe flooding struck the Northern Province after three days of torrential rain. Rivers overflowed, submerging villages and cutting off roads, leaving over 50,000 residents stranded. Emergency services reported 15 fatalities and over 200 injuries.',
+    },
+  ];
 
   return (
     <StyledContainer>
@@ -43,19 +68,69 @@ const Dashboard = () => {
           </View>
         </View>
       </View>
-      <View style={styles.container}>
-        <View style={styles.wrapper}>
-          <Text style={styles.indexText}>Emergency help needed?</Text>
-          <View style={styles.bigCircleContainer}>
-            <TouchableOpacity onPress={() => router.push('/user/emergency_call')}>
-              <Image source={require('@/assets/images/index_logo.png')} style={styles.panicButton} />
+      <ScrollView style={{ flex: 1, paddingBottom: 20 }}>
+        <View style={styles.container}>
+          <View style={styles.wrapper}>
+            <Text style={styles.indexText}>Emergency help needed?</Text>
+            <View style={styles.bigCircleContainer}>
+              <TouchableOpacity onPress={() => router.push('/user/emergency_call')}>
+                <Image source={require('@/assets/images/index_logo.png')} style={styles.panicButton} />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity onPress={() => router.push('/user/report_emergency')}>
+              <Text style={styles.button}>Report Emergency</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={() => router.push('/user/report_emergency')}>
-            <Text style={styles.button}>Report Emergency</Text>
-          </TouchableOpacity>
+          <View style={styles.newsAlertWrapper}>
+            <View style={styles.titleWrapper}>
+              <Text style={styles.newsAlertTitle}>News Alert</Text>
+              <Link href={'/news'}>
+                <Text style={styles.viewAll}>View All</Text>
+              </Link>
+            </View>
+            <View style={styles.newsAlertContainer}>
+              <Animated.FlatList
+                horizontal
+                snapToAlignment="center"
+                snapToInterval={itemWidth}
+                data={nearbyAccidents}
+                contentContainerStyle={{ paddingHorizontal: scale(20) }}
+                getItemLayout={(data, index) => ({
+                  length: itemWidth,
+                  offset: itemWidth * index,
+                  index,
+                })}
+                onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
+                  useNativeDriver: true,
+                })}
+                scrollEventThrottle={16}
+                renderItem={({ item, index }) => {
+                  const inputRange = [(index - 1) * itemWidth, index * itemWidth, (index + 1) * itemWidth];
+                  const scale = scrollX.interpolate({
+                    inputRange,
+                    outputRange: [0.9, 1, 0.9],
+                    extrapolate: 'clamp',
+                  });
+
+                  return (
+                    <Animated.View style={{ transform: [{ scale }] }}>
+                      <NewsAlertCard
+                        title={item.title}
+                        dateString={item.dateString}
+                        timeAgo={item.timeAgo}
+                        viewString={item.viewsString}
+                        detailsString={item.detailsString}
+                      />
+                    </Animated.View>
+                  );
+                }}
+                keyExtractor={(item) => item.id}
+                ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
+              />
+            </View>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </StyledContainer>
   );
 };
@@ -96,6 +171,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: '20@s',
+    paddingBottom: '10@vs',
   },
   topBarLeft: {
     flexDirection: 'row',
@@ -130,6 +206,41 @@ const styles = ScaledSheet.create({
     color: '#FFF',
     padding: '10@s',
     fontFamily: 'BeVietnamProMedium',
+  },
+  newsAlertWrapper: {
+    flex: 1,
+    paddingVertical: '40@vs',
+  },
+  titleWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: '20@s',
+  },
+  newsAlertTitle: {
+    fontSize: '24@ms',
+    color: '#aaacb0',
+    fontFamily: 'BeVietnamProSemiBold',
+  },
+  viewAll: {
+    color: '#a4a2a0',
+    fontSize: '14@ms',
+    fontFamily: 'BeVietnamProRegular',
+    textDecorationLine: 'underline',
+  },
+  newsAlertContainer: {
+    marginTop: '10@s',
+  },
+  textInfo: {
+    fontSize: '40@s',
+    color: '#0c0c63',
+    fontWeight: 'bold',
+    marginBottom: '10@s',
+    padding: '3@s',
+  },
+  nearbyAccidents: {
+    flex: 1,
+    marginTop: '10@s',
   },
 });
 

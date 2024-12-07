@@ -9,11 +9,10 @@ import { ScaledSheet } from 'react-native-size-matters';
 import ConfirmModal from '../ConfirmModal';
 
 interface HeaderProps {
-  responder?: boolean;
   bg?: string;
 }
 
-const AdminHeader: React.FC<HeaderProps> = ({ responder = false, bg = '#e6e6e6' }) => {
+const AdminHeader: React.FC<HeaderProps> = ({ bg = '#e6e6e6' }) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -56,11 +55,7 @@ const AdminHeader: React.FC<HeaderProps> = ({ responder = false, bg = '#e6e6e6' 
           <MaterialCommunityIcons name="bell" size={32} color="#016ea6" />
         </Pressable>
         <Pressable>
-          {responder ? (
-            <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
-          ) : (
-            <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
-          )}
+          <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
         </Pressable>
       </View>
 
@@ -71,14 +66,9 @@ const AdminHeader: React.FC<HeaderProps> = ({ responder = false, bg = '#e6e6e6' 
         </TouchableOpacity>
         <View style={styles.burgerProfile}>
           <Pressable>
-            {responder ? (
-              <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
-            ) : (
-              // <Icon name="user-circle" size={70} color="#8F8E8D" />
-              <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
-            )}
+            <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
           </Pressable>
-          <Text style={styles.burgerName}>Elizabeth Olsen</Text>
+          <Text style={styles.burgerName}>Admin</Text>
         </View>
         <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/emergency_report')}>
           <Image source={require('@/assets/images/reports-purple.png')} style={styles.adminSideBarIcon} />
@@ -92,7 +82,7 @@ const AdminHeader: React.FC<HeaderProps> = ({ responder = false, bg = '#e6e6e6' 
           <Image source={require('@/assets/images/analytics-purple.png')} style={styles.adminSideBarIcon} />
           <Text style={styles.sliderNavItemText}>View Analytics</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/settings')}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/settings')}>
           <Ionicons name="settings-sharp" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Settings</Text>
         </TouchableOpacity>

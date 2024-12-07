@@ -1,18 +1,21 @@
-import React from 'react';
-import { Image, Text, TouchableOpacity, View, FlatList, ScrollView } from 'react-native';
+import React, { useRef } from 'react';
+import { Image, Text, TouchableOpacity, View, ScrollView, Dimensions, Animated } from 'react-native';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Link, useRouter } from 'expo-router';
 import NewsAlertCard from '@/components/NewsAlertCard';
 import ResponderStyledContainer from '@/components/responder/responderStyledContainer';
 import ResponderHeader from '@/components/responder/responderHeader';
-import { ScaledSheet } from 'react-native-size-matters';
+import { scale, ScaledSheet } from 'react-native-size-matters';
 import { getAuth } from 'firebase/auth';
 
 MCI.loadFont();
 
+const itemWidth = Dimensions.get('screen').width * 0.9;
+
 const ResponderDashboard = () => {
   const user = getAuth().currentUser;
   const router = useRouter();
+  const scrollX = useRef(new Animated.Value(0)).current;
 
   const nearbyAccidents = [
     {
@@ -68,24 +71,46 @@ const ResponderDashboard = () => {
           <View style={styles.newsAlertWrapper}>
             <View style={styles.titleWrapper}>
               <Text style={styles.newsAlertTitle}>News Alert</Text>
-              <Link href={'/'}>
+              <Link href={'/news'}>
                 <Text style={styles.viewAll}>View All</Text>
               </Link>
             </View>
             <View style={styles.newsAlertContainer}>
-              <FlatList
+              <Animated.FlatList
                 horizontal
                 snapToAlignment="center"
+                snapToInterval={itemWidth}
                 data={nearbyAccidents}
-                renderItem={({ item }) => (
-                  <NewsAlertCard
-                    title={item.title}
-                    dateString={item.dateString}
-                    timeAgo={item.timeAgo}
-                    viewString={item.viewsString}
-                    detailsString={item.detailsString}
-                  />
-                )}
+                contentContainerStyle={{ paddingHorizontal: scale(20) }}
+                getItemLayout={(data, index) => ({
+                  length: itemWidth,
+                  offset: itemWidth * index,
+                  index,
+                })}
+                onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
+                  useNativeDriver: true,
+                })}
+                scrollEventThrottle={16}
+                renderItem={({ item, index }) => {
+                  const inputRange = [(index - 1) * itemWidth, index * itemWidth, (index + 1) * itemWidth];
+                  const scale = scrollX.interpolate({
+                    inputRange,
+                    outputRange: [0.9, 1, 0.9],
+                    extrapolate: 'clamp',
+                  });
+
+                  return (
+                    <Animated.View style={{ transform: [{ scale }] }}>
+                      <NewsAlertCard
+                        title={item.title}
+                        dateString={item.dateString}
+                        timeAgo={item.timeAgo}
+                        viewString={item.viewsString}
+                        detailsString={item.detailsString}
+                      />
+                    </Animated.View>
+                  );
+                }}
                 keyExtractor={(item) => item.id}
                 ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
               />
@@ -102,7 +127,6 @@ const styles = ScaledSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: '30@vs',
   },
   textWrapper: {
     alignItems: 'flex-start',
@@ -162,13 +186,13 @@ const styles = ScaledSheet.create({
   },
   newsAlertWrapper: {
     flex: 1,
-    paddingVertical: '10@vs',
-    paddingHorizontal: '20@s',
+    paddingVertical: '30@vs',
   },
   titleWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    paddingHorizontal: '20@s',
   },
   newsAlertTitle: {
     fontSize: '24@ms',

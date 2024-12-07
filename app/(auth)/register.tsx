@@ -103,7 +103,7 @@ const Register = () => {
             });
             await set(ref(db, `responders/${userId}`), {
               status: 'inactive',
-              location: null, 
+              location: null,
             });
             router.navigate('/(auth)/login');
           },
@@ -157,10 +157,17 @@ const Register = () => {
               style={styles.input}
               value={username}
               onChangeText={setUsername}
+              autoCapitalize="none"
             />
           </View>
           <View style={styles.inputContainer}>
-            <TextInput placeholder="email" style={styles.input} value={email} onChangeText={setEmail} />
+            <TextInput
+              placeholder="email"
+              style={styles.input}
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+            />
           </View>
           <View style={styles.inputContainer}>
             <TextInput
@@ -168,6 +175,7 @@ const Register = () => {
               style={styles.input}
               value={password}
               onChangeText={setPassword}
+              autoCapitalize="none"
               secureTextEntry
             />
           </View>
@@ -177,6 +185,7 @@ const Register = () => {
               style={styles.input}
               value={confirmPassword}
               onChangeText={setConfirmPassword}
+              autoCapitalize="none"
               secureTextEntry
             />
           </View>

@@ -36,11 +36,9 @@ const Login = () => {
       if (userId) {
         if (role === 'responder') {
           router.replace('/responder');
-        }
-        else if (role === 'admin') {
+        } else if (role === 'admin') {
           router.replace('/admin');
-        }
-        else {
+        } else {
           router.replace('/user');
         }
       }
@@ -136,6 +134,7 @@ const Login = () => {
               style={styles.input}
               value={username}
               onChangeText={setUsername}
+              autoCapitalize="none"
             />
           </View>
           <View style={styles.inputContainer}>
@@ -146,6 +145,7 @@ const Login = () => {
               secureTextEntry={!showPassword}
               value={password}
               onChangeText={setPassword}
+              autoCapitalize="none"
             />
             <Pressable onPress={() => setShowPassword((prev) => !prev)}>
               <Icon name={showPassword ? 'eye' : 'eye-slash'} size={25} color={'#5997C6'} />
