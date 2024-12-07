@@ -3,7 +3,7 @@ import React from 'react';
 import { KeyboardAvoidingView, Pressable, StyleSheet, TouchableOpacity, View, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const ResponderFooter = () => {
+const responderFooter = () => {
   const router = useRouter();
   const currentPath = usePathname();
 
@@ -63,7 +63,7 @@ const ResponderFooter = () => {
   );
 };
 
-export default ResponderFooter;
+export default responderFooter;
 
 const styles = StyleSheet.create({
   container: {

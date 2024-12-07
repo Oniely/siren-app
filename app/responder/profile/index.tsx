@@ -13,7 +13,7 @@ import {
 import HeaderText from '@/components/app/HeaderText';
 import Loading from '@/components/app/Loading';
 import ConfirmModal from '@/components/ConfirmModal';
-import ResponderStyledContainer from '@/components/responder/ResponderStyledContainer';
+import ResponderStyledContainer from '@/components/responder/responderStyledContainer';
 import { getAuth } from 'firebase/auth';
 
 MCI.loadFont();

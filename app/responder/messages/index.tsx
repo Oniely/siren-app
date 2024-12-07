@@ -18,7 +18,7 @@ import Container from '@/components/Container';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import Feather from '@expo/vector-icons/Feather';
-import ResponderFooter from '@/components/responder/ResponderFooter';
+import ResponderFooter from '@/components/responder/responderFooter';
 
 // import { equalTo, get, onValue, orderByChild, query, ref } from 'firebase/database';
 // import AsyncStorage from '@react-native-async-storage/async-storage';

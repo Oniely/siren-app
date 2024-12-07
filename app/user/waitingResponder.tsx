@@ -88,7 +88,7 @@ const WaitingResponder: React.FC = () => {
               const responderRef = ref(db, `responders/${responderId}`);
               const unsubscribeResponder = onValue(responderRef, (snapshot) => {
                 if (snapshot.exists()) {
-                  setModalVisible(true);
+                  // setModalVisible(true);
                   const data = snapshot.val();
                   setResponderLocation({
                     latitude: data.latitude,

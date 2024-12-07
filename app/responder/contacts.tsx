@@ -21,7 +21,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import ResponderFooter from '@/components/responder/ResponderFooter';
+import ResponderFooter from '@/components/responder/responderFooter';
 import { getAuth } from 'firebase/auth';
 
 const Contact = () => {

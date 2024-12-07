@@ -10,12 +10,10 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Entypo from '@expo/vector-icons/Entypo';
 
 // components
-// import AsyncStorage from '@react-native-async-storage/async-storage';
-// import { equalTo, get, onValue, orderByChild, push, query, ref } from 'firebase/database';
-// import Container from '../components/Container';
-// import Footer from '../components/Footer';
-// import MessageHeader from '../components/MessageHeader';
-// import { db } from '../firebase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { equalTo, get, onValue, orderByChild, push, query, ref } from 'firebase/database';
+import Footer from '@/components/Footer';
+import { db } from '@/firebaseConfig';
 
 interface Receiver {
   username: string;
@@ -34,105 +32,105 @@ const MessagingItem = () => {
 
   console.log(queryParams);
 
-  // useEffect(() => {
-  //   async function getUserId() {
-  //     const userId = await AsyncStorage.getItem('userId');
-  //     console.log(userId);
-  //     setCurrentUserId(userId);
-  //     return userId;
-  //   }
-  //   const id = getUserId();
-  //   const userRef = ref(db, `users/${selectedId}`);
-  //   const docRef = ref(db, `rooms/${roomId}`);
-  //   const q = query(docRef);
+  useEffect(() => {
+    async function getUserId() {
+      const userId = await AsyncStorage.getItem('userId');
+      console.log(userId);
+      setCurrentUserId(userId);
+      return userId;
+    }
+    const id = getUserId();
+    const userRef = ref(db, `users/${selectedId}`);
+    const docRef = ref(db, `rooms/${roomId}`);
+    const q = query(docRef);
 
-  //   get(userRef)
-  //     .then((snapshot) => {
-  //       if (snapshot.exists()) {
-  //         const data = snapshot.val();
-  //         console.log('Matching documents:', data);
-  //         setReceiver(data);
-  //       } else {
-  //         console.log('No matching documents found.');
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error retrieving documents:', error);
-  //     });
+    get(userRef)
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          console.log('Matching documents:', data);
+          setReceiver(data);
+        } else {
+          console.log('No matching documents found.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error retrieving documents:', error);
+      });
 
-  //   // Get the documents that match the query
-  //   get(q)
-  //     .then((snapshot) => {
-  //       if (snapshot.exists()) {
-  //         const data = snapshot.val();
-  //         console.log('Matching documents:', data);
-  //         if (data.messages) {
-  //           const map = new Map(Object.entries(data.messages));
-  //           let messageList = [];
-  //           for (let [key, value] of map) {
-  //             console.log(`${key}: ${value}`);
-  //             messageList.push({ id: key, ...value });
-  //           }
-  //           setMessages(messageList);
-  //           console.log(data.messages);
-  //         } else {
-  //           setMessages([]);
-  //         }
-  //       } else {
-  //         console.log('No matching documents found.');
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error retrieving documents:', error);
-  //     });
+    // Get the documents that match the query
+    get(q)
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          console.log('Matching documents:', data);
+          if (data.messages) {
+            const map = new Map(Object.entries(data.messages));
+            let messageList = [];
+            for (let [key, value] of map) {
+              console.log(`${key}: ${value}`);
+              messageList.push({ id: key, ...value });
+            }
+            setMessages(messageList);
+            console.log(data.messages);
+          } else {
+            setMessages([]);
+          }
+        } else {
+          console.log('No matching documents found.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error retrieving documents:', error);
+      });
 
-  //   async function updatedMessages(snapshot) {
-  //     if (snapshot.exists()) {
-  //       const data = snapshot.val();
-  //       console.log('Matching documents:', data);
-  //       if (data.messages) {
-  //         const map = new Map(Object.entries(data.messages));
-  //         let messageList = [];
-  //         for (let [key, value] of map) {
-  //           console.log(`${key}: ${value}`);
-  //           messageList.push({ id: key, ...value });
-  //         }
-  //         setMessages(messageList);
-  //         console.log(data.messages);
-  //       } else {
-  //         setMessages([]);
-  //       }
-  //     }
-  //   }
+    async function updatedMessages(snapshot) {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        console.log('Matching documents:', data);
+        if (data.messages) {
+          const map = new Map(Object.entries(data.messages));
+          let messageList = [];
+          for (let [key, value] of map) {
+            console.log(`${key}: ${value}`);
+            messageList.push({ id: key, ...value });
+          }
+          setMessages(messageList);
+          console.log(data.messages);
+        } else {
+          setMessages([]);
+        }
+      }
+    }
 
-  //   onValue(
-  //     q,
-  //     (snapshot) => {
-  //       updatedMessages(snapshot);
-  //     },
-  //     (error) => {
-  //       console.error('Error fetching data: ', error);
-  //     }
-  //   );
-  // }, []);
+    onValue(
+      q,
+      (snapshot) => {
+        updatedMessages(snapshot);
+      },
+      (error) => {
+        console.error('Error fetching data: ', error);
+      }
+    );
+  }, []);
 
-  // async function createMessage(message) {
-  //   if (message !== '') {
-  //     const messagesRef = ref(db, `rooms/${roomId}/messages`);
-  //     const userId = await AsyncStorage.getItem('userId');
-  //     push(messagesRef, {
-  //       senderId: userId,
-  //       message: message,
-  //       createdAt: Date.now(),
-  //     })
-  //       .then(() => {
-  //         setMessage(''); // Clear the input field
-  //       })
-  //       .catch((error) => {
-  //         Alert.alert('Error sending message:', error.message);
-  //       });
-  //   }
-  // }
+  async function createMessage(message) {
+    if (message !== '') {
+      const messagesRef = ref(db, `rooms/${roomId}/messages`);
+      const userId = await AsyncStorage.getItem('userId');
+      push(messagesRef, {
+        senderId: userId,
+        message: message,
+        createdAt: Date.now(),
+      })
+        .then(() => {
+          setMessage(''); // Clear the input field
+        })
+        .catch((error) => {
+          Alert.alert('Error sending message:', error.message);
+        });
+    }
+  }
 
   return (
     <Container bg="#F0F1F2">
@@ -197,7 +195,7 @@ const MessagingItem = () => {
               justifyContent: 'center',
               alignItems: 'center',
             }}
-            // onPress={() => createMessage(message)}
+            onPress={() => createMessage(message)}
           >
             <MCI name="send" size={30} color={'#b6b6b7'} />
           </TouchableOpacity>

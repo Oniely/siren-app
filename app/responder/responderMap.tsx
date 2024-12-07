@@ -97,7 +97,10 @@ const ResponderMap = () => {
     }
     const reportRef = ref(db, `reports/${selectedReport.reportId}`);
 
-    update(reportRef, { status: 'Accepted' })
+    update(reportRef, {
+      status: 'Accepted',
+      responderId: responderId, 
+    })
       .then(() => {
         console.log('Report accepted');
         updateResponderLocation(responderId, responderLocation);
