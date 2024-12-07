@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import FS from 'react-native-vector-icons/FontAwesome';
 import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
@@ -15,13 +9,12 @@ import { db } from '@/firebaseConfig';
 import Container from '@/components/Container';
 import Footer from '@/components/Footer';
 
-// Define the type for a message
 interface Message {
   id: string;
   receiverId: string;
   user: {
     username: string;
-    email: string; // or other user properties
+    email: string; 
   };
   lastMessage: {
     message: string;
@@ -31,46 +24,44 @@ interface Message {
 
 const Messaging = () => {
   const router = useRouter();
-  const [messages, setMessages] = useState<Message[]>([]); // Explicitly define the state type
-  
+  const [messages, setMessages] = useState<Message[]>([]); 
+
   useEffect(() => {
     init();
   }, []);
 
-  // Initialize the fetch of rooms and messages
   async function init() {
     const userId = await AsyncStorage.getItem('userId');
     const roomsRef = ref(db, 'rooms');
 
     try {
-      // Step 1: Get all rooms
       const roomsSnapshot = await get(roomsRef);
-      
+
       if (roomsSnapshot.exists()) {
         const rooms = roomsSnapshot.val();
         const roomList: Message[] = [];
-        
-        // Step 2: Filter rooms where the current user is involved
+
         for (const [key, value] of Object.entries(rooms)) {
           if (value.user1 === userId || value.user2 === userId) {
             const receiverId = value.user1 === userId ? value.user2 : value.user1;
-            
-            // Step 3: Fetch the receiver's data
+
+            console.log('Receiver ID:', receiverId);
+
             const receiverRef = ref(db, `users/${receiverId}`);
             const receiverData = await get(receiverRef);
 
-            // Step 4: Ensure receiverData exists before accessing properties
+            console.log('Receiver data:', receiverData.val());
+
             if (receiverData.exists()) {
-              // Step 5: Prepare the message data
               const allMessages = Object.entries(value.messages || {}).map(([key, msg]) => ({
                 id: key,
                 ...msg,
               }));
 
-              // Check if there are messages, if not, set a default lastMessage
-              const lastMessage = allMessages.length > 0
-                ? allMessages.sort((a, b) => a.createdAt - b.createdAt)[0]
-                : { message: "No messages yet", createdAt: Date.now() }; // Default message if no messages exist
+              const lastMessage =
+              allMessages.length > 0
+                ? allMessages.sort((a, b) => b.createdAt - a.createdAt)[0]  // Sort in descending order
+                : { message: 'No messages yet', createdAt: Date.now() };
 
               roomList.push({
                 id: key,
@@ -79,12 +70,11 @@ const Messaging = () => {
                 lastMessage,
               });
             } else {
-              console.log(`User data for receiverId ${receiverId} not found`);
+              console.log(`User data for receiverId ${receiverId} not found, skipping this receiver.`);
             }
           }
         }
-        
-        // Set messages data
+
         setMessages(roomList);
       } else {
         console.log('No rooms found');
@@ -111,7 +101,7 @@ const Messaging = () => {
                 style={styles.contactInfo}
                 onPress={() =>
                   router.push({
-                    pathname: '/user/messages',
+                    pathname: '/user/messages/chat',
                     params: {
                       selectedId: item.receiverId,
                       roomId: item.id,
