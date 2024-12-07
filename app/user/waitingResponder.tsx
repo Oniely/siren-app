@@ -7,9 +7,7 @@ import {
   Pressable,
   Image,
   TouchableOpacity,
-  ImageBackground,
   Modal,
-  Button,
   Platform,
   StatusBar as STATUSBAR,
   Dimensions,
@@ -17,15 +15,11 @@ import {
 import MapView, { Marker, LatLng } from 'react-native-maps';
 import { db, auth } from '@/firebaseConfig';
 import { ref, get, onValue } from 'firebase/database';
-import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from 'expo-router';
-import { formatDate } from '@/constants/Date';
 import { mapStyle } from '@/constants/Map';
 import { StatusBar } from 'expo-status-bar';
-import { ScaledSheet } from 'react-native-size-matters';
 import { LinearGradient } from 'expo-linear-gradient';
-
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Loading from '@/components/app/Loading';
 
 interface Report {
   senderId: string;
@@ -137,14 +131,8 @@ const WaitingResponder: React.FC = () => {
       });
     }
   }, [reports, responderLocation]);
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Loading data...</Text>
-      </View>
-    );
-  }
+
+  if (loading) return <Loading />;
 
   if (!location) {
     return (
@@ -186,6 +174,7 @@ const WaitingResponder: React.FC = () => {
       <MapView
         ref={mapRef}
         style={styles.map}
+        customMapStyle={mapStyle}
         initialRegion={{
           latitude: location?.latitude || 12.8797,
           longitude: location?.longitude || 121.774,
@@ -252,6 +241,7 @@ const WaitingResponder: React.FC = () => {
           </View>
         </View>
       </Modal>
+      <StatusBar style="dark" />
     </View>
   );
 };
@@ -310,11 +300,6 @@ const styles = StyleSheet.create({
   },
   map: {
     flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   errorContainer: {
     flex: 1,

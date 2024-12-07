@@ -72,7 +72,7 @@ const ResponderHeader = ({ user }: { user: User }) => {
               style={styles.sliderNavImage}
             />
           </Pressable>
-          <Text style={styles.burgerName}>{user.displayName}</Text>
+          <Text style={styles.burgerName}>{user?.displayName || ''}</Text>
         </View>
 
         <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/responder/contacts')}>
@@ -94,7 +94,7 @@ const ResponderHeader = ({ user }: { user: User }) => {
           <Ionicons name="notifications" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Notifications</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/settings')}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/responder/settings')}>
           <Ionicons name="settings-sharp" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Settings</Text>
         </TouchableOpacity>

@@ -23,7 +23,7 @@ const Dashboard = () => {
             style={styles.topBarImage}
           />
           <View>
-            {/* <Text style={styles.topBarName}>{user?.displayName}</Text> */}
+            <Text style={styles.topBarName}>{user?.displayName || ''}</Text>
             <Link href={'/user/profile'}>
               <Text style={styles.topBarLink}>See profile</Text>
             </Link>

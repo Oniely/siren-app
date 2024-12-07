@@ -8,6 +8,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 import { useRouter } from 'expo-router';
 import { ScaledSheet } from 'react-native-size-matters';
 import HeaderText from '@/components/app/HeaderText';
+import { FontAwesome6 } from '@expo/vector-icons';
 
 export default function Settings() {
   const router = useRouter();
@@ -27,6 +28,13 @@ export default function Settings() {
           </View>
           <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
         </TouchableOpacity>
+        <TouchableOpacity style={styles.settingButton} onPress={() => router.push('/admin/map')}>
+          <View style={styles.settingContent}>
+            <MaterialCommunityIcons name="map-outline" size={24} color="#b6b6b7" />
+            <Text style={styles.settingText}>Map</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
+        </TouchableOpacity>
         <Text style={styles.settingHeader}>Notifications</Text>
         <TouchableOpacity style={styles.settingButton}>
           <View style={styles.settingContent}>
@@ -35,28 +43,19 @@ export default function Settings() {
           </View>
           <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
         </TouchableOpacity>
-        <Text style={styles.settingHeader}>Display</Text>
-        <TouchableOpacity style={styles.settingButton}>
+        <Text style={styles.settingHeader}>Location</Text>
+        <TouchableOpacity
+          style={styles.settingButton}
+          onPress={() => router.push('/user/map')}
+          activeOpacity={0.8}
+        >
           <View style={styles.settingContent}>
-            <MaterialCommunityIcons name="format-font-size-increase" size={24} color="#b6b6b7" />
-            <Text style={styles.settingText}>Font Size</Text>
+            <FontAwesome6 name="location-dot" size={24} color="#b6b6b7" />
+            <Text style={styles.settingText}>Location</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.settingButton}>
-          <View style={styles.settingContent}>
-            <MaterialCommunityIcons name="format-font" size={24} color="#b6b6b7" />
-            <Text style={styles.settingText}>Font Styles</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.settingButton}>
-          <View style={styles.settingContent}>
-            <Entypo name="magnifying-glass" size={24} color="#b6b6b7" />
-            <Text style={styles.settingText}>Zoom Level</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
-        </TouchableOpacity>
+
         <Text style={[styles.settingHeader, { marginTop: 25 }]}>Support</Text>
         <Text style={styles.settingText}>Contact Support</Text>
         <Text style={styles.settingText}>Report a Bug</Text>

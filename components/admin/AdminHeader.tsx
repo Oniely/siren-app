@@ -92,7 +92,7 @@ const AdminHeader: React.FC<HeaderProps> = ({ responder = false, bg = '#e6e6e6' 
           <Image source={require('@/assets/images/analytics-purple.png')} style={styles.adminSideBarIcon} />
           <Text style={styles.sliderNavItemText}>View Analytics</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/settings')}>
+        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/settings')}>
           <Ionicons name="settings-sharp" size={35} color="#0c0c63" />
           <Text style={styles.sliderNavItemText}>Settings</Text>
         </TouchableOpacity>
