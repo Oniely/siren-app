@@ -46,6 +46,7 @@ export default function RootLayout() {
         }}
       >
         <Stack.Screen name="index" />
+        <Stack.Screen name="news" />
         {/* portals  */}
         <Stack.Screen name="user" />
         <Stack.Screen name="responder" />
