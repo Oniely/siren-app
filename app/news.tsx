@@ -1,38 +1,84 @@
 import HeaderText from '@/components/app/HeaderText';
-import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import React, { useRef } from 'react';
-import { View, Text, FlatList, ImageBackground, Dimensions, Image, Animated } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  ImageBackground,
+  Dimensions,
+  Image,
+  Animated,
+  TouchableOpacity,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScaledSheet } from 'react-native-size-matters';
 
 const newsData = [
   {
-    newsOutlet: 'CNN-NEWS',
-    newsDesc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec urna.',
-    image: 'https://picsum.photos/id/0/367/267',
+    source: 'CNN-NEWS',
+    title: "Biden's approval rating hits new low",
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec urna.',
+    image_url: 'https://picsum.photos/id/0/367/267',
+    url: 'https://picsum.photos/id/0/367/267',
+    categories: ['general'],
   },
   {
-    newsOutlet: 'BBC',
-    newsDesc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec urna.',
-    image: 'https://picsum.photos/id/0/367/267',
+    source: 'ABS-CBN',
+    title: "Biden's approval rating hits new low",
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec urna.',
+    image_url: 'https://picsum.photos/id/2/367/267',
+    url: 'https://picsum.photos/id/2/367/267',
+    categories: ['general'],
   },
   {
-    newsOutlet: 'ABS-CBN',
-    newsDesc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec urna.',
-    image: 'https://picsum.photos/id/2/367/267',
-  },
-  {
-    newsOutlet: 'GMA',
-    newsDesc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec urna.',
-    image: 'https://picsum.photos/id/7/367/267',
+    source: 'GMA',
+    title: "Biden's approval rating hits new low",
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec urna.',
+    image_url: 'https://picsum.photos/id/7/367/267',
+    url: 'https://picsum.photos/id/7/367/267',
+    categories: ['general'],
   },
 ];
 
 const itemWidth = Dimensions.get('screen').width * 0.9;
 
+var requestOptions = {
+  method: 'GET',
+};
+
+var params = {
+  api_token: 'ddDiL34ChLUzeQMakkLdkmr2iIOU2dkfXsTUOEy5', // Replace with your valid API token
+  categories: 'health,travel,general',
+  limit: '3',
+  language: 'en',
+};
+
+var esc = encodeURIComponent;
+var query = Object.keys(params)
+  .map(function (k) {
+    // @ts-ignore
+    return esc(k) + '=' + esc(params[k]);
+  })
+  .join('&');
+
 export default function News() {
+  const [news, setNews] = useState<any>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
+  const router = useRouter();
+
+  useEffect(() => {
+    fetch('https://api.thenewsapi.com/v1/news/all?' + query, requestOptions)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((result) => setNews(result.data))
+      .catch((error) => console.error('Error:', error));
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -42,7 +88,7 @@ export default function News() {
           horizontal
           snapToAlignment={'start'}
           snapToInterval={itemWidth}
-          data={newsData}
+          data={news || newsData}
           initialScrollIndex={0}
           contentContainerStyle={styles.contentContainer}
           getItemLayout={(data, index) => ({
@@ -63,14 +109,19 @@ export default function News() {
             });
             return (
               <Animated.View style={{ transform: [{ scale }] }}>
-                <ImageBackground source={{ uri: item.image }} style={styles.imageBackground}>
-                  <View style={styles.textContainer}>
-                    <Text style={styles.newsOutlet}>{item.newsOutlet}</Text>
-                    <Text style={styles.newsDesc} numberOfLines={2}>
-                      {item.newsDesc}
-                    </Text>
-                  </View>
-                </ImageBackground>
+                <TouchableOpacity onPress={() => router.push(item.url)} activeOpacity={0.9}>
+                  <ImageBackground
+                    source={{ uri: item?.image_url || 'https://picsum.photos/id/7/367/267' }}
+                    style={styles.imageBackground}
+                  >
+                    <View style={styles.textContainer}>
+                      <Text style={styles.newsOutlet}>{item.source}</Text>
+                      <Text style={styles.newsDesc} numberOfLines={2}>
+                        {item.source}
+                      </Text>
+                    </View>
+                  </ImageBackground>
+                </TouchableOpacity>
               </Animated.View>
             );
           }}
@@ -81,44 +132,26 @@ export default function News() {
       <View style={styles.recommendations}>
         <Text style={styles.headerText}>Recommendations</Text>
         <View style={styles.cardContainer}>
-          <Link href={'/'} asChild>
-            <View style={styles.recomCard}>
-              <Image source={{ uri: newsData[0].image }} style={styles.recomImage} />
-              <View style={styles.recomTexts}>
-                <Text style={styles.recomTop}>Travel</Text>
-                <Text style={styles.recomName}>Lorem Ipsum</Text>
-                <Text style={styles.recomDesc} numberOfLines={1}>
-                  Lorem ipsum dolor sit amet, consec...
-                </Text>
-              </View>
-            </View>
-          </Link>
-        </View>
-        <View style={styles.cardContainer}>
-          <Link href={'/'} asChild>
-            <View style={styles.recomCard}>
-              <Image source={{ uri: newsData[0].image }} style={styles.recomImage} />
-              <View style={styles.recomTexts}>
-                <Text style={styles.recomTop}>Travel</Text>
-                <Text style={styles.recomName}>Lorem Ipsum</Text>
-                <Text style={styles.recomDesc} numberOfLines={1}>
-                  Lorem ipsum dolor sit amet, consec...
-                </Text>
-              </View>
-            </View>
-          </Link>
-          <Link href={'/'} asChild>
-            <View style={styles.recomCard}>
-              <Image source={{ uri: newsData[0].image }} style={styles.recomImage} />
-              <View style={styles.recomTexts}>
-                <Text style={styles.recomTop}>Travel</Text>
-                <Text style={styles.recomName}>Lorem Ipsum</Text>
-                <Text style={styles.recomDesc} numberOfLines={1}>
-                  Lorem ipsum dolor sit amet, consec...
-                </Text>
-              </View>
-            </View>
-          </Link>
+          <FlatList
+            data={news || newsData}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => router.push(item.url)} activeOpacity={0.9}>
+                <View style={styles.recomCard}>
+                  <Image
+                    source={{ uri: item?.image_url || 'https://picsum.photos/id/7/367/267' }}
+                    style={styles.recomImage}
+                  />
+                  <View style={styles.recomTexts}>
+                    <Text style={styles.recomTop}>{item.categories[0]}</Text>
+                    <Text style={styles.recomName}>{item.source}</Text>
+                    <Text style={styles.recomDesc} numberOfLines={1}>
+                      {item.description}
+                    </Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
         </View>
       </View>
       <StatusBar style="dark" />
@@ -138,6 +171,7 @@ const styles = ScaledSheet.create({
     paddingHorizontal: '20@s',
   },
   imageBackground: {
+    resizeMode: 'center',
     width: itemWidth,
     height: '200@vs',
     justifyContent: 'flex-end',
@@ -162,16 +196,18 @@ const styles = ScaledSheet.create({
     width: 10,
   },
   recommendations: {
-    padding: '20@s',
     flex: 1,
   },
   headerText: {
     fontSize: '18@ms',
     fontFamily: 'BeVietnamProSemiBold',
     color: '#231f20',
+    paddingHorizontal: '20@s',
+    paddingVertical: '10@vs',
   },
   cardContainer: {
     paddingVertical: '10@vs',
+    paddingHorizontal: '20@s',
     gap: '15@vs',
   },
   recomCard: {
@@ -186,7 +222,7 @@ const styles = ScaledSheet.create({
   },
   recomImage: {
     width: '80@s',
-    height: '80@s',
+    height: '80@vs',
     borderRadius: '10@ms',
   },
   recomTexts: {
@@ -198,7 +234,7 @@ const styles = ScaledSheet.create({
     color: '#c9cacd',
   },
   recomName: {
-    fontSize: '15@ms',
+    fontSize: '14@ms',
     fontFamily: 'BeVietnamProSemiBold',
     color: '#016ea6',
   },

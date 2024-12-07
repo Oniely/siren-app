@@ -166,7 +166,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
             <Entypo name="map" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Report Map</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/settings')}>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/settings')}>
             <Ionicons name="settings-sharp" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Settings</Text>
           </TouchableOpacity>

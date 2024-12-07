@@ -57,6 +57,10 @@ const ResponderMap = () => {
     // @ts-ignore
     modalizeRef.current?.open();
   };
+  const onClose = () => {
+    // @ts-ignore
+    modalizeRef.current?.close();
+  };
 
   const resetSelectedReport = () => setSelectedReport(null);
   const handleMarkerPress = (report: any, event: any) => {
@@ -106,6 +110,8 @@ const ResponderMap = () => {
       .catch((error: Error) => {
         console.error('Error updating status:', error.message);
       });
+
+    onClose();
   };
 
   const declineStatus = () => {
