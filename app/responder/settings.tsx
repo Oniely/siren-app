@@ -28,6 +28,13 @@ export default function Settings() {
           </View>
           <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
         </TouchableOpacity>
+        <TouchableOpacity style={styles.settingButton} onPress={() => router.push('/responder/responderMap')}>
+          <View style={styles.settingContent}>
+            <MaterialCommunityIcons name="map-outline" size={24} color="#b6b6b7" />
+            <Text style={styles.settingText}>Map</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
+        </TouchableOpacity>
         <Text style={styles.settingHeader}>Notifications</Text>
         <TouchableOpacity style={styles.settingButton}>
           <View style={styles.settingContent}>

@@ -28,10 +28,7 @@ export default function Settings() {
           </View>
           <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.settingButton}
-          onPress={() => router.push('/user/profile/notifications')}
-        >
+        <TouchableOpacity style={styles.settingButton} onPress={() => router.push('/user/map')}>
           <View style={styles.settingContent}>
             <MaterialCommunityIcons name="map-outline" size={24} color="#b6b6b7" />
             <Text style={styles.settingText}>Map</Text>

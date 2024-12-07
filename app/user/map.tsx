@@ -1,6 +1,6 @@
 import * as Location from 'expo-location';
 import React, { useEffect, useState } from 'react';
-import { Alert, Dimensions, PermissionsAndroid, Platform, StyleSheet, Text, View } from 'react-native';
+import { Alert, Dimensions, StyleSheet, Text, View } from 'react-native';
 import MapView, { Callout, Marker } from 'react-native-maps';
 import MapContent from '@/components/map/MapContent';
 import { useRouter } from 'expo-router';
@@ -46,7 +46,7 @@ const Map = () => {
       <MapView
         style={[StyleSheet.absoluteFillObject, styles.map]}
         mapType="standard"
-        mapPadding={{ top: 0, right: 0, bottom: 90, left: 5 }}
+        mapPadding={{ top: 120, right: 0, bottom: 5, left: 5 }}
         customMapStyle={mapStyle}
         initialRegion={{
           latitude: location.coords.latitude,
