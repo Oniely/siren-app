@@ -20,8 +20,8 @@ const MessageHeader = ({ username, email }: Props) => {
         <MI name="arrow-back-ios" size={40} color={'#0c0c63'} />
       </TouchableOpacity>
       <View style={styles.userInfo}>
-        <Text style={styles.name}>{username}Lorem Ipsum</Text>
-        <Text style={styles.number}>{email}+639889382</Text>
+        <Text style={styles.name}>{username}</Text>
+        <Text style={styles.number}>{email}</Text>
       </View>
 
       <View style={styles.buttons}>
