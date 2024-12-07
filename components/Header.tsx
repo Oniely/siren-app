@@ -131,7 +131,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
                 style={styles.sliderNavImage}
               />
             </Pressable>
-            <Text style={styles.burgerName}>{user.displayName}</Text>
+            <Text style={styles.burgerName}>{user?.displayName || ''}</Text>
           </View>
           <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/contacts')}>
             <Feather name="phone-call" size={35} color="#0c0c63" />
