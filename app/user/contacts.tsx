@@ -32,18 +32,7 @@ import { getAuth } from 'firebase/auth';
 import { db, auth } from '@/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
-import {
-  orderByChild,
-  get,
-  update,
-  set,
-  equalTo,
-  limitToFirst,
-  ref,
-  push,
-  off,
-  onValue,
-} from 'firebase/database';
+import { orderByChild, get, update, set, equalTo, limitToFirst, ref, push, remove } from 'firebase/database';
 const Contact = () => {
   const user = getAuth().currentUser;
   const router = useRouter();
@@ -68,7 +57,7 @@ const Contact = () => {
   >([]);
   const [searchText, setSearchText] = useState('');
   const [filteredData, setFilteredData] = useState<
-    { id: string; username: string; email: string; roomId: string; }[]
+    { id: string; username: string; email: string; roomId: string }[]
   >([]);
 
   type ContactType = {
@@ -110,31 +99,41 @@ const Contact = () => {
     }
   };
 
-  // FOR ADDING SIREN CONTACT
-  const handleAddSirenContact = async () => {
-    if (!selectedUser || !selectedUser.id) {
-      Alert.alert('Validation Error', 'Please select a valid user with an ID to add as a Siren contact.');
+  const handleAddSirenContact = async (user: ContactType) => {
+    if (!user || !user.id) {
+      Alert.alert('Validation Error', 'Invalid user selected. Please try again.');
       return;
     }
 
-    console.log('Selected user for Siren contact:', selectedUser);
-
     const sirenContact: ContactType = {
-      id: selectedUser.id, // This should now have a valid `id`
-      username: selectedUser.username,
-      firstname: selectedUser.firstname,
-      lastname: selectedUser.lastname,
-      email: selectedUser.email,
-      number: selectedUser.number || '', // Use empty string or null if missing
+      id: user.id,
+      username: user.username,
+      firstname: user.firstname || '',
+      lastname: user.lastname || '',
+      email: user.email || '',
+      number: user.number || '',
       category: 'siren',
     };
 
-    await createSirenContactandRoom(sirenContact);
-    setModalVisible(false);
-    setSelectedUser(null);
-    setSearchUsername('');
-  };
+    try {
+      await createSirenContactandRoom(sirenContact); // Save to Firebase
 
+      // Update the local state
+      setContacts((prevContacts) => [...prevContacts, sirenContact]);
+
+      // Update filtered data if it matches the active category
+      if (activeTab.toLowerCase() === 'siren') {
+        setFilteredData((prevFilteredData) => [...prevFilteredData, sirenContact]);
+      }
+
+      // Reset and close modal
+      setModalVisible(false);
+      setSelectedUser(null);
+      setSearchUsername('');
+    } catch (error) {
+      console.error('Error adding Siren contact:', error);
+    }
+  };
   async function createSirenContactandRoom(addedContact: ContactType) {
     const userId = await AsyncStorage.getItem('userId');
     if (!userId) {
@@ -183,6 +182,29 @@ const Contact = () => {
       console.error('Error writing document: ', error);
     }
   }
+
+  const handleDeleteContact = async (contactId: string, category: string) => {
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      if (!userId) {
+        console.error('UserId not found in AsyncStorage');
+        return;
+      }
+
+      const contactRef = ref(db, `users/${userId}/contacts/${category}/${contactId}`);
+      await remove(contactRef);
+
+      // Update the local state to reflect the deletion
+      setContacts((prevContacts) => prevContacts.filter((contact) => contact.id !== contactId));
+
+      setFilteredData((prevData) => prevData.filter((contact) => contact.id !== contactId));
+
+      Alert.alert('Success', 'Contact deleted successfully.');
+    } catch (error) {
+      console.error('Error deleting contact:', error);
+      Alert.alert('Error', 'Failed to delete the contact.');
+    }
+  };
   // PHONE LINKING
   const callNumber = (number: string) => {
     const url = `tel:${number}`;
@@ -219,6 +241,9 @@ const Contact = () => {
       console.error('UserId not found in AsyncStorage');
       return;
     }
+
+    console.log('UserId:', userId);
+    console.log('Added Contact:', addedContact);
 
     const contactRef = ref(db, `contacts/${userId}`);
     const newContactRef = push(contactRef);
@@ -290,44 +315,56 @@ const Contact = () => {
   //FETCHING CONTACTS
   useEffect(() => {
     const fetchContacts = async () => {
+      // Get the userId from AsyncStorage
       const userId = await AsyncStorage.getItem('userId');
+
+      // If there's no userId, handle the error
       if (!userId) {
         console.error('UserId not found in AsyncStorage');
         return;
       }
 
+      // Log the userId for debugging
+      console.log(userId);
+
+      // Create a reference to the contacts under this userId
       const contactsRef = ref(db, `contacts/${userId}`);
 
-      // Listen for real-time updates
-      const contactsListener = onValue(contactsRef, (snapshot) => {
+      try {
+        // Fetch the data from Firebase
+        const snapshot = await get(contactsRef);
+
         if (snapshot.exists()) {
           const data = snapshot.val();
+
+          // Format and include placeholders for missing data
           const formattedContacts: ContactType[] = Object.entries(data).map(
             ([contactId, contact]: [string, any]) => ({
-              id: contactId,
-              firstname: contact.name?.split(' ')[0] || '',
-              lastname: contact.name?.split(' ')[1] || '',
+              id: contactId, // Use the contact ID as the unique identifier
+              firstname: contact.name?.split(' ')[0] || '', // Extract first name
+              lastname: contact.name?.split(' ')[1] || '', // Extract last name
               username: contact.name || `${contact.firstname} ${contact.lastname}`,
               email: contact.email || '',
               number: contact.number || '',
               category: contact.category || 'personal', // Default to "personal"
             })
           );
-          setContacts(formattedContacts); // Update state with new contacts
+
+          // Set the formatted contacts to state
+          setContacts(formattedContacts);
         } else {
           console.log('No contacts found for the current user');
-          setContacts([]); // If no contacts are found, set empty list
+          setContacts([]); // If no contacts are found, set the contacts state to empty
         }
-      });
-
-      // Cleanup listener on component unmount
-      return () => {
-        contactsRef.off('value', contactsListener);
-      };
+      } catch (error) {
+        console.error('Error fetching contacts: ', error);
+      }
     };
 
+    // Call the fetchContacts function when the component mounts
     fetchContacts();
   }, []);
+
   //FETCH SELECTED USER
   useEffect(() => {
     if (selectedUser && selectedUser.id) {
@@ -363,25 +400,16 @@ const Contact = () => {
           />
           {matchingUsers.length > 0 ? (
             matchingUsers.map((user) => (
-              <TouchableOpacity
-                key={user.id}
-                style={{ padding: 10, marginBottom: 5 }}
-                onPress={() => {
-                  console.log('User selected:', user); // Ensure that `user` has an id field
-                  if (user.id) {
-                    setSelectedUser(user);
-                  } else {
-                    console.error('User ID is missing:', user); // Handle case where id is missing
-                  }
-                }}
-              >
+              <View key={user.id} style={{ padding: 10, marginBottom: 5 }}>
                 <View style={styles.usernameContainer}>
                   <Text>{user.username}</Text>
-                  <Pressable onPress={handleAddSirenContact}>
+                  <Pressable
+                    onPress={() => handleAddSirenContact(user)} // Pass the user object directly to the function
+                  >
                     <FS name="plus-circle" size={24} color="#0b0c63" />
                   </Pressable>
                 </View>
-              </TouchableOpacity>
+              </View>
             ))
           ) : (
             <Text>No matching users found</Text>
@@ -447,8 +475,8 @@ const Contact = () => {
     return (
       <FlatList
         data={filteredContacts}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.contactList}
+        keyExtractor={(item) => item.id} // Ensure `id` is unique
+        contentContainerStyle={styles.contactList} // Add styling for the list if needed
         renderItem={({ item }) => (
           <View style={styles.contacts}>
             <Pressable style={styles.contactsInfo}>
@@ -470,8 +498,8 @@ const Contact = () => {
                 <Pressable onPress={() => callNumber(item.number)}>
                   <Ionicons name="call" size={30} color="#0b0c63" />
                 </Pressable>
-                <Pressable onPress={() => callNumber(item.number)}>
-                  <SimpleLineIcons name="options" size={30} color="#0b0c63" />
+                <Pressable onPress={() => handleDeleteContact(item.id, item.category)}>
+                  <Ionicons name="trash" size={30} color="red" />
                 </Pressable>
               </View>
             </Pressable>
@@ -481,31 +509,47 @@ const Contact = () => {
     );
   };
   // ADD CONTACT FUNCTION
-  const handleAddContact = () => {
+  const handleAddContact = async () => {
     if (!firstname || !lastname || !email || !number) {
       Alert.alert('Validation Error', 'All fields are required.');
       return;
     }
+
     const addedContact: ContactType = {
       id: Date.now().toString(),
       username: `${firstname} ${lastname}`,
-      firstname: firstname,
-      lastname: lastname,
-      email: email,
-      number: number,
+      firstname,
+      lastname,
+      email,
+      number,
       category,
     };
 
-    createContact(addedContact);
-    setModalVisible(false);
+    try {
+      await createContact(addedContact); // Save to Firebase
+
+      // Update the local state
+      setContacts((prevContacts) => [...prevContacts, addedContact]);
+
+      // Update filtered data if it matches the active category
+      if (activeTab.toLowerCase() === category) {
+        setFilteredData((prevFilteredData) => [...prevFilteredData, addedContact]);
+      }
+
+      // Close modal
+      setModalVisible(false);
+    } catch (error) {
+      console.error('Error adding contact:', error);
+    }
   };
-  const handleSearch = (text) => {
+
+  const handleSearch = (text: string) => {
     setSearchText(text);
 
     if (text.trim() === '') {
       setFilteredData(data);
     } else {
-      const filtered = data.filter((item) => item.username.toLowerCase().includes(text.toLowerCase()));
+      const filtered = data.filter((item) => item.name.toLowerCase().includes(text.toLowerCase()));
       setFilteredData(filtered);
     }
   };
@@ -769,7 +813,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
   },
-  contactList: {},
   contactListItem: {
     padding: 10,
     borderBottomWidth: 1,

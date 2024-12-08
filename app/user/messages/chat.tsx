@@ -3,7 +3,7 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View, FlatList, Pressabl
 import { useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { db } from '@/firebaseConfig';
-import { ref, get, onValue, push, query, orderByChild } from 'firebase/database';
+import { ref, get, onChildAdded, push, query, orderByChild, onValue } from 'firebase/database';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MessageHeader from '@/components/MessageHeader';

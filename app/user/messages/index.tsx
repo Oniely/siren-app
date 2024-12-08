@@ -4,7 +4,7 @@ import FS from 'react-native-vector-icons/FontAwesome';
 import Feather from '@expo/vector-icons/Feather';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { get, ref } from 'firebase/database';
+import { get, ref, onValue } from 'firebase/database';
 import { db } from '@/firebaseConfig';
 import Container from '@/components/Container';
 import Footer from '@/components/Footer';
@@ -22,35 +22,37 @@ interface Message {
   };
 }
 
+// Define the structure of the rooms data
+interface Room {
+  user1: string;
+  user2: string;
+  messages?: Record<string, { senderId: string; message: string; createdAt: number }>;
+}
+
 const Messaging = () => {
   const router = useRouter();
-  const [messages, setMessages] = useState<Message[]>([]); 
+  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
-    init();
-  }, []);
-
-  async function init() {
-    const userId = await AsyncStorage.getItem('userId');
+    // Set up live listener for room updates
     const roomsRef = ref(db, 'rooms');
+    
+    // Use the onValue listener to fetch real-time data
+    onValue(roomsRef, async (snapshot) => {
+      if (snapshot.exists()) {
+        const rooms: Record<string, Room> = snapshot.val();  // Type the rooms data
 
-    try {
-      const roomsSnapshot = await get(roomsRef);
-
-      if (roomsSnapshot.exists()) {
-        const rooms = roomsSnapshot.val();
         const roomList: Message[] = [];
 
+        // Loop through rooms and get the necessary information
+        const userId = await AsyncStorage.getItem('userId');
         for (const [key, value] of Object.entries(rooms)) {
           if (value.user1 === userId || value.user2 === userId) {
             const receiverId = value.user1 === userId ? value.user2 : value.user1;
 
-            console.log('Receiver ID:', receiverId);
-
+            // Fetch receiver data
             const receiverRef = ref(db, `users/${receiverId}`);
             const receiverData = await get(receiverRef);
-
-            console.log('Receiver data:', receiverData.val());
 
             if (receiverData.exists()) {
               const allMessages = Object.entries(value.messages || {}).map(([key, msg]) => ({
@@ -59,9 +61,9 @@ const Messaging = () => {
               }));
 
               const lastMessage =
-              allMessages.length > 0
-                ? allMessages.sort((a, b) => b.createdAt - a.createdAt)[0]  // Sort in descending order
-                : { message: 'No messages yet', createdAt: Date.now() };
+                allMessages.length > 0
+                  ? allMessages.sort((a, b) => b.createdAt - a.createdAt)[0]  // Sort in descending order
+                  : { message: 'No messages yet', createdAt: Date.now() };
 
               roomList.push({
                 id: key,
@@ -69,20 +71,19 @@ const Messaging = () => {
                 user: receiverData.val(),
                 lastMessage,
               });
-            } else {
-              console.log(`User data for receiverId ${receiverId} not found, skipping this receiver.`);
             }
           }
         }
 
-        setMessages(roomList);
-      } else {
-        console.log('No rooms found');
+        setMessages(roomList);  // Update the state with the new room list
       }
-    } catch (error) {
-      console.error('Error querying messages:', error);
-    }
-  }
+    });
+
+    // Cleanup function to remove the listener if the component unmounts
+    return () => {
+      // You can add a listener removal here if needed, e.g., off()
+    };
+  }, []);  // Empty dependency array ensures this effect runs only once
 
   return (
     <Container bg="#e6e6e6" style={{ paddingTop: 10 }}>
