@@ -21,10 +21,12 @@ import { getDatabase, ref, update } from 'firebase/database';
 import LoadingOverlay from '@/components/app/LoadingOverlay';
 import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import useUser from '@/hooks/useUser';
+import { useRouter } from 'expo-router';
 
 export default function EditProfile() {
   const { user, loading } = useUser();
   const currentUser = getAuth().currentUser;
+  const router = useRouter();
 
   const [profileImage, setProfileImage] = useState<any>(currentUser?.photoURL || '');
   const [fname, setFname] = useState('');
@@ -86,6 +88,7 @@ export default function EditProfile() {
       });
 
       alert('Profile updated successfully!');
+      router.back();
     } catch (error) {
       console.error('Error updating profile: ', error);
       alert('An error occurred while updating the profile');

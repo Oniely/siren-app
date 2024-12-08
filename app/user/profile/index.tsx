@@ -45,7 +45,9 @@ const Profile = () => {
           />
           <View style={styles.infoContainer}>
             <Text style={styles.profileName}>{user?.displayName}</Text>
-            <Text style={styles.profileAt}>{user?.email}</Text>
+            <Text style={styles.profileAt} numberOfLines={2}>
+              {user?.email}
+            </Text>
             <TouchableOpacity
               onPress={() => router.push('/user/profile/edit_profile')}
               style={styles.editButton}
@@ -142,6 +144,7 @@ const styles = ScaledSheet.create({
     gap: '15@s',
   },
   infoContainer: {
+    flex: 1,
     gap: '6@vs',
     alignItems: 'flex-start',
   },
@@ -154,6 +157,7 @@ const styles = ScaledSheet.create({
     fontSize: '14@s',
     color: '#b6b6b7',
     fontFamily: 'BeVietnamProRegular',
+    width: '80%',
   },
   profileImage: {
     resizeMode: 'cover',

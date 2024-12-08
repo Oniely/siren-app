@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth, db } from '@/firebaseConfig.js';
 import { useEffect, useState } from 'react';
 import React, {
@@ -89,6 +89,10 @@ const Register = () => {
 
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const userId = userCredential.user.uid;
+
+      await updateProfile(auth?.currentUser!, {
+        displayName: `${firstname} ${lastname}`,
+      });
 
       Alert.alert('Responder', 'Are you a responder?', [
         {
