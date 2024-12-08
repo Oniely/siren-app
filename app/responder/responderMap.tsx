@@ -23,6 +23,7 @@ import { formatDate } from '@/constants/Date';
 import { mapStyle } from '@/constants/Map';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
+import Entypo from '@expo/vector-icons/Entypo';
 
 interface Report {
   reportId: string;
@@ -49,6 +50,7 @@ const ResponderMap = () => {
   const [reports, setReports] = useState<any[]>([]);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [responderId, setResponderId] = useState<string | null>(null);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   const router = useRouter();
   const modalizeRef = useRef(null);
@@ -66,11 +68,14 @@ const ResponderMap = () => {
   const handleMarkerPress = (report: any, event: any) => {
     event.persist();
     setSelectedReport(report);
+    console.log(report.status); // Add this log to verify the status value
+    setIsButtonDisabled(report.status === 'Accepted' || report.status === 'Reviewed'); // This should work if status is correct
     onOpen();
-
-    console.log(report);
   };
-
+  useEffect(() => {
+    console.log('Selected Report:', selectedReport);
+    console.log('Is Button Disabled:', isButtonDisabled);
+  }, [selectedReport, isButtonDisabled]);
   useEffect(() => {
     const auth = getAuth();
 
@@ -103,7 +108,7 @@ const ResponderMap = () => {
 
     update(reportRef, {
       status: 'Accepted',
-      responderId: responderId, 
+      responderId: responderId,
     })
       .then(() => {
         console.log('Report accepted');
@@ -241,7 +246,7 @@ const ResponderMap = () => {
             latitude: responderLocation?.latitude || 12.8797,
             longitude: responderLocation?.longitude || 121.774,
             latitudeDelta: 0.1,
-            longitudeDelta: 0.00001,
+            longitudeDelta: 0.001,
           }}
         >
           {/* Responder Marker */}
@@ -256,23 +261,28 @@ const ResponderMap = () => {
             />
           )}
           {/* Markers for All Reports with Categories */}
-          {reports.map(
-            (report, idx) =>
-              report.location &&
-              typeof report.location.latitude === 'number' &&
-              typeof report.location.longitude === 'number' && (
-                <Marker
-                  key={idx}
-                  coordinate={report.location}
-                  title={`Report ${report.id}`}
-                  description={`Category: ${report.category}, Lat: ${report.location.latitude}, Lng: ${report.location.longitude}`}
-                  pinColor="red"
-                  onPress={(e) => handleMarkerPress(report, e)}
-                >
-                  {/* <EmergencyMarker /> */}
-                </Marker>
-              )
-          )}
+          {/* Markers for Reports */}
+          {reports.map((report, index) => {
+            // Different marker styles for Accepted and Reviewed reports
+            let markerColor = 'red'; // Default for new reports
+            if (report.status === 'Accepted') {
+              markerColor = 'green'; // Accepted
+            } else if (report.status === 'Reviewed') {
+              markerColor = 'orange'; // Reviewed
+            }
+
+            return (
+              <Marker
+                key={index}
+                coordinate={report.location}
+                title={report.senderName}
+                description={report.category}
+                onPress={(event) => handleMarkerPress(report, event)}
+              >
+                <Entypo name="location-pin" size={60} color={markerColor} />
+              </Marker>
+            );
+          })}
         </MapView>
         <Modalize ref={modalizeRef} snapPoint={300} onClose={resetSelectedReport}>
           <View style={styles.modal}>
@@ -289,7 +299,11 @@ const ResponderMap = () => {
                 {selectedReport?.location.latitude}, {selectedReport?.location.longitude}
               </Text>
             </View>
-            <TouchableOpacity style={styles.borderBottom} onPress={confirmStatus}>
+            <TouchableOpacity
+              style={[styles.borderBottom, isButtonDisabled && styles.buttonDisabled]}
+              onPress={confirmStatus}
+              disabled={isButtonDisabled}
+            >
               <Text style={styles.primaryButton}>Respond to Emergency</Text>
             </TouchableOpacity>
             <Text style={[styles.headerText, styles.borderBottom]}>Emergency Details</Text>
@@ -582,6 +596,9 @@ const styles = ScaledSheet.create({
     zIndex: 1000,
     width: Dimensions.get('window').width,
     height: '200@vs',
+  },
+  buttonDisabled: {
+    backgroundColor: 'fff',
   },
 });
 

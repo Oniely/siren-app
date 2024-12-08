@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Image, Pressable, StyleSheet, Text, View, Animated, TouchableOpacity } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, View, Animated, TouchableOpacity, ScrollView } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Href, usePathname, useRouter } from 'expo-router';
 import Feather from '@expo/vector-icons/Feather';
@@ -62,47 +62,52 @@ const ResponderHeader = ({ user }: { user: User }) => {
 
       {/* Burger Menu Modal */}
       <Animated.View style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }]}>
-        <TouchableOpacity onPress={toggleMenu} style={styles.closeButton}>
-          <AntDesign name="close" size={30} color="black" />
-        </TouchableOpacity>
-        <View style={styles.burgerProfile}>
-          <Pressable onPress={() => router.push('/responder/profile')}>
-            <Image
-              source={user?.photoURL ? { uri: user.photoURL } : require('@/assets/images/profile-logo.png')}
-              style={styles.sliderNavImage}
-            />
-          </Pressable>
-          <Text style={styles.burgerName}>{user?.displayName || ''}</Text>
-        </View>
+        <ScrollView style={styles.navScrollContainer}>
+          <TouchableOpacity onPress={toggleMenu} style={styles.closeButton}>
+            <AntDesign name="close" size={30} color="black" />
+          </TouchableOpacity>
+          <View style={styles.burgerProfile}>
+            <Pressable onPress={() => router.push('/responder/profile')}>
+              <Image
+                source={user?.photoURL ? { uri: user.photoURL } : require('@/assets/images/profile-logo.png')}
+                style={styles.sliderNavImage}
+              />
+            </Pressable>
+            <Text style={styles.burgerName}>{user?.displayName || ''}</Text>
+          </View>
 
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/responder/contacts')}>
-          <Feather name="phone-call" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Emergency Call</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/responder/messages')}>
-          <FontAwesome name="send" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Emergency Text</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/responder/responderMap')}>
-          <Ionicons name="eye-sharp" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>View Alerts</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.sliderNavItem}
-          onPress={() => handlePress('/responder/profile/notifications')}
-        >
-          <Ionicons name="notifications" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Notifications</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/responder/settings')}>
-          <Ionicons name="settings-sharp" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Settings</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => setShowModal(true)}>
-          <Ionicons name="exit" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Logout</Text>
-        </TouchableOpacity>
-        <Text style={styles.burgerFooter}>All Rights Reserved @Siren2024</Text>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/responder/contacts')}>
+            <Feather name="phone-call" size={35} color="#0c0c63" />
+            <Text style={styles.sliderNavItemText}>Emergency Call</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/responder/messages')}>
+            <FontAwesome name="send" size={35} color="#0c0c63" />
+            <Text style={styles.sliderNavItemText}>Emergency Text</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.sliderNavItem}
+            onPress={() => handlePress('/responder/responderMap')}
+          >
+            <Ionicons name="eye-sharp" size={35} color="#0c0c63" />
+            <Text style={styles.sliderNavItemText}>View Alerts</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.sliderNavItem}
+            onPress={() => handlePress('/responder/profile/notifications')}
+          >
+            <Ionicons name="notifications" size={35} color="#0c0c63" />
+            <Text style={styles.sliderNavItemText}>Notifications</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/responder/settings')}>
+            <Ionicons name="settings-sharp" size={35} color="#0c0c63" />
+            <Text style={styles.sliderNavItemText}>Settings</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => setShowModal(true)}>
+            <Ionicons name="exit" size={35} color="#0c0c63" />
+            <Text style={styles.sliderNavItemText}>Logout</Text>
+          </TouchableOpacity>
+          <Text style={styles.burgerFooter}>All Rights Reserved @Siren2024</Text>
+        </ScrollView>
       </Animated.View>
       <ConfirmModal
         visible={showModal}
@@ -150,6 +155,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FAF9F6',
     width: '100%',
+  },
+  navScrollContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    overflow: 'scroll',
+    backgroundColor: '#ffffff',
+    zIndex: 1000,
   },
   burgerName: {
     marginTop: 20,

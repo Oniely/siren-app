@@ -22,7 +22,9 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { push, ref, set } from 'firebase/database';
-import { getDownloadURL, uploadBytes, ref as reference } from 'firebase/storage';
+import { getAuth } from 'firebase/auth';
+
+import { getDownloadURL, uploadBytes, ref as storageRef } from 'firebase/storage';
 import { db, storage } from '@/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
@@ -32,7 +34,8 @@ import { Colors } from '@/constants/Colors';
 import { Ionicons } from '@expo/vector-icons';
 import HeaderText from '@/components/app/HeaderText';
 import Loading from '@/components/app/Loading';
-
+import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 interface LocationProp {
   coords: {
     longitude: any;
@@ -57,19 +60,19 @@ const category = [
 
 const ReportEmergency = () => {
   const router = useRouter();
-
+  const currentUser = getAuth().currentUser;
+  const [reportImage, setReportImage] = useState<{ uri: string } | null>(null);
   const [reportId, setreportId] = useState(false);
   const [showCateg, setShowCateg] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState<any>(null);
   const [details, setDetails] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedCateg, setSelectedCateg] = useState('');
-
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [imageUrls, setImageUrls] = useState<{ file: any; url: string }[]>([]);
-
   const [location, setLocation] = useState<LocationProp | null>(null);
   const [status, setStatus] = useState('Standby');
+  const [mediaFiles, setMediaFiles] = useState<any[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -116,57 +119,43 @@ const ReportEmergency = () => {
     }
   };
 
-  const uploadMediaToStorage = async (mediaFiles: any) => {
-    setStatus('Uploading');
-    const uploadedUrls = [];
-
+  const pickMedia = async () => {
+    const result = await launchImageLibraryAsync({
+      mediaTypes: MediaTypeOptions.All,
+      allowsMultipleSelection: true,
+      quality: 1,
+    });
+    if (!result.canceled && result.assets) {
+      setMediaFiles([...mediaFiles, ...result.assets]);
+    }
+  };
+  const uploadMediaFiles = async () => {
+    const uploadedFiles = [];
     for (const file of mediaFiles) {
-      const { uri, fileName, type } = file; // Get file details
-      console.log(file);
-      const response = await fetch(uri); // Convert to blob
-      const blob = await response.blob();
-      console.log(storage);
-      const storageRef = reference(storage, `reports/${fileName}`); // Firebase Storage reference
-      console.log('REF', storageRef);
-
       try {
-        const snapshot = await uploadBytes(storageRef, blob); // Upload file
-        console.log('File uploaded successfully:', snapshot);
-
+        const response = await fetch(file.uri);
+        const blob = await response.blob();
+        const fileRef = storageRef(storage, `reports/${file.fileName}`);
+        const snapshot = await uploadBytes(fileRef, blob);
         const downloadURL = await getDownloadURL(snapshot.ref);
-        uploadedUrls.push({ file: file, url: downloadURL });
-
-        console.log(downloadURL);
-        setStatus('Uploaded');
+        uploadedFiles.push({ file, url: downloadURL });
       } catch (error) {
-        setStatus('Upload error');
         console.error('Error uploading file:', error);
+        throw error;
       }
     }
-
-    setImageUrls(uploadedUrls);
+    // Update imageUrls state with uploaded file URLs
+    setImageUrls(uploadedFiles);
+    return uploadedFiles;
   };
-
-  const pickImage = async () => {
-    const result = await launchImageLibrary({
-      mediaType: 'mixed',
-      selectionLimit: 3,
-      includeBase64: false,
-    });
-
-    if (result.assets && result.assets.length > 0) {
-      setSelectedMedia(result.assets);
-      uploadMediaToStorage(result.assets);
-    }
-  };
-
   const submit = async (
     date: Date,
     latitude: number,
     longitude: number,
     details: string,
     assets: { file: any; url: string }[],
-    category: string
+    category: string,
+    reportImage: any // The image selected for the report
   ) => {
     console.log('Submit function started');
     console.log('Data to be submitted:', {
@@ -176,6 +165,7 @@ const ReportEmergency = () => {
       details,
       assets,
       category,
+      reportImage,
     });
 
     const defaultLatitude = 37.7749; // Example: San Francisco latitude
@@ -195,51 +185,60 @@ const ReportEmergency = () => {
       return;
     }
 
-    const reportRef = ref(db, 'reports/');
-    console.log('Firebase Reference:', reportRef);
-    const newReportRef = push(reportRef);
-    console.log('New Report Reference:', newReportRef);
-    const reportId = newReportRef.key; // Retrieve the generated ID
-    set(newReportRef, {
-      reportId,
-      status: 'Reported',
-      timestamp: new Date(date).getTime(),
-      location: { latitude: finalLatitude, longitude: finalLongitude },
-      details,
-      assets: assets ?? [],
-      category,
-      createdAt: Date.now(),
-      senderId: userId,
-    })
-      .then(() => {
-        console.log('Submitting report with the following data:');
-        console.log('Report ID', reportId);
-        console.log('Date:', selectedDate);
-        console.log('Location:', location);
-        console.log('Details:', details);
-        console.log('Assets:', imageUrls);
-        console.log('Category:', selectedCateg);
-        console.log('User ID:', userId);
-        console.log('Data saved successfully with auto ID!');
-        setStatus('Submitted');
-      })
-      .catch((error) => {
-        setStatus('Submitted error');
-        console.error('Error writing document: ', error);
+    let imageUrl = '';
+    try {
+      const uploadedMedia = await uploadMediaFiles();
+      const reportRef = push(ref(db, 'reports/'));
+      const reportId = reportRef.key;
+
+      await set(reportRef, {
+        reportId,
+        timestamp: selectedDate.getTime(),
+        location: location?.coords || { latitude: 0, longitude: 0 },
+        details,
+        category: selectedCateg,
+        assets: uploadedMedia,
+        senderId: userId,
+        status: 'Reported',
+        createdAt: Date.now(),
       });
 
-    // if (!selectedDate || !location.latitude || !location.longitude || !details || !selectedCateg) {
-    //   console.error('All fields must be filled');
-    //   setStatus('Error: Missing fields');
-    //   return;
-    // }
-    // if (imageUrls.length === 0) {
-    //   console.error('No media uploaded');
-    //   setStatus('Error: No media uploaded');
-    //   return;
-    // }
+      setStatus('Submitted');
+      alert('Report successfully submitted.');
+    } catch (error) {
+      console.error('Error submitting report:', error);
+      setStatus('Error');
+    }
+  };
+  const handleRemoveMedia = (index: number) => {
+    const updatedMedia = [...mediaFiles];
+    updatedMedia.splice(index, 1);
+    setMediaFiles(updatedMedia);
   };
 
+  if (!location) {
+    return <Loading />;
+  }
+  const handleSubmit = async () => {
+    setStatus('Uploading');
+    try {
+      const uploadedMedia = await uploadMediaFiles();
+      await submit(
+        selectedDate,
+        location.coords.latitude,
+        location.coords.longitude,
+        details,
+        uploadedMedia, // Pass the result from uploadMediaFiles
+        selectedCateg,
+        reportImage
+      );
+      setStatus('Submitted');
+      router.navigate('/user/waitingResponder');
+    } catch (error) {
+      console.error('Error during report submission:', error);
+      setStatus('Error');
+    }
+  };
   return (
     <Container bg="#faf9f6" statusBarStyle="light">
       <HeaderText text="Report Emergency" bg="#e6e6e6" />
@@ -309,58 +308,31 @@ const ReportEmergency = () => {
           </View>
           <View style={styles.emergencyUpload}>
             <Text style={styles.emergencyUploadText}>Photos/Videos</Text>
-            {imageUrls && imageUrls.length > 0 ? (
-              <View style={styles.uploadDetails}>
-                {imageUrls.map((media: any, index: number) => {
-                  if (media.file.type.includes('video')) {
-                    return (
-                      <Video
-                        key={index}
-                        // Can be a URL or a local file.
-                        source={{ uri: media.url }}
-                        // Store reference
-                        // ref={videoRef}
-                        // Callback when remote video is buffering
-                        // onBuffer={onBuffer}
-                        // // Callback when video cannot be loaded
-                        // onError={onError}
-                        // style={styles.backgroundVideo}
-                        style={{ width: 80, height: 80 }}
-                      />
-                    );
-                  } else {
-                    return (
-                      <Image key={index} source={{ uri: media.url }} style={{ width: 80, height: 80 }} />
-                    );
-                  }
-                })}
-              </View>
-            ) : (
-              <View style={styles.iconUpload}>
-                <TouchableOpacity onPress={pickImage}>
-                  <SLI name="cloud-upload" size={40} color={'#0B0C63'} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={takePicture}>
-                  <SLI name="camera" size={40} color={'#0B0C63'} />
-                </TouchableOpacity>
-              </View>
-            )}
+            <Text style={styles.label}>Upload Photos/Videos</Text>
+
+            <View style={styles.media}>
+              <TouchableOpacity style={styles.mediaButton} onPress={pickMedia}>
+                <SLI name="cloud-upload" size={40} color="#0B0C63" />
+              </TouchableOpacity>
+              <ScrollView horizontal style={styles.mediaGallery}>
+                {mediaFiles.map((file, index) => (
+                  <View key={index} style={styles.mediaPreview}>
+                    <Image source={{ uri: file.uri }} style={styles.mediaImage} />
+                    <TouchableOpacity
+                      onPress={() => handleRemoveMedia(index)}
+                      style={styles.removeMediaButton}
+                    >
+                      <MI name="close" size={20} color="#fff" />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </ScrollView>
+            </View>
           </View>
           <Pressable
             style={styles.button}
             disabled={status === 'Submitting' || status === 'Uploading'}
-            onPress={() => {
-              console.log('Submit button clicked'); // Debugging
-              submit(
-                selectedDate,
-                location.coords.latitude,
-                location.coords.longitude,
-                details,
-                imageUrls,
-                selectedCateg
-              );
-              router.navigate('/user/waitingResponder');
-            }}
+            onPress={handleSubmit} // Use the new function
           >
             <Text style={styles.buttonText}>Submit Report</Text>
           </Pressable>
@@ -481,6 +453,9 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     backgroundColor: '#e6e6e6',
     marginTop: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
   },
   detailsInput: {
     borderWidth: 1,
@@ -509,7 +484,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '86%',
     marginHorizontal: 'auto',
-    marginVertical: 40,
+    marginVertical: 60,
     zIndex: 10,
   },
   buttonText: {
@@ -518,4 +493,40 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'BeVietnamProSemiBold',
   },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    resizeMode: 'cover',
+    width: 120,
+    height: 120,
+  },
+  imageContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  removeImageButton: {},
+  changeImageButton: {},
+  imageOptions: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  label: { fontSize: 16, marginBottom: 5 },
+  media: {
+    gap: 5,
+    marginVertical: 10,
+    backgroundColor: '#e6e6e6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+    height: '100%',
+  },
+  mediaButton: { alignSelf: 'center', marginBottom: 10 },
+  mediaGallery: { flexDirection: 'row' },
+  mediaPreview: { marginRight: 10, position: 'relative' },
+  mediaImage: { width: 100, height: 100, borderRadius: 10 },
+  removeMediaButton: { position: 'absolute', top: 5, right: 5, backgroundColor: '#000', padding: 5 },
 });

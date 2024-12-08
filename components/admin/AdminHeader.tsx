@@ -1,5 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { Image, Pressable, Text, View, Animated, TouchableOpacity } from 'react-native';
+import {
+  Image,
+  Pressable,
+  Text,
+  View,
+  Animated,
+  TouchableOpacity,
+  Dimensions,
+  ScrollView,
+} from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Href, usePathname, useRouter } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -7,6 +16,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScaledSheet } from 'react-native-size-matters';
 import ConfirmModal from '../ConfirmModal';
+const { height } = Dimensions.get('window');
 
 interface HeaderProps {
   bg?: string;
@@ -52,45 +62,52 @@ const AdminHeader: React.FC<HeaderProps> = ({ bg = '#e6e6e6' }) => {
       {/* Right Side: Notifications & Profile */}
       <View style={styles.rightSide}>
         <Pressable>
-          <MaterialCommunityIcons name="bell" size={32} color="#016ea6" />
-        </Pressable>
-        <Pressable>
           <Image source={require('@/assets/images/profile-logo.png')} style={styles.police} />
         </Pressable>
       </View>
 
       {/* Burger Menu Modal */}
-      <Animated.View style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }]}>
-        <TouchableOpacity onPress={toggleMenu} style={styles.closeButton}>
-          <AntDesign name="close" size={30} color="black" />
-        </TouchableOpacity>
-        <View style={styles.burgerProfile}>
-          <Pressable>
-            <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
-          </Pressable>
-          <Text style={styles.burgerName}>Admin</Text>
-        </View>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/emergency_report')}>
-          <Image source={require('@/assets/images/reports-purple.png')} style={styles.adminSideBarIcon} />
-          <Text style={styles.sliderNavItemText}>View Reports</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/manage_accounts')}>
-          <Image source={require('@/assets/images/people-purple.png')} style={styles.adminSideBarIcon} />
-          <Text style={styles.sliderNavItemText}>Manage Accounts</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/analytics')}>
-          <Image source={require('@/assets/images/analytics-purple.png')} style={styles.adminSideBarIcon} />
-          <Text style={styles.sliderNavItemText}>View Analytics</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/settings')}>
-          <Ionicons name="settings-sharp" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Settings</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.sliderNavItem} onPress={() => setShowModal(true)}>
-          <Ionicons name="exit" size={35} color="#0c0c63" />
-          <Text style={styles.sliderNavItemText}>Logout</Text>
-        </TouchableOpacity>
-        <Text style={styles.burgerFooter}>All Rights Reserved @Siren2024</Text>
+      <Animated.View
+        style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }, { height: height }]}
+      >
+        <ScrollView style={styles.navScrollContainer}>
+          <TouchableOpacity onPress={toggleMenu} style={styles.closeButton}>
+            <AntDesign name="close" size={30} color="black" />
+          </TouchableOpacity>
+          <View style={styles.burgerProfile}>
+            <Pressable>
+              <Image source={require('@/assets/images/profile-logo.png')} style={styles.sliderNavImage} />
+            </Pressable>
+            <Text style={styles.burgerName}>Admin</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.sliderNavItem}
+            onPress={() => handlePress('/admin/emergency_report')}
+          >
+            <Image source={require('@/assets/images/reports-purple.png')} style={styles.adminSideBarIcon} />
+            <Text style={styles.sliderNavItemText}>View Reports</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.sliderNavItem}
+            onPress={() => handlePress('/admin/manage_accounts')}
+          >
+            <Image source={require('@/assets/images/people-purple.png')} style={styles.adminSideBarIcon} />
+            <Text style={styles.sliderNavItemText}>Manage Accounts</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/analytics')}>
+            <Image source={require('@/assets/images/analytics-purple.png')} style={styles.adminSideBarIcon} />
+            <Text style={styles.sliderNavItemText}>View Analytics</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/settings')}>
+            <Ionicons name="settings-sharp" size={35} color="#0c0c63" />
+            <Text style={styles.sliderNavItemText}>Settings</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => setShowModal(true)}>
+            <Ionicons name="exit" size={35} color="#0c0c63" />
+            <Text style={styles.sliderNavItemText}>Logout</Text>
+          </TouchableOpacity>
+          <Text style={styles.burgerFooter}>All Rights Reserved @Siren2024</Text>
+        </ScrollView>
       </Animated.View>
       <ConfirmModal
         visible={showModal}
@@ -132,6 +149,13 @@ const styles = ScaledSheet.create({
     height: '40@s',
     width: '40@s',
     borderRadius: '20@s',
+  },
+  navScrollContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    overflow: 'scroll',
+    backgroundColor: '#ffffff',
+    zIndex: 1000,
   },
   burgerProfile: {
     height: '250@s',

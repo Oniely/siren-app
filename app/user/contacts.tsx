@@ -15,6 +15,7 @@ import {
   Animated,
   Alert,
   Linking,
+  ScrollView,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from 'expo-router';
@@ -30,7 +31,19 @@ import Loading from '@/components/app/Loading';
 import { getAuth } from 'firebase/auth';
 import { db, auth } from '@/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { orderByChild, get, update, set, equalTo, limitToFirst, ref, push } from 'firebase/database';
+import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
+import {
+  orderByChild,
+  get,
+  update,
+  set,
+  equalTo,
+  limitToFirst,
+  ref,
+  push,
+  off,
+  onValue,
+} from 'firebase/database';
 const Contact = () => {
   const user = getAuth().currentUser;
   const router = useRouter();
@@ -55,7 +68,7 @@ const Contact = () => {
   >([]);
   const [searchText, setSearchText] = useState('');
   const [filteredData, setFilteredData] = useState<
-    { id: string; username: string; email: string; roomId: string }[]
+    { id: string; username: string; email: string; roomId: string; }[]
   >([]);
 
   type ContactType = {
@@ -207,9 +220,6 @@ const Contact = () => {
       return;
     }
 
-    console.log('UserId:', userId);
-    console.log('Added Contact:', addedContact);
-
     const contactRef = ref(db, `contacts/${userId}`);
     const newContactRef = push(contactRef);
 
@@ -280,56 +290,44 @@ const Contact = () => {
   //FETCHING CONTACTS
   useEffect(() => {
     const fetchContacts = async () => {
-      // Get the userId from AsyncStorage
       const userId = await AsyncStorage.getItem('userId');
-
-      // If there's no userId, handle the error
       if (!userId) {
         console.error('UserId not found in AsyncStorage');
         return;
       }
 
-      // Log the userId for debugging
-      console.log(userId);
-
-      // Create a reference to the contacts under this userId
       const contactsRef = ref(db, `contacts/${userId}`);
 
-      try {
-        // Fetch the data from Firebase
-        const snapshot = await get(contactsRef);
-
+      // Listen for real-time updates
+      const contactsListener = onValue(contactsRef, (snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.val();
-
-          // Format and include placeholders for missing data
           const formattedContacts: ContactType[] = Object.entries(data).map(
             ([contactId, contact]: [string, any]) => ({
-              id: contactId, // Use the contact ID as the unique identifier
-              firstname: contact.name?.split(' ')[0] || '', // Extract first name
-              lastname: contact.name?.split(' ')[1] || '', // Extract last name
+              id: contactId,
+              firstname: contact.name?.split(' ')[0] || '',
+              lastname: contact.name?.split(' ')[1] || '',
               username: contact.name || `${contact.firstname} ${contact.lastname}`,
               email: contact.email || '',
               number: contact.number || '',
               category: contact.category || 'personal', // Default to "personal"
             })
           );
-
-          // Set the formatted contacts to state
-          setContacts(formattedContacts);
+          setContacts(formattedContacts); // Update state with new contacts
         } else {
           console.log('No contacts found for the current user');
-          setContacts([]); // If no contacts are found, set the contacts state to empty
+          setContacts([]); // If no contacts are found, set empty list
         }
-      } catch (error) {
-        console.error('Error fetching contacts: ', error);
-      }
+      });
+
+      // Cleanup listener on component unmount
+      return () => {
+        contactsRef.off('value', contactsListener);
+      };
     };
 
-    // Call the fetchContacts function when the component mounts
     fetchContacts();
   }, []);
-
   //FETCH SELECTED USER
   useEffect(() => {
     if (selectedUser && selectedUser.id) {
@@ -446,31 +444,42 @@ const Contact = () => {
       return <Text style={{ textAlign: 'center', marginTop: 20 }}>No contacts available</Text>;
     }
 
-    return filteredContacts.map((contact) => (
-      <View key={contact.id} style={styles.contacts}>
-        <Pressable style={styles.contactsInfo}>
-          <Image
-            source={
-              contact.category === 'siren' // Check for 'siren' category
-                ? require('@/assets/images/call-logo.png') // Add your siren logo
-                : contact.category === 'emergency'
-                ? require('@/assets/images/call-logo.png')
-                : require('@/assets/images/personal-logo.png')
-            }
-            style={styles.iconLogo}
-          />
-          <Text style={styles.contactName}>{contact.username}</Text>
-          <Pressable onPress={() => sendMessage(contact.number)}>
-            <Ionicons name="chatbox-ellipses" size={45} color="#0b0c63" />
-          </Pressable>
-          <Pressable onPress={() => callNumber(contact.number)}>
-            <Ionicons name="call" size={45} color="#0b0c63" />
-          </Pressable>
-        </Pressable>
-      </View>
-    ));
+    return (
+      <FlatList
+        data={filteredContacts}
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={styles.contactList}
+        renderItem={({ item }) => (
+          <View style={styles.contacts}>
+            <Pressable style={styles.contactsInfo}>
+              <Image
+                source={
+                  item.category === 'siren'
+                    ? require('@/assets/images/call-logo.png')
+                    : item.category === 'emergency'
+                    ? require('@/assets/images/call-logo.png')
+                    : require('@/assets/images/personal-logo.png')
+                }
+                style={styles.iconLogo}
+              />
+              <Text style={styles.contactName}>{item.username}</Text>
+              <View style={styles.contactIcons}>
+                <Pressable onPress={() => sendMessage(item.number)}>
+                  <Ionicons name="chatbox-ellipses" size={30} color="#0b0c63" />
+                </Pressable>
+                <Pressable onPress={() => callNumber(item.number)}>
+                  <Ionicons name="call" size={30} color="#0b0c63" />
+                </Pressable>
+                <Pressable onPress={() => callNumber(item.number)}>
+                  <SimpleLineIcons name="options" size={30} color="#0b0c63" />
+                </Pressable>
+              </View>
+            </Pressable>
+          </View>
+        )}
+      />
+    );
   };
-
   // ADD CONTACT FUNCTION
   const handleAddContact = () => {
     if (!firstname || !lastname || !email || !number) {
@@ -490,13 +499,13 @@ const Contact = () => {
     createContact(addedContact);
     setModalVisible(false);
   };
-  const handleSearch = (text: string) => {
+  const handleSearch = (text) => {
     setSearchText(text);
 
     if (text.trim() === '') {
       setFilteredData(data);
     } else {
-      const filtered = data.filter((item) => item.name.toLowerCase().includes(text.toLowerCase()));
+      const filtered = data.filter((item) => item.username.toLowerCase().includes(text.toLowerCase()));
       setFilteredData(filtered);
     }
   };
@@ -663,16 +672,23 @@ const styles = StyleSheet.create({
   contactsInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     flex: 1,
+    width: '100%',
   },
   contactName: {
     fontSize: 24,
+    flexWrap: 'wrap',
+    width: '33%',
+  },
+  contactIcons: {
+    flexDirection: 'row',
+    gap: 10,
   },
   iconLogo: {
     resizeMode: 'center',
     height: 50,
-    width: '25%',
+    width: '20%',
   },
   centeredView: {
     flex: 1,
@@ -753,6 +769,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 10,
   },
+  contactList: {},
   contactListItem: {
     padding: 10,
     borderBottomWidth: 1,

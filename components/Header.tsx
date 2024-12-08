@@ -8,6 +8,7 @@ import {
   Animated,
   TouchableOpacity,
   ScrollView,
+  Dimensions,
 } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Href, usePathname, useRouter } from 'expo-router';
@@ -20,6 +21,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 import { ref, get } from 'firebase/database';
 import { db, auth } from '@/firebaseConfig';
 import { User } from 'firebase/auth';
+const { height } = Dimensions.get('window');
 
 interface HeaderProps {
   user: User;
@@ -119,7 +121,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
       </Pressable>
 
       {/* Burger Menu Modal */}
-      <Animated.View style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }]}>
+      <Animated.View style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }, {height: height}]}>
         <ScrollView style={styles.navScrollContainer}>
           <TouchableOpacity onPress={toggleMenu} style={styles.closeButton}>
             <AntDesign name="close" size={30} color="black" />
