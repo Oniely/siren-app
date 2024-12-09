@@ -68,8 +68,8 @@ const ResponderMap = () => {
   const handleMarkerPress = (report: any, event: any) => {
     event.persist();
     setSelectedReport(report);
-    console.log(report.status); // Add this log to verify the status value
-    setIsButtonDisabled(report.status === 'Accepted' || report.status === 'Reviewed'); // This should work if status is correct
+    console.log(report.status); 
+    setIsButtonDisabled(report.status === 'Accepted' || report.status === 'Reviewed');
     onOpen();
   };
   useEffect(() => {
@@ -105,7 +105,6 @@ const ResponderMap = () => {
       return;
     }
     const reportRef = ref(db, `reports/${selectedReport.reportId}`);
-
     update(reportRef, {
       status: 'Accepted',
       responderId: responderId,
@@ -118,7 +117,6 @@ const ResponderMap = () => {
       .catch((error: Error) => {
         console.error('Error updating status:', error.message);
       });
-
     onClose();
   };
 
@@ -260,11 +258,8 @@ const ResponderMap = () => {
               pinColor="blue"
             />
           )}
-          {/* Markers for All Reports with Categories */}
-          {/* Markers for Reports */}
           {reports.map((report, index) => {
-            // Different marker styles for Accepted and Reviewed reports
-            let markerColor = 'red'; // Default for new reports
+            let markerColor = 'red'; 
             if (report.status === 'Accepted') {
               markerColor = 'green'; // Accepted
             } else if (report.status === 'Reviewed') {

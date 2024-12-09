@@ -120,9 +120,9 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
         <MaterialCommunityIcons name="menu" size={30} color="#8F8E8D" />
       </Pressable>
 
-      {/* Burger Menu Modal */}
-      <Animated.View style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }, 
-    ]}>
+      <Animated.View
+        style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }, { height: height }]}
+      >
         <ScrollView style={styles.navScrollContainer}>
           <TouchableOpacity onPress={toggleMenu} style={styles.closeButton}>
             <AntDesign name="close" size={30} color="black" />

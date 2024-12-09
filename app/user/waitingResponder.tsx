@@ -37,6 +37,7 @@ const WaitingResponder: React.FC = () => {
   const [profileData, setProfileData] = useState<any>(null);
   const [responderLocation, setResponderLocation] = useState<any>(null);
   const mapRef = useRef<MapView>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchProfileData = async () => {
     try {
@@ -76,13 +77,11 @@ const WaitingResponder: React.FC = () => {
             const latestReport = matchingReports[0];
             setLocation(latestReport?.location || null);
 
-            // Set up live responder tracking if status is "Accepted"
             if (latestReport.status === 'Accepted') {
-              const responderId = 'responder-unique-id'; // Replace with actual responder ID
+              const responderId = reportsData.responderId; 
               const responderRef = ref(db, `responders/${responderId}`);
               const unsubscribeResponder = onValue(responderRef, (snapshot) => {
                 if (snapshot.exists()) {
-                  // setModalVisible(true);
                   const data = snapshot.val();
                   setResponderLocation({
                     latitude: data.latitude,
@@ -91,7 +90,6 @@ const WaitingResponder: React.FC = () => {
                 }
               });
 
-              // Clean up the listener
               return () => {
                 unsubscribeResponder();
               };
@@ -111,7 +109,32 @@ const WaitingResponder: React.FC = () => {
     fetchUserReports();
   }, [reports]);
 
-  // Ensure map only updates when both responder and report data are present
+  const startTimer = () => {
+    
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = setTimeout(() => {
+      console.log('Timer finished');
+      setModalVisible(true); 
+    }, 300000);
+  };
+
+  const handleNotYet = () => {
+    console.log('Not Yet clicked, restarting timer');
+    setModalVisible(false); // Hide the modal
+    startTimer(); // Restart the timer
+  };
+
+  useEffect(() => {
+    startTimer();
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
   useEffect(() => {
     if (reports.length > 0 && responderLocation) {
       const coordinates: LatLng[] = [
@@ -223,6 +246,7 @@ const WaitingResponder: React.FC = () => {
               <Pressable
                 style={[styles.declineModalButtons, styles.modalButton]}
                 onPress={() => {
+                  handleNotYet;
                   setModalVisible(false);
                 }}
               >

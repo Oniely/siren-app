@@ -113,8 +113,6 @@ const Contact = () => {
       category: 'siren',
     };
 
-    
-
     try {
       await createSirenContactandRoom(sirenContact);
       setContacts((prevContacts) => [...prevContacts, sirenContact]);
@@ -152,9 +150,7 @@ const Contact = () => {
     const sirenContactRef = ref(db, `contacts/${userId}`);
     const newsirenContactRef = push(sirenContactRef);
 
-  
-    
-       try {
+    try {
       await set(newUserRef, {
         contactId: addedContact.id,
         username: addedContact.username,
@@ -343,7 +339,7 @@ const Contact = () => {
           setContacts(formattedContacts);
         } else {
           console.log('No contacts found for the current user');
-          setContacts([]); 
+          setContacts([]);
         }
       } catch (error) {
         console.error('Error fetching contacts: ', error);
@@ -355,9 +351,9 @@ const Contact = () => {
   //FETCH SELECTED USER
   useEffect(() => {
     if (selectedUser && selectedUser.id) {
-      console.log('Selected user:', selectedUser); 
+      console.log('Selected user:', selectedUser);
     }
-  }, [selectedUser]); 
+  }, [selectedUser]);
 
   // SEARCH FILTER
   useEffect(() => {
@@ -382,7 +378,7 @@ const Contact = () => {
             value={searchUsername}
             onChangeText={(text) => {
               setSearchUsername(text);
-              handleSearchUsername(); 
+              handleSearchUsername();
             }}
           />
           {matchingUsers.length > 0 ? (
@@ -390,9 +386,7 @@ const Contact = () => {
               <View key={user.id} style={{ padding: 10, marginBottom: 5 }}>
                 <View style={styles.usernameContainer}>
                   <Text>{user.username}</Text>
-                  <Pressable
-                    onPress={() => handleAddSirenContact(user)} 
-                  >
+                  <Pressable onPress={() => handleAddSirenContact(user)}>
                     <FS name="plus-circle" size={24} color="#0b0c63" />
                   </Pressable>
                 </View>
@@ -462,15 +456,15 @@ const Contact = () => {
     return (
       <FlatList
         data={filteredContacts}
-        keyExtractor={(item) => item.id} 
-        contentContainerStyle={styles.contactList} 
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.contactList}
         renderItem={({ item }) => (
           <View style={styles.contacts}>
             <Pressable style={styles.contactsInfo}>
               <Image
                 source={
                   item.category === 'siren'
-                    ? require('@/assets/images/call-logo.png')
+                    ? require('@/assets/images/logo.png')
                     : item.category === 'emergency'
                     ? require('@/assets/images/call-logo.png')
                     : require('@/assets/images/personal-logo.png')
@@ -513,7 +507,7 @@ const Contact = () => {
     };
 
     try {
-      await createContact(addedContact); 
+      await createContact(addedContact);
 
       setContacts((prevContacts) => [...prevContacts, addedContact]);
 
@@ -527,16 +521,16 @@ const Contact = () => {
     }
   };
 
-  const handleSearch = (text: string) => {
-    setSearchText(text);
+  // const handleSearch = (text: string) => {
+  //   setSearchText(text);
 
-    if (text.trim() === '') {
-      setFilteredData(data);
-    } else {
-      const filtered = data.filter((item) => item.name.toLowerCase().includes(text.toLowerCase()));
-      setFilteredData(filtered);
-    }
-  };
+  //   if (text.trim() === '') {
+  //     setFilteredData(data);
+  //   } else {
+  //     const filtered = data.filter((item) => item.name.toLowerCase().includes(text.toLowerCase()));
+  //     setFilteredData(filtered);
+  //   }
+  // };
   return (
     <Container bg="#e6e6e6" style={{ paddingTop: 10 }}>
       <Pressable style={styles.addButton} onPress={() => setModalVisible(true)}>
