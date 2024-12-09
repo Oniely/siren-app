@@ -26,7 +26,7 @@ const newsData = [
   },
   {
     source: 'ABS-CBN',
-    title: "Biden's approval rating hits new low",
+    title: "Biden's approval rating hits new low2",
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec urna.',
     image_url: 'https://picsum.photos/id/2/367/267',
     url: 'https://picsum.photos/id/2/367/267',
@@ -34,7 +34,7 @@ const newsData = [
   },
   {
     source: 'GMA',
-    title: "Biden's approval rating hits new low",
+    title: "Biden's approval rating hits new low3",
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec urna.',
     image_url: 'https://picsum.photos/id/7/367/267',
     url: 'https://picsum.photos/id/7/367/267',
@@ -125,7 +125,7 @@ export default function News() {
               </Animated.View>
             );
           }}
-          keyExtractor={(item) => item.newsOutlet}
+          keyExtractor={(item) => item.title}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
       </View>
@@ -134,6 +134,7 @@ export default function News() {
         <View style={styles.cardContainer}>
           <FlatList
             data={news || newsData}
+            keyExtractor={(item) => item.title}
             renderItem={({ item }) => (
               <TouchableOpacity onPress={() => router.push(item.url)} activeOpacity={0.9}>
                 <View style={styles.recomCard}>

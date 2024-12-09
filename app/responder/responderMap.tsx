@@ -17,7 +17,6 @@ import { Modalize } from 'react-native-modalize';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ScaledSheet } from 'react-native-size-matters';
 import { FontAwesome6 } from '@expo/vector-icons';
-import EmergencyMarker from '@/components/map/EmergencyMarker';
 import { useRouter } from 'expo-router';
 import { formatDate } from '@/constants/Date';
 import { mapStyle } from '@/constants/Map';
@@ -38,6 +37,7 @@ interface Report {
   createdAt: number;
   timestamp: number;
   status: string;
+  assets: any[];
 }
 
 type LocationCoords = {
@@ -362,9 +362,13 @@ const ResponderMap = () => {
                 <View style={styles.infoColumn}>
                   <Text style={[styles.infoHeaderText, styles.pad]}>Images</Text>
                   <View style={styles.imageContainer}>
-                    <Image source={require('@/assets/images/policeman.png')} style={styles.image} />
-                    <Image source={require('@/assets/images/policeman.png')} style={styles.image} />
-                    <Image source={require('@/assets/images/policeman.png')} style={styles.image} />
+                    {selectedReport?.assets.map((item: any, idx: number) => (
+                      <Image
+                        source={item ? { uri: item.url } : require('@/assets/images/policeman.png')}
+                        style={styles.image}
+                        key={idx}
+                      />
+                    ))}
                   </View>
                 </View>
               </View>
@@ -510,12 +514,14 @@ const styles = ScaledSheet.create({
   },
   imageContainer: {
     width: '100%',
+    height: 'auto',
     flexDirection: 'row',
+    flexWrap: 'wrap',
     paddingVertical: '30@vs',
     gap: '5@s',
     justifyContent: 'space-around',
     alignItems: 'center',
-    paddingBottom: '220@vs', //change this if the space below of scroll view is too big/small
+    paddingBottom: '220@vs',
   },
   image: {
     resizeMode: 'cover',

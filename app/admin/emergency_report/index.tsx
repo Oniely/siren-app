@@ -63,13 +63,11 @@ export default function Reports() {
             <TouchableOpacity
               key={index}
               style={styles.report}
-              onPress={() =>
-                router.navigate(`/admin/emergency_report/report_detail?${report.id}`)
-              }
+              onPress={() => router.navigate(`/admin/emergency_report/report_detail?id=${report.reportId}`)}
             >
               <Image
                 source={
-                  report.reporterProfile
+                  report?.reporterProfile
                     ? { uri: report.reporterProfile }
                     : require('@/assets/images/profile.png')
                 }
