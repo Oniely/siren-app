@@ -121,7 +121,8 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
       </Pressable>
 
       {/* Burger Menu Modal */}
-      <Animated.View style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }, {height: height}]}>
+      <Animated.View style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }, 
+    ]}>
         <ScrollView style={styles.navScrollContainer}>
           <TouchableOpacity onPress={toggleMenu} style={styles.closeButton}>
             <AntDesign name="close" size={30} color="black" />

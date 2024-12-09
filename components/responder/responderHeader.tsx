@@ -1,5 +1,15 @@
 import React, { useState, useRef } from 'react';
-import { Image, Pressable, StyleSheet, Text, View, Animated, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Href, usePathname, useRouter } from 'expo-router';
 import Feather from '@expo/vector-icons/Feather';
@@ -9,6 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ConfirmModal from '../ConfirmModal';
 import { FontAwesome } from '@expo/vector-icons';
 import { User } from 'firebase/auth';
+const { height } = Dimensions.get('window');
 
 const ResponderHeader = ({ user }: { user: User }) => {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -61,7 +72,9 @@ const ResponderHeader = ({ user }: { user: User }) => {
       </View>
 
       {/* Burger Menu Modal */}
-      <Animated.View style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }]}>
+      <Animated.View
+        style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }, { height: height }]}
+      >
         <ScrollView style={styles.navScrollContainer}>
           <TouchableOpacity onPress={toggleMenu} style={styles.closeButton}>
             <AntDesign name="close" size={30} color="black" />
