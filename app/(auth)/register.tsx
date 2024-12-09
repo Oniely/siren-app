@@ -22,7 +22,7 @@ import { Picker } from '@react-native-picker/picker';
 const Register = () => {
   const router = useRouter();
 
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState('User');
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
   const [username, setUsername] = useState('');
@@ -53,7 +53,7 @@ const Register = () => {
   };
 
   const handleSignup = async () => {
-    if (!username || !email || !password || !confirmPassword) {
+    if (!username || !email || !password || !confirmPassword || !category) {
       alert('Please fill in all fields');
       return;
     }
@@ -118,7 +118,7 @@ const Register = () => {
 
         await set(ref(db, `responders/${userId}`), {
           status: 'inactive',
-          location: null, // Add a default value for location if needed
+          location: null, 
         });
       }
 
