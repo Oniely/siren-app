@@ -6,6 +6,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { db, auth } from '@/firebaseConfig';
 import { ref, get, onValue, push, set, update } from 'firebase/database';
+import { useRouter } from 'expo-router';
 
 export default function ResponseReview() {
   const [defaultRating, setDefaultRating] = useState(0);
@@ -13,7 +14,7 @@ export default function ResponseReview() {
   const [comment, setComment] = useState('');
   const [profileData, setProfileData] = useState<any>(null);
   const [reportId, setReportId] = useState<string | null>(null);
-
+  const router = useRouter();
   const starImgFilled = <AntDesign name="star" size={40} color="#1f86e8" />;
   const starImgCorner = <AntDesign name="staro" size={40} color="#1074d2" />;
 
@@ -21,7 +22,7 @@ export default function ResponseReview() {
     try {
       const userId = auth.currentUser?.uid;
       if (!userId) throw new Error('No user ID found');
-  
+
       // Fetch user profile
       const userRef = ref(db, `users/${userId}`);
       const userSnapshot = await get(userRef);
@@ -31,17 +32,18 @@ export default function ResponseReview() {
       } else {
         console.log('No profile data available');
       }
-  
+
       // Fetch user's reports and filter
       const reportsRef = ref(db, `reports`);
       const reportsSnapshot = await get(reportsRef);
-  
+
       if (reportsSnapshot.exists()) {
         const reports = reportsSnapshot.val();
         const userReports = Object.entries(reports).filter(
-          ([, reportData]: [string, any]) => reportData.senderId === userId && reportData.status === 'Accepted'
+          ([, reportData]: [string, any]) =>
+            reportData.senderId === userId && reportData.status === 'Accepted'
         );
-  
+
         if (userReports.length > 0) {
           // Assuming you want to handle the first matching report
           const [firstReportId] = userReports[0];
@@ -56,7 +58,7 @@ export default function ResponseReview() {
       console.error('Error fetching profile or reports data:', error);
     }
   };
-  
+
   useEffect(() => {
     fetchProfileData();
   }, []);
@@ -78,7 +80,7 @@ export default function ResponseReview() {
     const reviewRef = ref(db, 'review/');
     const newReviewRef = push(reviewRef); // Generate a new review ID
     update(reportRef, { status: 'Reviewed' })
-    .then(() => {
+      .then(() => {
         console.log('Report status updated to Reviewed.');
 
         // Insert the review data
@@ -92,6 +94,7 @@ export default function ResponseReview() {
       .then(() => {
         console.log('Review submitted successfully!');
         alert('Thank you for your feedback!');
+        router.replace('/user/');
         setDefaultRating(0);
         setComment('');
       })

@@ -280,11 +280,12 @@ const ResponderMap = () => {
             );
           })}
         </MapView>
-        <Modalize ref={modalizeRef} snapPoint={300} onClose={resetSelectedReport}>
+        <Modalize ref={modalizeRef} snapPoint={350} onClose={resetSelectedReport}>
           <View style={styles.modal}>
             <View style={[styles.flexRowCenter, styles.borderBottom, { paddingTop: 15 }]}>
               <Image source={require('@/assets/images/profile.png')} />
               <View>
+                <Text style={styles.profileStatus}>{selectedReport?.status || ''}</Text>
                 <Text style={styles.profileName}>{selectedReport?.senderName || ''}</Text>
                 <Text style={styles.emergency}>Emergency Type: {selectedReport?.category || ''}</Text>
               </View>
@@ -295,13 +296,15 @@ const ResponderMap = () => {
                 {selectedReport?.location.latitude}, {selectedReport?.location.longitude}
               </Text>
             </View>
-            <TouchableOpacity
-              style={[styles.borderBottom, isButtonDisabled && styles.buttonDisabled]}
-              onPress={confirmStatus}
-              disabled={isButtonDisabled}
-            >
-              <Text style={styles.primaryButton}>Respond to Emergency</Text>
-            </TouchableOpacity>
+            {!(selectedReport?.status === 'Accepted' || selectedReport?.status === 'Reviewed') && (
+              <TouchableOpacity
+                style={[styles.borderBottom, isButtonDisabled && styles.buttonDisabled]}
+                onPress={confirmStatus}
+                disabled={isButtonDisabled}
+              >
+                <Text style={styles.primaryButton}>Respond to Emergency</Text>
+              </TouchableOpacity>
+            )}
             <Text style={[styles.headerText, styles.borderBottom]}>Emergency Details</Text>
           </View>
           <View style={styles.bottomContainer}>
@@ -601,6 +604,9 @@ const styles = ScaledSheet.create({
   },
   buttonDisabled: {
     backgroundColor: 'fff',
+  },
+  profileStatus: {
+    fontStyle: 'italic',
   },
 });
 

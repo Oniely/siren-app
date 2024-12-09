@@ -21,6 +21,7 @@ import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import Loading from '@/components/app/Loading';
 import { Report } from '../responder/responderMap';
+import Entypo from '@expo/vector-icons/Entypo';
 
 const WaitingResponder: React.FC = () => {
   const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
@@ -68,7 +69,9 @@ const WaitingResponder: React.FC = () => {
           );
           setReports(matchingReports);
           if (matchingReports.length > 0) {
-            const latestReport: Report = matchingReports[0];
+            const latestReport: Report = matchingReports.reduce((latest, current) => {
+              return current.timestamp > latest.timestamp ? current : latest;
+            });
             setLocation(latestReport?.location || null);
 
             // Set up live responder tracking if status is "Accepted"
@@ -106,6 +109,31 @@ const WaitingResponder: React.FC = () => {
     fetchUserReports();
   }, [reports]);
 
+  const startTimer = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = setTimeout(() => {
+      console.log('Timer finished');
+      setModalVisible(true);
+    }, 300000);
+  };
+  const handleNotYet = () => {
+    console.log('Not Yet clicked, restarting timer');
+    setModalVisible(false); // Hide the modal
+    startTimer(); // Restart the timer
+  };
+  useEffect(() => {
+    startTimer();
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
+  const handleMarkerPress = (report: any, event: any) => {
+    event.persist();
+  };
   // Ensure map only updates when both responder and report data are present
   useEffect(() => {
     if (reports.length > 0 && responderLocation) {
@@ -136,32 +164,6 @@ const WaitingResponder: React.FC = () => {
       </View>
     );
   }
-
-  const startTimer = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-    timerRef.current = setTimeout(() => {
-      console.log('Timer finished');
-      setModalVisible(true);
-    }, 300000);
-  };
-
-  const handleNotYet = () => {
-    console.log('Not Yet clicked, restarting timer');
-    setModalVisible(false); // Hide the modal
-    startTimer(); // Restart the timer
-  };
-
-  useEffect(() => {
-    startTimer();
-
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
 
   const currentReport = reports.length > 0 ? reports[0] : null;
 
@@ -204,17 +206,26 @@ const WaitingResponder: React.FC = () => {
         }}
       >
         {/* User's Report Locations */}
-        {reports.map((report, index) =>
-          report.location ? (
+        {reports.map((report, index) => {
+          let markerColor = 'red';
+          if (report.status === 'Accepted') {
+            markerColor = 'green'; // Accepted
+          } else if (report.status === 'Reviewed') {
+            markerColor = 'orange'; // Reviewed
+          }
+
+          return (
             <Marker
               key={index}
               coordinate={report.location}
-              title={`Report ${report.id}`}
-              description="Reported location"
-              pinColor="red"
-            />
-          ) : null
-        )}
+              title={report.senderName}
+              description={report.category}
+              onPress={(event) => handleMarkerPress(report, event)}
+            >
+              <Entypo name="location-pin" size={60} color={markerColor} />
+            </Marker>
+          );
+        })}
         {responderLocation && (
           <Marker
             coordinate={{
