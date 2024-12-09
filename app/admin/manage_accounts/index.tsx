@@ -1,4 +1,4 @@
-import { View, Text, Image, Pressable, FlatList, Modal, TextInput, Button } from 'react-native';
+import { Alert, View, Text, Image, Pressable, FlatList, Modal, TextInput, Button } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import AdminStyledContainer from '@/components/admin/AdminStyledContainer';
 import AdminHeader from '@/components/admin/AdminHeader';
@@ -25,6 +25,7 @@ export default function ManageAccounts() {
 
   type User = {
     id: string;
+    username: string;
     firstname: string;
     lastname: string;
     role: 'user' | 'responder';
@@ -57,13 +58,12 @@ export default function ManageAccounts() {
   }, []);
 
   const deleteUser = async (userId: string) => {
-    try {
-      const userRef = ref(db, `users/${userId}`);
-      await remove(userRef);
-      setUsers(users.filter((user) => user.id !== userId)); // Remove user from local state
-      console.log('User deleted');
-    } catch (error) {
-      console.error('Error deleting user:', error);
+    if (userToDelete && typeof userToDelete.id === 'string') {
+      await remove(ref(db, `users/${userToDelete.id}`));
+      setDeleteModalVisible(false);
+      Alert.alert('Account Deleted' );
+    } else {
+      console.error('Invalid user ID');
     }
   };
 
@@ -97,8 +97,8 @@ export default function ManageAccounts() {
       <View style={styles.accountPressables}>
         <Pressable
           onPress={() => {
-            setUserToDelete(item); // Set the user to be deleted
-            setDeleteModalVisible(true); // Show delete confirmation modal
+            setUserToDelete(item); // Correctly set the selected user
+            setDeleteModalVisible(true); // Show modal
           }}
         >
           <AntDesign name="delete" size={24} color="red" />
@@ -176,36 +176,29 @@ export default function ManageAccounts() {
         </View>
       </View>
 
-      {/* Edit User Modal */}
-      {selectedUser && (
-        <Modal visible={modalVisible} animationType="slide" transparent={true}>
+      {userToDelete && (
+        <Modal visible={deleteModalVisible} animationType="fade" transparent={true}>
           <View style={styles.modalContainer}>
-            <View style={styles.editModalContent}>
-              <Text style={styles.modalHeader}>Edit User</Text>
-              <Text style={styles.placeHolderText}>First name</Text>
-              <TextInput
-                style={styles.input}
-                value={firstName}
-                onChangeText={setFirstName}
-                placeholder="Enter first name"
-              />
-              <Text style={styles.placeHolderText}>Last name</Text>
-              <TextInput
-                style={styles.input}
-                value={lastName}
-                onChangeText={setLastName}
-                placeholder="Enter last name"
-              />
+            <View style={styles.modalContent}>
+              <Image source={require('@/assets/images/warning_logo.png')} style={styles.warningImage} />
+              <Text style={styles.modalHeader}>Are you sure you want to delete this user?</Text>
               <View style={styles.buttonContainer}>
-                <Pressable style={[styles.confirmModalButtons, styles.modalButton]} onPress={handleEditUser}>
-                  <Text style={styles.buttonTextYes}>Save Changes</Text>
+                <Pressable
+                  style={[styles.confirmModalButtons, styles.modalButton]}
+                  onPress={() => {
+                    if (userToDelete) {
+                      deleteUser(userToDelete.id); // Pass the correct user ID
+                      setDeleteModalVisible(false); // Hide modal
+                    }
+                  }}
+                >
+                  <Text style={styles.buttonTextYes}>Yes</Text>
                 </Pressable>
-
                 <Pressable
                   style={[styles.declineModalButtons, styles.modalButton]}
-                  onPress={() => setModalVisible(false)}
+                  onPress={() => setDeleteModalVisible(false)}
                 >
-                  <Text style={styles.buttonTextNo}>Cancel</Text>
+                  <Text style={styles.buttonTextNo}>No</Text>
                 </Pressable>
               </View>
             </View>
@@ -377,7 +370,6 @@ const styles = ScaledSheet.create({
     padding: 20,
     borderRadius: 10,
     width: '80%',
-  
   },
   modalContent: {
     backgroundColor: '#fff',

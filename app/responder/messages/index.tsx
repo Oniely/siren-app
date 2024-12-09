@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { get, ref, onValue } from 'firebase/database';
 import { db } from '@/firebaseConfig';
 import Container from '@/components/Container';
-import Footer from '@/components/Footer';
+import Footer from '@/components/responder/responderFooter';
 
 interface Message {
   id: string;

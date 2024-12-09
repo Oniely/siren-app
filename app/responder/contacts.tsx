@@ -24,7 +24,7 @@ import MI from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Feather from '@expo/vector-icons/Feather';
-import Footer from '@/components/Footer';
+import Footer from '@/components/responder/responderFooter';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import useUser from '@/hooks/useUser';
 import Loading from '@/components/app/Loading';

@@ -1,10 +1,11 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import AdminStyledContainer from '@/components/admin/AdminStyledContainer';
 import AdminHeader from '@/components/admin/AdminHeader';
 import { useRouter } from 'expo-router';
-import { get, ref } from 'firebase/database';
+import { get, ref, remove } from 'firebase/database';
 import { db } from '@/firebaseConfig';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 export default function Reports() {
   const router = useRouter();
@@ -51,6 +52,30 @@ export default function Reports() {
     fetchReports();
   }, []);
 
+  const handleDeleteReport = async (reportId: string) => {
+    Alert.alert('Delete Report', 'Are you sure you want to delete this report?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            const reportRef = ref(db, `reports/${reportId}`);
+            await remove(reportRef); // Delete the report from the database
+            setReports((prevReports) => prevReports.filter((report) => report.reportId !== reportId));
+            Alert.alert('Success', 'Report deleted successfully.');
+          } catch (error) {
+            console.error('Error deleting report:', error);
+            Alert.alert('Error', 'Failed to delete the report.');
+          }
+        },
+      },
+    ]);
+  };
+
   return (
     <AdminStyledContainer>
       <AdminHeader />
@@ -80,6 +105,9 @@ export default function Reports() {
                   {report.details}
                 </Text>
               </View>
+              <TouchableOpacity onPress={() => handleDeleteReport(report.reportId)}>
+                <FontAwesome name="trash" size={24} color="red" />
+              </TouchableOpacity>
             </TouchableOpacity>
           ))}
         </View>

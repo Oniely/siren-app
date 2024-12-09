@@ -8,6 +8,7 @@ export interface User {
   lastname: string;
   profileImage: string;
   email: string;
+  number: string;
   role: string;
 }
 

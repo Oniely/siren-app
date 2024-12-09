@@ -33,6 +33,8 @@ export default function EditProfile() {
   const [lname, setLname] = useState('');
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
+  const [number, setNumber] = useState('');
+
   const [password, setPassword] = useState('');
   const [updateLoading, setUpdateLoading] = useState(false);
 
@@ -42,6 +44,7 @@ export default function EditProfile() {
       setLname(user.lastname || '');
       setEmail(user.email || '');
       setUsername(user.username || '');
+      setNumber(user.number || '');
     }
   }, [user]);
 
@@ -84,6 +87,8 @@ export default function EditProfile() {
         lastname: lname,
         email: email,
         username: username,
+        number: number,
+
         profileImage: profileImage,
       });
 
@@ -149,6 +154,13 @@ export default function EditProfile() {
               />
               <Text style={styles.formText}>Email</Text>
               <TextInput style={styles.formInput} placeholder="Email" value={email} onChangeText={setEmail} />
+              <Text style={styles.formText}>Number</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Number"
+                value={number}
+                onChangeText={setNumber}
+              />
               <Text style={styles.formText}>Username</Text>
               <TextInput
                 style={styles.formInput}

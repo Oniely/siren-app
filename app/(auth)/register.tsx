@@ -17,14 +17,17 @@ import React, {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ref, set, get } from 'firebase/database';
+import { Picker } from '@react-native-picker/picker';
 
 const Register = () => {
   const router = useRouter();
 
+  const [category, setCategory] = useState('');
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [number, setNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   useEffect(() => {
@@ -94,38 +97,33 @@ const Register = () => {
         displayName: `${firstname} ${lastname}`,
       });
 
-      Alert.alert('Responder', 'Are you a responder?', [
-        {
-          text: 'Yes',
-          onPress: async () => {
-            await set(ref(db, `users/${userId}`), {
-              firstname,
-              lastname,
-              username,
-              email,
-              role: 'responder',
-            });
-            await set(ref(db, `responders/${userId}`), {
-              status: 'inactive',
-              location: null,
-            });
-            router.navigate('/(auth)/login');
-          },
-        },
-        {
-          text: 'No',
-          onPress: async () => {
-            await set(ref(db, `users/${userId}`), {
-              firstname,
-              lastname,
-              username,
-              email,
-              role: 'user',
-            });
-            router.navigate('/(auth)/login');
-          },
-        },
-      ]);
+      if (category === 'User') {
+        await set(ref(db, `users/${userId}`), {
+          firstname,
+          lastname,
+          username,
+          email,
+          number,
+          role: 'user',
+        });
+      } else if (category === 'Responder') {
+        await set(ref(db, `users/${userId}`), {
+          firstname,
+          lastname,
+          username,
+          email,
+          number,
+          role: 'responder',
+        });
+
+        await set(ref(db, `responders/${userId}`), {
+          status: 'inactive',
+          location: null, // Add a default value for location if needed
+        });
+      }
+
+      Alert.alert('Success', 'Account created successfully!');
+      router.push('/login');
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert('Error', error.message);
@@ -140,6 +138,14 @@ const Register = () => {
         <View style={styles.formContainer}>
           <Text style={styles.signupText}>SIGN UP</Text>
           <View style={styles.inputContainer}>
+            <Picker
+              selectedValue={category}
+              onValueChange={(itemValue: string) => setCategory(itemValue)}
+              style={styles.picker}
+            >
+              <Picker.Item label="User" value="User" style={styles.pickerText} />
+              <Picker.Item label="Responder" value="Responder" style={styles.pickerText} />
+            </Picker>
             <TextInput
               placeholder="firstname"
               style={styles.input}
@@ -170,6 +176,15 @@ const Register = () => {
               style={styles.input}
               value={email}
               onChangeText={setEmail}
+              autoCapitalize="none"
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="number"
+              style={styles.input}
+              value={number}
+              onChangeText={setNumber}
               autoCapitalize="none"
             />
           </View>
@@ -287,6 +302,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignContent: 'center',
     backgroundColor: '#1010',
+  },
+  picker: {
+    width: '100%',
+    marginBottom: 10,
+    borderWidth: 2,
+    borderColor: '#0C0C63',
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    fontSize: 18,
+    paddingVertical: 10,
+    fontFamily: 'BeVietnamProRegular',
+  },
+  pickerText: {
+    fontFamily: 'BeVietnamProRegular',
   },
 });
 
