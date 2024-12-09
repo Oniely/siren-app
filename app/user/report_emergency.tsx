@@ -126,7 +126,7 @@ const ReportEmergency = () => {
       quality: 1,
     });
     if (!result.canceled && result.assets) {
-      setMediaFiles([...mediaFiles, ...result.assets]);
+      setMediaFiles([...mediaFiles, ...result.assets[0].uri]);
     }
   };
   const uploadMediaFiles = async () => {

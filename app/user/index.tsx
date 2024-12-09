@@ -7,6 +7,7 @@ import { Link, useRouter } from 'expo-router';
 import { scale, ScaledSheet } from 'react-native-size-matters';
 import { getAuth } from 'firebase/auth';
 import NewsAlertCard from '@/components/NewsAlertCard';
+import Loading from '@/components/app/Loading';
 
 MCI.loadFont();
 
@@ -16,6 +17,8 @@ const Dashboard = () => {
   const user = getAuth().currentUser;
   const router = useRouter();
   const scrollX = useRef(new Animated.Value(0)).current;
+
+  if (!user) return <Loading />;
 
   const nearbyAccidents = [
     {

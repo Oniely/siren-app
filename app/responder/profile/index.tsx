@@ -156,7 +156,7 @@ const styles = ScaledSheet.create({
     fontSize: '14@s',
     color: '#b6b6b7',
     fontFamily: 'BeVietnamProRegular',
-    width: '80%',
+    width: '85%',
   },
   profileImage: {
     resizeMode: 'cover',
