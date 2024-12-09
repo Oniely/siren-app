@@ -49,7 +49,7 @@ const category = [
     img: require('@/assets/images/flood.png'),
   },
   {
-    name: 'Fires and Explotions',
+    name: 'Fires and Explosions',
     img: require('@/assets/images/fire.png'),
   },
   {
