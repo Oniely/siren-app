@@ -29,7 +29,7 @@ export default function ManageAccounts() {
     username: string;
     firstname: string;
     lastname: string;
-    role: 'user' | 'responder';
+    role: 'user' | 'responder' | 'admin'; // Add 'admin' to the role type
   };
 
   useEffect(() => {
@@ -43,9 +43,10 @@ export default function ManageAccounts() {
             id,
           }));
 
-          setUsers(userList);
+          const filteredUsers = userList.filter((user) => user.role !== 'admin');
 
-          setTotalUsers(userList.length);
+          setUsers(filteredUsers);
+          setTotalUsers(filteredUsers.length);
           setUserAccounts(userList.filter((user) => user.role === 'user').length);
           setResponderAccounts(userList.filter((user) => user.role === 'responder').length);
         } else {
@@ -76,7 +77,7 @@ export default function ManageAccounts() {
         lastname: lastName,
       })
         .then(() => {
-          setModalVisible(false); // Close the modal after editing
+          setModalVisible(false); 
           setUserName('');
           setFirstName('');
           setLastName('');
@@ -88,35 +89,41 @@ export default function ManageAccounts() {
     }
   };
 
-  const renderAccountItem = ({ item }: { item: User }) => (
-    <View style={styles.account}>
-      <View style={styles.accountDetail}>
-        <Image source={require('@/assets/images/profile_placeholder.png')} style={styles.accoutImage} />
-        <Text style={styles.accountName}>{item.firstname + ' ' + item.lastname}</Text>
+  const renderAccountItem = ({ item }: { item: User }) => {
+    if (item.role === 'admin') {
+      return null; 
+    }
+
+    return (
+      <View style={styles.account}>
+        <View style={styles.accountDetail}>
+          <Image source={require('@/assets/images/profile_placeholder.png')} style={styles.accoutImage} />
+          <Text style={styles.accountName}>{item.firstname + ' ' + item.lastname}</Text>
+        </View>
+        <View style={styles.accountPressables}>
+          <Pressable
+            onPress={() => {
+              setUserToDelete(item); 
+              setDeleteModalVisible(true);
+            }}
+          >
+            <AntDesign name="delete" size={24} color="red" />
+          </Pressable>
+          <Pressable
+            onPress={() => {
+              setSelectedUser(item);
+              setUserName(item.username);
+              setLastName(item.lastname);
+              setFirstName(item.firstname);
+              setModalVisible(true);
+            }}
+          >
+            <Feather name="edit" size={24} color="blue" />
+          </Pressable>
+        </View>
       </View>
-      <View style={styles.accountPressables}>
-        <Pressable
-          onPress={() => {
-            setUserToDelete(item); // Correctly set the selected user
-            setDeleteModalVisible(true); // Show modal
-          }}
-        >
-          <AntDesign name="delete" size={24} color="red" />
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            setSelectedUser(item);
-            setUserName(item.username); // Set the initial value for editing
-            setLastName(item.lastname); // Set the initial value for editing
-            setFirstName(item.firstname); // Set the initial value for editing
-            setModalVisible(true); // Open the modal
-          }}
-        >
-          <Feather name="edit" size={24} color="blue" />
-        </Pressable>
-      </View>
-    </View>
-  );
+    );
+  };
 
   return (
     <AdminStyledContainer>
