@@ -46,7 +46,7 @@ export default function Settings() {
         <Text style={styles.settingHeader}>Location</Text>
         <TouchableOpacity
           style={styles.settingButton}
-          onPress={() => router.push('/user/map')}
+          onPress={() => router.push('/admin/map')}
           activeOpacity={0.8}
         >
           <View style={styles.settingContent}>
