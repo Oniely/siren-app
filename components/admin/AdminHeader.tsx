@@ -81,6 +81,10 @@ const AdminHeader: React.FC<HeaderProps> = ({ bg = '#e6e6e6' }) => {
             </Pressable>
             <Text style={styles.burgerName}>Admin</Text>
           </View>
+          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/')}>
+            <AntDesign name="home" size={40} color="#0c0c63" />
+            <Text style={styles.sliderNavItemText}>Home</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.sliderNavItem}
             onPress={() => handlePress('/admin/emergency_report')}

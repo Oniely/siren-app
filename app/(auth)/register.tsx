@@ -13,12 +13,16 @@ import React, {
   TouchableOpacity,
   View,
   Alert,
+  ScrollView,
+  Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ref, set, get } from 'firebase/database';
 import { Picker } from '@react-native-picker/picker';
-
+const { height } = Dimensions.get('window');
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import * as Location from 'expo-location'; // Import the Expo Location API
 const Register = () => {
   const router = useRouter();
 
@@ -30,6 +34,8 @@ const Register = () => {
   const [number, setNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [location, setLocation] = useState<LocationType>(null); // Move this here
+
   useEffect(() => {
     (async () => {
       try {
@@ -47,6 +53,7 @@ const Register = () => {
       }
     })();
   }, []);
+
   const validateEmail = (email: string): boolean => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
@@ -75,6 +82,22 @@ const Register = () => {
     }
 
     try {
+      if (category === 'Responder') {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert('Error', 'Permission to access location was denied');
+          return;
+        }
+
+        const locationData = await Location.getCurrentPositionAsync({});
+        const newLocation = {
+          latitude: locationData.coords.latitude,
+          longitude: locationData.coords.longitude,
+        };
+        setLocation(newLocation);
+        console.log('Location:', newLocation); // Log immediately after fetching
+      }
+
       const userRef = ref(db, 'users');
       const snapshot = await get(userRef);
       const existingUsers = snapshot.val();
@@ -118,7 +141,7 @@ const Register = () => {
 
         await set(ref(db, `responders/${userId}`), {
           status: 'inactive',
-          location: null, 
+          location: location,
         });
       }
 
@@ -131,94 +154,105 @@ const Register = () => {
         Alert.alert('Error', 'An unknown error occurred.');
       }
     }
+    useEffect(() => {
+      if (location) {
+        console.log('Updated Location:', location);
+      }
+    }, [location]);
   };
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <View style={styles.formContainer}>
-          <Text style={styles.signupText}>SIGN UP</Text>
-          <View style={styles.inputContainer}>
-            <Picker
-              selectedValue={category}
-              onValueChange={(itemValue: string) => setCategory(itemValue)}
-              style={styles.picker}
-            >
-              <Picker.Item label="User" value="User" style={styles.pickerText} />
-              <Picker.Item label="Responder" value="Responder" style={styles.pickerText} />
-            </Picker>
-            <TextInput
-              placeholder="firstname"
-              style={styles.input}
-              value={firstname}
-              onChangeText={setFirstname}
-            />
+        <ScrollView contentContainerStyle={styles.scrollViewContent} keyboardShouldPersistTaps="handled">
+          <View style={styles.formContainer}>
+            <View style={styles.signupHeader}>
+              <Text style={styles.signupText}>SIGN UP</Text>
+            </View>
+            <View style={styles.formInputContainer}>
+              <View style={styles.inputContainer}>
+                <Picker
+                  selectedValue={category}
+                  onValueChange={(itemValue: string) => setCategory(itemValue)}
+                  style={styles.picker}
+                >
+                  <Picker.Item label="User" value="User" style={styles.pickerText} />
+                  <Picker.Item label="Responder" value="Responder" style={styles.pickerText} />
+                </Picker>
+                <TextInput
+                  placeholder="firstname"
+                  style={styles.input}
+                  value={firstname}
+                  onChangeText={setFirstname}
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  placeholder="lastname"
+                  style={styles.input}
+                  value={lastname}
+                  onChangeText={setLastname}
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  placeholder="username"
+                  style={styles.input}
+                  value={username}
+                  onChangeText={setUsername}
+                  autoCapitalize="none"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  placeholder="email"
+                  style={styles.input}
+                  value={email}
+                  onChangeText={setEmail}
+                  autoCapitalize="none"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  placeholder="number"
+                  style={styles.input}
+                  value={number}
+                  onChangeText={setNumber}
+                  autoCapitalize="none"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  placeholder="password"
+                  style={styles.input}
+                  value={password}
+                  onChangeText={setPassword}
+                  autoCapitalize="none"
+                  secureTextEntry
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  placeholder="confirm password"
+                  style={styles.input}
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  autoCapitalize="none"
+                  secureTextEntry
+                />
+              </View>
+            </View>
+            <TouchableOpacity style={styles.signup} onPress={handleSignup}>
+              <Text style={styles.createAccountText}>Create Account</Text>
+            </TouchableOpacity>
+            <View style={styles.hasAccount}>
+              <Text style={styles.hasAccountQuestion}>Already have an account?</Text>
+              <Pressable onPress={() => router.push('/login')}>
+                <Text style={styles.loginLink}>LOGIN</Text>
+              </Pressable>
+            </View>
           </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="lastname"
-              style={styles.input}
-              value={lastname}
-              onChangeText={setLastname}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="username"
-              style={styles.input}
-              value={username}
-              onChangeText={setUsername}
-              autoCapitalize="none"
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="email"
-              style={styles.input}
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="number"
-              style={styles.input}
-              value={number}
-              onChangeText={setNumber}
-              autoCapitalize="none"
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="password"
-              style={styles.input}
-              value={password}
-              onChangeText={setPassword}
-              autoCapitalize="none"
-              secureTextEntry
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="confirm password"
-              style={styles.input}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              autoCapitalize="none"
-              secureTextEntry
-            />
-          </View>
-          <TouchableOpacity style={styles.signup} onPress={handleSignup}>
-            <Text style={styles.createAccountText}>Create Account</Text>
-          </TouchableOpacity>
-          <View style={styles.hasAccount}>
-            <Text style={styles.hasAccountQuestion}>Already have an account?</Text>
-            <Pressable onPress={() => router.push('/login')}>
-              <Text style={styles.loginLink}>LOGIN</Text>
-            </Pressable>
-          </View>
-        </View>
-        <StatusBar style="dark" />
+          <StatusBar style="dark" />
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -232,6 +266,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     justifyContent: 'center',
     display: 'flex',
+    height: hp(100),
+  },
+  scrollViewContent: {
+    paddingBottom: 20,
+    justifyContent: 'center',
+    textAlign: 'center',
+    height: hp(100),
+  },
+  signupHeader: {
+    height: hp(10),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   signupText: {
     color: '#0c0c63',
@@ -240,13 +286,15 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     textAlign: 'left',
     marginLeft: 50,
-    marginBottom: 50,
+  },
+  formInputContainer: {
+    justifyContent: 'center',
+    textAlign: 'center',
   },
   inputContainer: {
-    width: '80%',
+    width: wp(80),
     marginHorizontal: 'auto',
-    gap: 10,
-    marginBottom: 20,
+    marginBottom: 15,
   },
   label: {
     fontSize: 18,

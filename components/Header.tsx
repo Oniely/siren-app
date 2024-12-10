@@ -81,7 +81,6 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
         }));
       return userReports;
     } else {
-      console.error('No reports found');
       return [];
     }
   };

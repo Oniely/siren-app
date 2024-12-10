@@ -9,6 +9,7 @@ import { db } from '@/firebaseConfig';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
 import ButtonContainer from '@/components/ButtonContainer';
+import EditProfile from '@/app/responder/profile/edit_profile';
 
 export default function ManageAccounts() {
   const [users, setUsers] = useState<User[]>([]);
@@ -38,13 +39,12 @@ export default function ManageAccounts() {
         if (snapshot.exists()) {
           const data = snapshot.val();
           const userList = Object.entries(data).map(([id, userData]) => ({
-            ...userData, // Spread userData directly
-            id, // Ensure id is explicitly added or overwritten
+            ...userData,
+            id,
           }));
 
           setUsers(userList);
 
-          // Count totals
           setTotalUsers(userList.length);
           setUserAccounts(userList.filter((user) => user.role === 'user').length);
           setResponderAccounts(userList.filter((user) => user.role === 'responder').length);
@@ -61,7 +61,7 @@ export default function ManageAccounts() {
     if (userToDelete && typeof userToDelete.id === 'string') {
       await remove(ref(db, `users/${userToDelete.id}`));
       setDeleteModalVisible(false);
-      Alert.alert('Account Deleted' );
+      Alert.alert('Account Deleted');
     } else {
       console.error('Invalid user ID');
     }
@@ -76,7 +76,7 @@ export default function ManageAccounts() {
         lastname: lastName,
       })
         .then(() => {
-          setModalVisible(false);
+          setModalVisible(false); // Close the modal after editing
           setUserName('');
           setFirstName('');
           setLastName('');
@@ -176,29 +176,39 @@ export default function ManageAccounts() {
         </View>
       </View>
 
-      {userToDelete && (
-        <Modal visible={deleteModalVisible} animationType="fade" transparent={true}>
+      {selectedUser && modalVisible && (
+        <Modal visible={modalVisible} animationType="slide" transparent={true}>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Image source={require('@/assets/images/warning_logo.png')} style={styles.warningImage} />
-              <Text style={styles.modalHeader}>Are you sure you want to delete this user?</Text>
+              <Text style={styles.modalHeader}>Edit User</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Username"
+                value={userName}
+                onChangeText={setUserName}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="First Name"
+                value={firstName}
+                onChangeText={setFirstName}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Last Name"
+                value={lastName}
+                onChangeText={setLastName}
+              />
               <View style={styles.buttonContainer}>
-                <Pressable
-                  style={[styles.confirmModalButtons, styles.modalButton]}
-                  onPress={() => {
-                    if (userToDelete) {
-                      deleteUser(userToDelete.id); // Pass the correct user ID
-                      setDeleteModalVisible(false); // Hide modal
-                    }
-                  }}
-                >
-                  <Text style={styles.buttonTextYes}>Yes</Text>
+                <Pressable style={[styles.confirmModalButtons, styles.modalButton]} onPress={handleEditUser}>
+                  <Text style={styles.buttonTextYes}>Confirm</Text>
                 </Pressable>
+
                 <Pressable
                   style={[styles.declineModalButtons, styles.modalButton]}
-                  onPress={() => setDeleteModalVisible(false)}
+                  onPress={() => setModalVisible(false)}
                 >
-                  <Text style={styles.buttonTextNo}>No</Text>
+                  <Text style={styles.buttonTextNo}>Cancel</Text>
                 </Pressable>
               </View>
             </View>
