@@ -250,7 +250,7 @@ const ReportEmergency = () => {
           </Text>
         </View>
       ) : (
-        <ScrollView style={styles.reportContainer}>
+        <ScrollView style={styles.reportContainer} showsVerticalScrollIndicator={false}>
           <View style={styles.filterRowContainer}>
             <TouchableOpacity style={styles.filter} onPress={showDatePicker}>
               <Text>{selectedDate ? selectedDate.toLocaleString() : 'Date Time'}</Text>

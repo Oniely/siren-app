@@ -38,7 +38,7 @@ export default function Burger({ responder = false }) {
       </Pressable>
 
       <Animated.View style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }]}>
-        <ScrollView style={styles.navScrollContainer}>
+        <ScrollView style={styles.navScrollContainer} showsVerticalScrollIndicator={false}>
           <TouchableOpacity onPress={toggleMenu} style={styles.closeButton}>
             <AntDesign name="close" size={30} color="black" />
           </TouchableOpacity>

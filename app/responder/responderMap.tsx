@@ -23,6 +23,7 @@ import { mapStyle } from '@/constants/Map';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import Entypo from '@expo/vector-icons/Entypo';
+import Loading from '@/components/app/Loading';
 
 export interface Report {
   reportId: string;
@@ -66,8 +67,7 @@ const ResponderMap = () => {
   };
 
   const resetSelectedReport = () => setSelectedReport(null);
-  const handleMarkerPress = (report: any, event: any) => {
-    event.persist();
+  const handleMarkerPress = (report: any) => {
     setSelectedReport(report);
     console.log(report.status);
     setIsButtonDisabled(report.status === 'Accepted' || report.status === 'Reviewed');
@@ -213,6 +213,9 @@ const ResponderMap = () => {
     fetchReportsWithSenderNames();
   }, []);
 
+  // wait for responderLocation to update before loading to prevent map from centering on default location
+  if (!responderLocation) return <Loading />;
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -273,7 +276,10 @@ const ResponderMap = () => {
                 coordinate={report.location}
                 title={report.senderName}
                 description={report.category}
-                onPress={(event) => handleMarkerPress(report, event)}
+                onPress={(e: any) => {
+                  e.persist();
+                  handleMarkerPress(report);
+                }}
               >
                 <Entypo name="location-pin" size={60} color={markerColor} />
               </Marker>

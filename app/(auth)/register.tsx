@@ -14,7 +14,10 @@ import React, {
   View,
   Alert,
   ScrollView,
+<<<<<<< HEAD
   Dimensions,
+=======
+>>>>>>> fe08df2ef3d09d702bb64bf35e981a0a1106170c
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
