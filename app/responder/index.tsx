@@ -43,7 +43,7 @@ const ResponderDashboard = () => {
   return (
     <ResponderStyledContainer>
       <ResponderHeader user={user!} />
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.textWrapper}>
             <Text style={styles.indexText}>Hi, {user?.displayName || 'Elizabeth'}</Text>

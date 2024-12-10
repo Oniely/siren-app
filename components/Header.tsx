@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   Image,
   Pressable,
-  StyleSheet,
   Text,
   View,
   Animated,
@@ -21,8 +20,10 @@ import Entypo from '@expo/vector-icons/Entypo';
 import { ref, get } from 'firebase/database';
 import { db, auth } from '@/firebaseConfig';
 import { User } from 'firebase/auth';
-const { height } = Dimensions.get('window');
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { ScaledSheet } from 'react-native-size-matters';
+
+const { height } = Dimensions.get('window');
 
 interface HeaderProps {
   user: User;
@@ -124,7 +125,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
       <Animated.View
         style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }, { height: height }]}
       >
-        <ScrollView style={styles.navScrollContainer}>
+        <ScrollView style={styles.navScrollContainer} showsVerticalScrollIndicator={false}>
           <TouchableOpacity onPress={toggleMenu} style={styles.closeButton}>
             <AntDesign name="close" size={30} color="black" />
           </TouchableOpacity>
@@ -183,48 +184,48 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
 
 export default Header;
 
-const styles = StyleSheet.create({
+const styles = ScaledSheet.create({
   container: {
-    paddingVertical: 15,
+    paddingVertical: '15@vs',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: '20@s',
   },
   title: {
-    fontSize: 18,
+    fontSize: '18@ms',
     fontWeight: 'bold',
     color: '#000',
   },
   rightSide: {
     flexDirection: 'row',
-    columnGap: 10,
+    columnGap: '10@s',
     alignItems: 'center',
   },
   police: {
     resizeMode: 'stretch',
-    height: 40,
-    width: 40,
-    borderRadius: 20,
+    height: '40@s',
+    width: '40@s',
+    borderRadius: '20@s',
   },
   burgerProfile: {
-    height: 250,
+    height: '250@s',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FAF9F6',
     width: '100%',
   },
   burgerName: {
-    marginTop: 20,
-    fontSize: 25,
+    marginTop: '20@vs',
+    fontSize: '25@ms',
     color: '#000',
     fontFamily: 'BeVietnamProThin',
   },
   sliderNav: {
     position: 'absolute',
     top: 0,
-    left: -350,
-    width: 350,
+    left: '-350@s',
+    width: '350@s',
     backgroundColor: '#ffffff',
     justifyContent: 'flex-start',
     display: 'flex',
@@ -239,30 +240,30 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   sliderNavItem: {
-    paddingVertical: 10,
+    paddingVertical: '10@vs',
     left: wp('10%'),
     flexDirection: 'row',
     alignItems: 'center',
-    height: 90,
+    height: '90@s',
     zIndex: 100,
   },
   sliderNavItemText: {
     color: '#000',
-    fontSize: 24,
-    paddingLeft: 30,
+    fontSize: '24@ms',
+    paddingLeft: '30@s',
     fontFamily: 'BeVietnamProThin',
   },
   sliderNavImage: {
     resizeMode: 'cover',
-    width: 125,
-    height: 125,
+    width: '125@s',
+    height: '125@s',
     borderRadius: 999,
   },
   closeButton: {
     position: 'absolute',
-    top: 10,
-    left: 15,
-    padding: 10,
+    top: '10@s',
+    left: '15@s',
+    padding: '10@s',
     zIndex: 3,
   },
   closeButtonText: {
@@ -270,12 +271,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     textAlign: 'center',
     color: '#333',
-    fontSize: 50,
+    fontSize: '50@ms',
   },
   burgerFooter: {
     textAlign: 'center',
-    top: 200,
+    top: '200@s',
     bottom: 0,
-    height: 200,
+    height: '200@s',
   },
 });

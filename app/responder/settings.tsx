@@ -16,7 +16,7 @@ export default function Settings() {
   return (
     <SafeAreaView style={styles.container}>
       <HeaderText text="Settings" />
-      <ScrollView style={styles.settingsContainer}>
+      <ScrollView style={styles.settingsContainer} showsVerticalScrollIndicator={false}>
         <Text style={styles.settingHeader}>Emergency Preparedness</Text>
         <TouchableOpacity
           style={styles.settingButton}

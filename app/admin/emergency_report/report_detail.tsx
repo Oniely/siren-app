@@ -49,7 +49,7 @@ export default function ReportDetail() {
       <View style={styles.header}>
         <Text style={styles.headerText}>Report Details</Text>
       </View>
-      <ScrollView style={styles.container}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <View style={styles.reportsContainer}>
           <View style={styles.reportDesc}>
             <Text style={styles.descName}>{report?.reporterName || 'Unknown Reporter'}</Text>

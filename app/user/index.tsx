@@ -71,7 +71,7 @@ const Dashboard = () => {
           </View>
         </View>
       </View>
-      <ScrollView style={{ flex: 1, paddingBottom: 20 }}>
+      <ScrollView style={{ flex: 1, paddingBottom: 20 }} showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.wrapper}>
             <Text style={styles.indexText}>Emergency help needed?</Text>
@@ -153,7 +153,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   indexText: {
-    fontSize: '32@ms',
+    fontSize: '28@ms',
     textAlign: 'center',
     color: '#343434',
     fontFamily: 'BeVietnamProBold',
@@ -183,26 +183,27 @@ const styles = ScaledSheet.create({
     gap: '5@s',
   },
   topBarImage: {
-    width: 45,
-    height: 45,
+    width: '40@s',
+    height: '40@s',
     borderWidth: 1,
     borderColor: '#e6e6e6',
     borderRadius: 999,
   },
   topBarName: {
     fontFamily: 'BeVietnamProRegular',
-    fontSize: '12@s',
+    fontSize: '12@ms',
     color: '#999898',
   },
   topBarLink: {
     fontFamily: 'BeVietnamProRegular',
-    fontSize: '12@s',
+    fontSize: '12@ms',
     color: '#3998ff',
   },
   location: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   locationIcon: {
-    width: 10,
-    height: 15,
+    resizeMode: 'center',
+    width: '10@s',
+    height: '12@s',
   },
   button: {
     borderRadius: '10@s',
@@ -234,13 +235,6 @@ const styles = ScaledSheet.create({
   },
   newsAlertContainer: {
     marginTop: '10@s',
-  },
-  textInfo: {
-    fontSize: '40@s',
-    color: '#0c0c63',
-    fontWeight: 'bold',
-    marginBottom: '10@s',
-    padding: '3@s',
   },
   nearbyAccidents: {
     flex: 1,

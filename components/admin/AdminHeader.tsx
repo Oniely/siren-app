@@ -71,7 +71,7 @@ const AdminHeader: React.FC<HeaderProps> = ({ bg = '#e6e6e6' }) => {
       <Animated.View
         style={[styles.sliderNav, { transform: [{ translateX: slideAnimation }] }, { height: height }]}
       >
-        <ScrollView style={styles.navScrollContainer}>
+        <ScrollView style={styles.navScrollContainer} showsVerticalScrollIndicator={false}>
           <TouchableOpacity onPress={toggleMenu} style={styles.closeButton}>
             <AntDesign name="close" size={30} color="black" />
           </TouchableOpacity>

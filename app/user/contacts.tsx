@@ -384,7 +384,7 @@ const Contact = () => {
             }}
           />
           {matchingUsers.length > 0 ? (
-            <ScrollView style={[styles.scrollContainer]}>
+            <ScrollView style={[styles.scrollContainer]} showsVerticalScrollIndicator={false}>
               {matchingUsers.map((user) => (
                 <View key={user.id} style={styles.userItem}>
                   <View style={styles.usernameContainer}>

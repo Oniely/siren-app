@@ -55,7 +55,7 @@ export default function ResponseAnalytics() {
   return (
     <AdminStyledContainer>
       <AdminHeader bg="#e6e6e6" />
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View>
             <Text style={styles.headerText}>Analytic Reports</Text>
