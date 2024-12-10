@@ -24,7 +24,7 @@ import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import Entypo from '@expo/vector-icons/Entypo';
 
-interface Report {
+export interface Report {
   reportId: string;
   senderId: string;
   senderName: string;
@@ -38,6 +38,7 @@ interface Report {
   timestamp: number;
   status: string;
   assets: any[];
+  responderId: string;
 }
 
 type LocationCoords = {
@@ -68,7 +69,7 @@ const ResponderMap = () => {
   const handleMarkerPress = (report: any, event: any) => {
     event.persist();
     setSelectedReport(report);
-    console.log(report.status); 
+    console.log(report.status);
     setIsButtonDisabled(report.status === 'Accepted' || report.status === 'Reviewed');
     onOpen();
   };
@@ -259,7 +260,7 @@ const ResponderMap = () => {
             />
           )}
           {reports.map((report, index) => {
-            let markerColor = 'red'; 
+            let markerColor = 'red';
             if (report.status === 'Accepted') {
               markerColor = 'green'; // Accepted
             } else if (report.status === 'Reviewed') {

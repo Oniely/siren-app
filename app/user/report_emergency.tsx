@@ -219,6 +219,7 @@ const ReportEmergency = () => {
   if (!location) {
     return <Loading />;
   }
+
   const handleSubmit = async () => {
     setStatus('Uploading');
     try {
@@ -228,7 +229,7 @@ const ReportEmergency = () => {
         location.coords.latitude,
         location.coords.longitude,
         details,
-        uploadedMedia, 
+        uploadedMedia,
         selectedCateg,
         reportImage
       );
