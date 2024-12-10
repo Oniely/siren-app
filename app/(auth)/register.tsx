@@ -13,6 +13,7 @@ import React, {
   TouchableOpacity,
   View,
   Alert,
+  ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -118,7 +119,7 @@ const Register = () => {
 
         await set(ref(db, `responders/${userId}`), {
           status: 'inactive',
-          location: null, 
+          location: null,
         });
       }
 
@@ -134,92 +135,97 @@ const Register = () => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <View style={styles.formContainer}>
-          <Text style={styles.signupText}>SIGN UP</Text>
-          <View style={styles.inputContainer}>
-            <Picker
-              selectedValue={category}
-              onValueChange={(itemValue: string) => setCategory(itemValue)}
-              style={styles.picker}
-            >
-              <Picker.Item label="User" value="User" style={styles.pickerText} />
-              <Picker.Item label="Responder" value="Responder" style={styles.pickerText} />
-            </Picker>
-            <TextInput
-              placeholder="firstname"
-              style={styles.input}
-              value={firstname}
-              onChangeText={setFirstname}
-            />
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={{ paddingBottom: 30 }}
+        >
+          <View style={styles.formContainer}>
+            <Text style={styles.signupText}>SIGN UP</Text>
+            <View style={styles.inputContainer}>
+              <Picker
+                selectedValue={category}
+                onValueChange={(itemValue: string) => setCategory(itemValue)}
+                style={styles.picker}
+              >
+                <Picker.Item label="User" value="User" style={styles.pickerText} />
+                <Picker.Item label="Responder" value="Responder" style={styles.pickerText} />
+              </Picker>
+              <TextInput
+                placeholder="firstname"
+                style={styles.input}
+                value={firstname}
+                onChangeText={setFirstname}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                placeholder="lastname"
+                style={styles.input}
+                value={lastname}
+                onChangeText={setLastname}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                placeholder="username"
+                style={styles.input}
+                value={username}
+                onChangeText={setUsername}
+                autoCapitalize="none"
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                placeholder="email"
+                style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                placeholder="number"
+                style={styles.input}
+                value={number}
+                onChangeText={setNumber}
+                autoCapitalize="none"
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                placeholder="password"
+                style={styles.input}
+                value={password}
+                onChangeText={setPassword}
+                autoCapitalize="none"
+                secureTextEntry
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <TextInput
+                placeholder="confirm password"
+                style={styles.input}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                autoCapitalize="none"
+                secureTextEntry
+              />
+            </View>
+            <TouchableOpacity style={styles.signup} onPress={handleSignup}>
+              <Text style={styles.createAccountText}>Create Account</Text>
+            </TouchableOpacity>
+            <View style={styles.hasAccount}>
+              <Text style={styles.hasAccountQuestion}>Already have an account?</Text>
+              <Pressable onPress={() => router.push('/login')}>
+                <Text style={styles.loginLink}>LOGIN</Text>
+              </Pressable>
+            </View>
           </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="lastname"
-              style={styles.input}
-              value={lastname}
-              onChangeText={setLastname}
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="username"
-              style={styles.input}
-              value={username}
-              onChangeText={setUsername}
-              autoCapitalize="none"
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="email"
-              style={styles.input}
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="number"
-              style={styles.input}
-              value={number}
-              onChangeText={setNumber}
-              autoCapitalize="none"
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="password"
-              style={styles.input}
-              value={password}
-              onChangeText={setPassword}
-              autoCapitalize="none"
-              secureTextEntry
-            />
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="confirm password"
-              style={styles.input}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              autoCapitalize="none"
-              secureTextEntry
-            />
-          </View>
-          <TouchableOpacity style={styles.signup} onPress={handleSignup}>
-            <Text style={styles.createAccountText}>Create Account</Text>
-          </TouchableOpacity>
-          <View style={styles.hasAccount}>
-            <Text style={styles.hasAccountQuestion}>Already have an account?</Text>
-            <Pressable onPress={() => router.push('/login')}>
-              <Text style={styles.loginLink}>LOGIN</Text>
-            </Pressable>
-          </View>
-        </View>
-        <StatusBar style="dark" />
-      </KeyboardAvoidingView>
+          <StatusBar style="dark" />
+        </KeyboardAvoidingView>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -231,7 +237,6 @@ const styles = StyleSheet.create({
     position: 'relative',
     textAlign: 'center',
     justifyContent: 'center',
-    display: 'flex',
   },
   signupText: {
     color: '#0c0c63',
