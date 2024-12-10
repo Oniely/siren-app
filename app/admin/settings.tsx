@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import Entypo from '@expo/vector-icons/Entypo';
 import { useRouter } from 'expo-router';
 import { ScaledSheet } from 'react-native-size-matters';
 import HeaderText from '@/components/app/HeaderText';
@@ -18,10 +17,7 @@ export default function Settings() {
       <HeaderText text="Settings" />
       <ScrollView style={styles.settingsContainer}>
         <Text style={styles.settingHeader}>Emergency Preparedness</Text>
-        <TouchableOpacity
-          style={styles.settingButton}
-          onPress={() => router.push('/user/profile/notifications')}
-        >
+        <TouchableOpacity style={styles.settingButton} onPress={() => router.push('/admin/notifications')}>
           <View style={styles.settingContent}>
             <MaterialCommunityIcons name="bell" size={24} color="#b6b6b7" />
             <Text style={styles.settingText}>Notifications</Text>
@@ -36,7 +32,7 @@ export default function Settings() {
           <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
         </TouchableOpacity>
         <Text style={styles.settingHeader}>Notifications</Text>
-        <TouchableOpacity style={styles.settingButton}>
+        <TouchableOpacity style={styles.settingButton} onPress={() => router.push('/admin/notifications')}>
           <View style={styles.settingContent}>
             <MaterialCommunityIcons name="bell" size={24} color="#b6b6b7" />
             <Text style={styles.settingText}>Notification Management</Text>
