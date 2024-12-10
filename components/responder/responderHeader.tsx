@@ -187,8 +187,8 @@ const styles = ScaledSheet.create({
   sliderNav: {
     position: 'absolute',
     top: 0,
-    left: '-350@s',
-    width: '350@s',
+    left: -350,
+    width: 350,
     backgroundColor: '#ffffff',
     justifyContent: 'flex-start',
     display: 'flex',

@@ -1,5 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, FlatList, Pressable, Image, Alert } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+  FlatList,
+  Pressable,
+  Image,
+  Alert,
+} from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { db } from '@/firebaseConfig';
@@ -29,6 +39,14 @@ const MessagingItem = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentUserId, setCurrentUserId] = useState('');
   const [receiver, setReceiver] = useState<Receiver | null>(null);
+  const flatListRef = useRef<FlatList>(null);
+
+  useEffect(() => {
+    // Scroll to the end when messages are updated
+    if (flatListRef.current) {
+      flatListRef.current.scrollToEnd({ animated: true });
+    }
+  }, [messages]);
 
   useEffect(() => {
     async function getUserId() {
@@ -83,7 +101,7 @@ const MessagingItem = () => {
         message,
         createdAt: Date.now(),
       })
-        .then(() => setMessage(''))  // Clear the input after sending the message
+        .then(() => setMessage('')) // Clear the input after sending the message
         .catch((error) => Alert.alert('Error sending message:', error.message));
     }
   };
@@ -95,10 +113,9 @@ const MessagingItem = () => {
         <GestureHandlerRootView style={styles.messagesContent}>
           <FlatList
             data={messages}
+            keyboardShouldPersistTaps="handled"
             renderItem={({ item }) => (
-              <View
-                style={item.senderId === currentUserId ? styles.userMessage : styles.replyMessage}
-              >
+              <View style={item.senderId === currentUserId ? styles.userMessage : styles.replyMessage}>
                 {item.senderId !== currentUserId && (
                   <Image
                     source={require('@/assets/images/woman.png')}
@@ -107,6 +124,7 @@ const MessagingItem = () => {
                 )}
                 <View style={item.senderId === currentUserId ? styles.userMessageBox : styles.replyBox}>
                   <Text style={styles.replyText}>{item.message}</Text>
+                  <Text style={styles.timestamp}>{new Date(item.createdAt).toLocaleTimeString()}</Text>
                 </View>
               </View>
             )}
@@ -116,8 +134,12 @@ const MessagingItem = () => {
 
         <View style={styles.chatButtons}>
           <View style={styles.actions}>
-            <Pressable><MCI name="camera-outline" size={30} color={'#b6b6b7'} /></Pressable>
-            <Pressable><Feather name="mic" size={30} color="#b6b6b7" /></Pressable>
+            <Pressable>
+              <MCI name="camera-outline" size={30} color={'#b6b6b7'} />
+            </Pressable>
+            <Pressable>
+              <Feather name="mic" size={30} color="#b6b6b7" />
+            </Pressable>
           </View>
           <TextInput
             style={styles.input}
@@ -126,8 +148,12 @@ const MessagingItem = () => {
             onChangeText={setMessage}
             value={message}
           />
-          <Pressable><MCI name="image-outline" size={30} color={'#b6b6b7'} /></Pressable>
-          <Pressable><FontAwesome name="smile-o" size={30} color="#b6b6b7" /></Pressable>
+          <Pressable>
+            <MCI name="image-outline" size={30} color={'#b6b6b7'} />
+          </Pressable>
+          <Pressable>
+            <FontAwesome name="smile-o" size={30} color="#b6b6b7" />
+          </Pressable>
           <TouchableOpacity onPress={createMessage} style={styles.sendButton}>
             <MCI name="send" size={30} color={'#b6b6b7'} />
           </TouchableOpacity>
@@ -200,6 +226,12 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  timestamp: {
+    fontSize: 12,
+    color: '#777',
+    textAlign: 'right',
+    marginTop: 5,
   },
 });
 

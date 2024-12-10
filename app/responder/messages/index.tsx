@@ -122,22 +122,42 @@ const Messaging = () => {
       await fetchUsers();
     }
   };
-
   const createRoom = async (selectedUser: ContactType) => {
     try {
-      const userId = await AsyncStorage.getItem('userId');
-      if (!userId) {
+      const currentUser = await AsyncStorage.getItem('userId');
+      if (!currentUser) {
         console.error('User ID not found in AsyncStorage');
         return;
       }
 
-      const newRoomRef = ref(db, 'rooms');
+      const roomsRef = ref(db, 'rooms');
+      const roomsSnapshot = await get(roomsRef);
+
+      if (roomsSnapshot.exists()) {
+        const rooms: Record<string, Room> = roomsSnapshot.val();
+
+        // Check if a room already exists between the two users
+        const existingRoom = Object.entries(rooms).find(([key, room]) => {
+          return (
+            (room.user1 === currentUser && room.user2 === selectedUser.id) ||
+            (room.user1 === selectedUser.id && room.user2 === currentUser)
+          );
+        });
+
+        if (existingRoom) {
+          alert('You are both in a room');
+          return;
+        }
+      }
+
+      // If no existing room, create a new one
+      const newRoomRef = push(roomsRef);
+      const newRoomKey = newRoomRef.key;
       const newRoom = {
-        user1: userId,
+        user1: currentUser,
         user2: selectedUser.id,
       };
 
-      const newRoomKey = push(newRoomRef).key;
       await set(ref(db, `rooms/${newRoomKey}`), newRoom);
 
       setModalVisible(false);

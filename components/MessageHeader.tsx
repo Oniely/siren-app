@@ -26,12 +26,6 @@ const MessageHeader = ({ username, email }: Props) => {
 
       <View style={styles.buttons}>
         <Pressable>
-          <MCI name="phone" size={30} color={'#b6b6b7'} />
-        </Pressable>
-        <Pressable>
-          <MCI name="video" size={30} color={'#b6b6b7'} />
-        </Pressable>
-        <Pressable>
           <MCI name="information" size={30} color={'#b6b6b7'} />
         </Pressable>
       </View>
