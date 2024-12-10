@@ -14,10 +14,7 @@ import React, {
   View,
   Alert,
   ScrollView,
-<<<<<<< HEAD
   Dimensions,
-=======
->>>>>>> fe08df2ef3d09d702bb64bf35e981a0a1106170c
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -25,7 +22,7 @@ import { ref, set, get } from 'firebase/database';
 import { Picker } from '@react-native-picker/picker';
 const { height } = Dimensions.get('window');
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import * as Location from 'expo-location'; // Import the Expo Location API
+import * as Location from 'expo-location';
 const Register = () => {
   const router = useRouter();
 
@@ -37,8 +34,11 @@ const Register = () => {
   const [number, setNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [location, setLocation] = useState<LocationType>(null); // Move this here
-
+  const [location, setLocation] = useState<LocationType>(null); 
+  type LocationType = {
+    latitude: number;
+    longitude: number;
+  } | null;
   useEffect(() => {
     (async () => {
       try {
@@ -93,12 +93,11 @@ const Register = () => {
         }
 
         const locationData = await Location.getCurrentPositionAsync({});
-        const newLocation = {
+        setLocation({
           latitude: locationData.coords.latitude,
           longitude: locationData.coords.longitude,
-        };
-        setLocation(newLocation);
-        console.log('Location:', newLocation); // Log immediately after fetching
+        });
+        console.log('Location:', location); // For debugging purposes
       }
 
       const userRef = ref(db, 'users');
@@ -157,11 +156,6 @@ const Register = () => {
         Alert.alert('Error', 'An unknown error occurred.');
       }
     }
-    useEffect(() => {
-      if (location) {
-        console.log('Updated Location:', location);
-      }
-    }, [location]);
   };
   return (
     <SafeAreaView style={styles.container}>
