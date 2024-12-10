@@ -153,16 +153,15 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   indexText: {
-    fontSize: '40@vs',
+    fontSize: '32@ms',
     textAlign: 'center',
     color: '#343434',
     fontFamily: 'BeVietnamProBold',
     flexWrap: 'wrap',
-    
   },
   bigCircleContainer: {
     width: '100%',
-    maxWidth: 500,
+    maxWidth: '500@s',
     aspectRatio: 1,
   },
   panicButton: {
