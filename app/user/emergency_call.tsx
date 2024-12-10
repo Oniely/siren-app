@@ -1,44 +1,135 @@
-import { View, Text, TouchableOpacity, Image, StyleSheet, Modal, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Modal,
+  FlatList,
+  Linking,
+  Alert,
+  Pressable,
+} from 'react-native';
 import React, { useState, useEffect } from 'react';
 import StyledContainer from '@/components/StyledContainer';
 import { useRouter } from 'expo-router';
-import { Linking } from 'react-native'; // For calling functionality
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { get, ref } from 'firebase/database';
 import { db } from '@/firebaseConfig';
 import { getAuth } from 'firebase/auth';
-import { RTCPeerConnection, RTCSessionDescription, RTCIceCandidate } from 'react-native-webrtc';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import * as Location from 'expo-location';
+import * as geolib from 'geolib';
 
 export default function EmergencyCall() {
   const router = useRouter();
   const user = getAuth().currentUser;
 
-  // State for modal visibility and siren contacts
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [sirenContacts, setSirenContacts] = useState([]); // Use this state to store siren contacts
+  const [sirenContacts, setSirenContacts] = useState([]);
+  const [nearestResponder, setNearestResponder] = useState([]);
+  const [isCalling, setIsCalling] = useState(false); // To track whether a call is in progress
 
-  // WebRTC Peer Connection
-  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
-
-  type ContactType = {
+  type Responder = {
     id: string;
-    firstname: string;
-    lastname: string;
-    username: string;
-    email: string;
-    number: string;
-    category: 'personal' | 'emergency' | 'siren';
+    latitude: number;
+    longitude: number;
+    [key: string]: any; // To allow additional fields from the users collection
   };
 
-  // Fetch siren contacts
+  type UserDetails = {
+    id: string;
+    username: string;
+    number: string;
+    [key: string]: any; // Any additional user fields
+  };
+
+  const fetchNearestResponder = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Location permissions are required to find nearby responders.');
+        return;
+      }
+
+      const userLocation = await Location.getCurrentPositionAsync({});
+      const userCoords = {
+        latitude: userLocation.coords.latitude,
+        longitude: userLocation.coords.longitude,
+      };
+
+      console.log('User Location:', userCoords);
+
+      // Fetch responders from Firebase
+      const responderSnapshot = await get(ref(db, 'responders/'));
+      if (!responderSnapshot.exists()) {
+        console.log('No responders found in Firebase');
+        return;
+      }
+
+      // Retrieve responders with their keys
+      const responders = Object.entries(responderSnapshot.val() || []).map(([key, value]) => ({
+        id: key, // Use the key as the ID
+        ...value,
+      }));
+      console.log('Responders from Firebase:', responders);
+
+      // Fetch user details for each responder
+      const detailedResponders = await Promise.all(
+        responders.map(async (responder) => {
+          const userSnapshot = await get(ref(db, `users/${responder.id}`));
+          if (userSnapshot.exists()) {
+            const userDetails = userSnapshot.val();
+            console.log(`User Details for Responder ID ${responder.id}:`, userDetails);
+            return { ...responder, ...userDetails };
+          }
+          console.log(`No user details found for Responder ID ${responder.id}`);
+          return null;
+        })
+      );
+
+      const validResponders = detailedResponders.filter(Boolean);
+      console.log('Valid Responders:', validResponders);
+
+      if (validResponders.length === 0) {
+        console.log('No valid responders nearby');
+        return;
+      }
+
+      // Calculate distances
+      const respondersWithDistance = validResponders
+        .filter((responder) => responder.latitude && responder.longitude)
+        .map((responder) => {
+          const distance = geolib.getDistance(
+            { latitude: userCoords.latitude, longitude: userCoords.longitude },
+            { latitude: responder.latitude, longitude: responder.longitude }
+          );
+          return { ...responder, distance };
+        });
+
+      // Find the nearest responder
+      const nearestResponder = respondersWithDistance.sort((a, b) => a.distance - b.distance)[0];
+      console.log('Nearest Responder:', nearestResponder);
+
+      if (nearestResponder) {
+        setNearestResponder(nearestResponder); // Only set the nearestResponder if valid
+      } else {
+        console.log('No responders nearby');
+      }
+    } catch (error) {
+      console.error('Error finding nearest responder:', error);
+    }
+  };
   const fetchSirenContacts = async () => {
     try {
       const userId = await AsyncStorage.getItem('userId');
       if (userId) {
-        const snapshot = await get(ref(db, `users/${userId}/contacts/siren/`));
+        const snapshot = await get(ref(db, `users/`));
         if (snapshot.exists()) {
-          const sirenContacts: ContactType[] = Object.values(snapshot.val() || []);
-          setSirenContacts(sirenContacts);
+          // Filter the users with the role of 'responder'
+          const allUsers = Object.values(snapshot.val() || []);
+          const responderContacts = allUsers.filter((user) => user.role === 'responder');
+          setSirenContacts(responderContacts);
         } else {
           console.log('No Siren contacts found');
         }
@@ -49,80 +140,59 @@ export default function EmergencyCall() {
       console.error('Error fetching Siren contacts:', error);
     }
   };
-
-  // Fetch siren contacts when the component mounts
   useEffect(() => {
     fetchSirenContacts();
+    fetchNearestResponder();
   }, []);
 
-  // Set up WebRTC connection
-  // const setUpPeerConnection = () => {
-  //   const pc = new RTCPeerConnection({
-  //     iceServers: [
-  //       {
-  //         urls: 'stun:stun.l.google.com:19302', // STUN server for WebRTC
-  //       },
-  //     ],
-  //   });
+  const callNumber = (number) => {
+    const url = `tel:${number}`;
 
-    // Handle ICE candidate
-  //   pc.onicecandidate = (event) => {
-  //     if (event.candidate) {
-  //       console.log('ICE Candidate: ', event.candidate);
-  //     }
-  //   };
+    Linking.canOpenURL(url)
+      .then((supported) => {
+        if (!supported) {
+          Alert.alert('Error', 'Your device cannot handle this request.');
+        } else {
+          return Linking.openURL(url);
+        }
+      })
+      .catch((err) => console.error('Error opening phone dialer:', err));
+  };
 
-  //   setPeerConnection(pc);
-  // };
+  const autoCallNearestResponder = () => {
+    if (nearestResponder && nearestResponder.number) {
+      setTimeout(() => {
+        callNumber(nearestResponder.number); // Call the nearest responder after 3 seconds
+        setIsCalling(true); // Indicate that a call is in progress
+      }, 3000);
+    } else {
+      Alert.alert('No Responder', 'No nearby responder found.');
+    }
+  };
 
-  // Handle call: Use Linking for a phone call or WebRTC for in-app call
-  // const handleCall = (number: string, isWebrtc: boolean = false) => {
-  //   if (isWebrtc && peerConnection) {
-  //     // Set up peer connection for WebRTC call
-  //     setUpPeerConnection();
-  //     initiateWebRTCConnection();
-  //   } else {
-  //     // If it's a phone number, use Linking to place a call
-  //     if (number) {
-  //       Linking.openURL(`tel:${number}`);
-  //     } else {
-  //       alert('No phone number available for this contact');
-  //     }
-  //   }
-  // };
+  const handlePanicButtonPress = () => {
+    setIsModalVisible(true); // Show modal on panic button click
+    fetchNearestResponder(); // Detect nearest responder when button is clicked
 
-  // Initiate WebRTC connection (simplified)
-  // const initiateWebRTCConnection = async () => {
-  //   if (peerConnection) {
-  //     // Get user media (camera/mic) for the call
-  //     try {
-  //       const stream = await navigator.mediaDevices.getUserMedia({
-  //         audio: true,
-  //         video: false, // or true for video calls
-  //       });
+    // Disable the panic button and wait before calling the responder
+    setTimeout(() => {
+      autoCallNearestResponder(); // Automatically call the nearest responder after 3 seconds
+    }, 3000);
+  };
 
-  //       // Add stream to the connection
-  //       stream.getTracks().forEach((track) => peerConnection?.addTrack(track, stream));
-
-  //       // Create offer
-  //       const offer = await peerConnection.createOffer();
-  //       await peerConnection.setLocalDescription(new RTCSessionDescription(offer));
-
-  //       // Send the offer to the other user via Firebase
-  //       // Here, you need to implement the Firebase signaling logic
-  //       // e.g., update Firebase with the offer
-
-  //       console.log('WebRTC offer created');
-  //     } catch (error) {
-  //       console.error('Error getting media devices:', error);
-  //     }
-  //   }
-  // };
-
-  // Close the modal
   const closeModal = () => {
     setIsModalVisible(false);
+    setIsCalling(false); // Reset the calling status when the modal is closed
   };
+
+  // This useEffect will handle the logic of calling the nearest responder only if valid data is available
+  // useEffect(() => {
+  //   if (nearestResponder && nearestResponder.number) {
+  //     autoCallNearestResponder();
+  //   } else {
+  //     console.log('No valid responder or number to call');
+  //   }
+  // }, [nearestResponder]); // Watch for changes to the nearestResponder
 
   return (
     <StyledContainer bg={'#f0efee'}>
@@ -150,8 +220,9 @@ export default function EmergencyCall() {
           <View style={styles.bigCircleContainer}>
             <Image source={require('@/assets/images/emergency_call_hero.png')} style={styles.buttonBg} />
             <TouchableOpacity
-              onPress={() => setIsModalVisible(true)} // Show modal on panic button click
+              onPress={handlePanicButtonPress} // Trigger panic button logic
               style={styles.panicButton}
+              disabled={isCalling} // Disable the button if a call is already in progress
             >
               <Image
                 source={require('@/assets/images/emergency_call_btn.png')}
@@ -183,21 +254,18 @@ export default function EmergencyCall() {
       <Modal animationType="slide" transparent={true} visible={isModalVisible} onRequestClose={closeModal}>
         <View style={styles.modalBackground}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Siren Contacts</Text>
-            <FlatList
-              data={sirenContacts}
-              keyExtractor={(item) => item.id || item.username || `${item.firstname}-${item.lastname}`}
-              renderItem={({ item }) => (
-                <View style={styles.contactItem}>
-                  <Text style={styles.contactName}>{item.username}</Text>
-                  <TouchableOpacity
-                    onPress={() => handleCall(item.number, true)} // Use WebRTC for in-app call
-                  >
-                    <Text style={styles.callButton}>Call</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            />
+            <Text style={styles.modalTitle}>Nearby Responder</Text>
+            <Text style={styles.modalFooter}>Calling...</Text>
+            {nearestResponder && (
+              <View style={styles.nearestResponderContainer}>
+                <Text style={styles.nearestResponderText}>
+                  {nearestResponder.username} ({nearestResponder.distance} meters away)
+                </Text>
+                {/* <Pressable onPress={() => callNumber(nearestResponder.number)}> */}
+                <Ionicons name="call" size={30} color="#0b0c63" />
+                {/* </Pressable> */}
+              </View>
+            )}
             <TouchableOpacity onPress={closeModal} style={styles.closeModalButton}>
               <Text style={styles.closeModalText}>Close</Text>
             </TouchableOpacity>
@@ -369,5 +437,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     color: '#343434',
+  },
+  nearestResponderContainer: {
+    padding: 15,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    width: '100%',
+  },
+  nearestResponderText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalFooter: {
+    paddingVertical: 10,
   },
 });
