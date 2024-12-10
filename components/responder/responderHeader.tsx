@@ -20,6 +20,7 @@ import ConfirmModal from '../ConfirmModal';
 import { FontAwesome } from '@expo/vector-icons';
 import { User } from 'firebase/auth';
 const { height } = Dimensions.get('window');
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const ResponderHeader = ({ user }: { user: User }) => {
   const [menuVisible, setMenuVisible] = useState(false);
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     zIndex: 1000,
     flex: 1,
-    height: 1250,
+    height: hp('100%'),
   },
   sliderNavItem: {
     marginTop: 10,

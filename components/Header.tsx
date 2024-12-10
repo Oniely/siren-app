@@ -22,6 +22,7 @@ import { ref, get } from 'firebase/database';
 import { db, auth } from '@/firebaseConfig';
 import { User } from 'firebase/auth';
 const { height } = Dimensions.get('window');
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 interface HeaderProps {
   user: User;
@@ -80,7 +81,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
         }));
       return userReports;
     } else {
-
+      console.error('No reports found');
       return [];
     }
   };
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     display: 'flex',
     zIndex: 1000,
-    height: 900,
+    height: hp('100%'),
   },
   navScrollContainer: {
     flex: 1,
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
   },
   sliderNavItem: {
     paddingVertical: 10,
-    left: 50,
+    left: wp('10%'),
     flexDirection: 'row',
     alignItems: 'center',
     height: 90,

@@ -17,6 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScaledSheet } from 'react-native-size-matters';
 import ConfirmModal from '../ConfirmModal';
 const { height } = Dimensions.get('window');
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 interface HeaderProps {
   bg?: string;
@@ -99,11 +100,11 @@ const AdminHeader: React.FC<HeaderProps> = ({ bg = '#e6e6e6' }) => {
             <Text style={styles.sliderNavItemText}>View Analytics</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/admin/settings')}>
-            <Ionicons name="settings-sharp" size={35} color="#0c0c63" />
+            <Ionicons name="settings-sharp" size={40} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Settings</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.sliderNavItem} onPress={() => setShowModal(true)}>
-            <Ionicons name="exit" size={35} color="#0c0c63" />
+            <Ionicons name="exit" size={40} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Logout</Text>
           </TouchableOpacity>
           <Text style={styles.burgerFooter}>All Rights Reserved @Siren2024</Text>
@@ -133,6 +134,8 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     paddingHorizontal: '20@s',
     zIndex: 1000,
+    height: hp('10%'),
+    flexWrap: 'wrap',
   },
   title: {
     fontSize: '18@s',
@@ -158,7 +161,7 @@ const styles = ScaledSheet.create({
     zIndex: 1000,
   },
   burgerProfile: {
-    height: '250@s',
+    height: 250,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#FAF9F6',
@@ -179,12 +182,12 @@ const styles = ScaledSheet.create({
     justifyContent: 'flex-start',
     display: 'flex',
     zIndex: 1000,
-    height: 900,
+    flex: 1,
+    height: hp('100%'),
   },
   sliderNavItem: {
-    marginTop: 10,
     paddingVertical: 10,
-    left: 50,
+    left: wp('10%'),
     flexDirection: 'row',
     alignItems: 'center',
     height: 100,
@@ -194,7 +197,7 @@ const styles = ScaledSheet.create({
     color: '#000',
     fontSize: 24,
     marginHorizontal: 10,
-    paddingLeft: 30,
+    paddingLeft: wp('5%'),
     fontFamily: 'BeVietnamProThin',
   },
   sliderNavImage: {},
@@ -218,5 +221,5 @@ const styles = ScaledSheet.create({
     bottom: 0,
     height: '200@s',
   },
-  adminSideBarIcon: { width: '40@s', height: '40@s', resizeMode: 'center' },
+  adminSideBarIcon: { width: 40, height: 40, resizeMode: 'center' },
 });

@@ -157,6 +157,8 @@ const styles = ScaledSheet.create({
     textAlign: 'center',
     color: '#343434',
     fontFamily: 'BeVietnamProBold',
+    flexWrap: 'wrap',
+    
   },
   bigCircleContainer: {
     width: '100%',

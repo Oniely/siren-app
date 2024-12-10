@@ -33,6 +33,8 @@ import { db, auth } from '@/firebaseConfig';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import { orderByChild, get, update, set, equalTo, limitToFirst, ref, push, remove } from 'firebase/database';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+
 const Contact = () => {
   const user = getAuth().currentUser;
   const router = useRouter();
@@ -382,25 +384,23 @@ const Contact = () => {
             }}
           />
           {matchingUsers.length > 0 ? (
-            matchingUsers.map((user) => (
-              <View key={user.id} style={{ padding: 10, marginBottom: 5 }}>
-                <View style={styles.usernameContainer}>
-                  <Text>{user.username}</Text>
-                  <Pressable onPress={() => handleAddSirenContact(user)}>
-                    <FS name="plus-circle" size={24} color="#0b0c63" />
-                  </Pressable>
+            <ScrollView style={[styles.scrollContainer]}>
+              {matchingUsers.map((user) => (
+                <View key={user.id} style={styles.userItem}>
+                  <View style={styles.usernameContainer}>
+                    <Text>{user.username}</Text>
+                    <Pressable onPress={() => handleAddSirenContact(user)}>
+                      <FS name="plus-circle" size={24} color="#0b0c63" />
+                    </Pressable>
+                  </View>
                 </View>
-              </View>
-            ))
+              ))}
+            </ScrollView>
           ) : (
             <Text>No matching users found</Text>
           )}
-
           <Pressable onPress={handleSearchUsername} style={styles.addContact}>
             <Text style={styles.addContactText}>Search</Text>
-          </Pressable>
-          <Pressable style={styles.addContact} onPress={handleAddSirenContact}>
-            <Text style={styles.addContactText}>Add Siren Contact</Text>
           </Pressable>
         </>
       );
@@ -666,13 +666,16 @@ const styles = StyleSheet.create({
     marginLeft: 40,
     height: 50,
     marginBottom: 10,
+    width: wp('100%'),
+    flexWrap: 'wrap',
+    overflow: 'scroll',
   },
   header: {
     paddingVertical: 10,
     marginHorizontal: 'auto',
     color: '#414753',
     fontWeight: 'bold',
-    fontSize: 30,
+    fontSize: 25,
     flex: 1,
     paddingHorizontal: 10,
   },
@@ -696,7 +699,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     flex: 1,
-    width: '100%',
+    width: wp('100%'),
+    flexWrap: 'wrap',
   },
   contactName: {
     fontSize: 24,
@@ -766,8 +770,8 @@ const styles = StyleSheet.create({
   },
   addButton: {
     zIndex: 10,
-    bottom: '10%',
-    right: '10%',
+    bottom: hp('10%'),
+    right: wp('10%'),
     position: 'absolute',
   },
   addContact: {
@@ -800,11 +804,27 @@ const styles = StyleSheet.create({
   contactListItemText: {
     fontSize: 18,
   },
+  scrollContainer: {
+    maxHeight: 300, // Set your desired height
+    marginVertical: 10,
+    paddingHorizontal: 15,
+    width: '100%',
+  },
+  userItem: {
+    padding: 10,
+    marginBottom: 10,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 3,
+  },
   usernameContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '60%',
   },
   contactList: {},
 });

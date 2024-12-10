@@ -90,11 +90,7 @@ const styles = StyleSheet.create({
     width: 80,
     position: 'relative',
   },
-  activeFooter: {
-    borderTopColor: '#3998ff',
-    borderTopWidth: 4,
-    paddingTop: 4,
-  },
+  activeFooter: {},
   panicButton: {
     resizeMode: 'contain',
     height: 60,

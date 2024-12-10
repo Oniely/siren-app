@@ -20,6 +20,7 @@ import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/aut
 import { ref, get } from 'firebase/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { setLogLevel } from 'firebase/app';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const Login = () => {
   const router = useRouter();
@@ -205,6 +206,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#faf9f6',
     padding: 16,
+    height: hp('100%'),
+    width: wp('100%'), 
   },
   imageContainer: {
     flex: 1,
