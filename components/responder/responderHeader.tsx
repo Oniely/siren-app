@@ -159,7 +159,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   police: {
-    resizeMode: 'stretch',
+    resizeMode: 'cover',
     height: '40@s',
     width: '40@s',
     borderRadius: '20@s',
