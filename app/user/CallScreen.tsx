@@ -2,15 +2,17 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
-import { ref, update, get, child } from 'firebase/database';
-import { db, auth } from '@/firebaseConfig'; // Assuming you're importing your Firebase config
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, update, get } from 'firebase/database';
+import { db, auth, storage } from '@/firebaseConfig';
 
 const TestRecordingScreen = () => {
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingUri, setRecordingUri] = useState<string | null>(null);
-  const [callRoomId, setCallRoomId] = useState<string>('room_1733945490711_VVqOS5w4dsZ8Tv12B8MVbylUNla2_cBH3Ux7ANIcxFPNGm2c2Z3lmlk53'); // Example Room ID
+  const [callRoomId, setCallRoomId] = useState<string>(
+    'room_1733945490711_VVqOS5w4dsZ8Tv12B8MVbylUNla2_cBH3Ux7ANIcxFPNGm2c2Z3lmlk53'
+  );
 
   // Function to start recording
   const startRecording = async () => {
@@ -28,9 +30,7 @@ const TestRecordingScreen = () => {
       });
 
       // Start recording
-      const { recording } = await Audio.Recording.createAsync(
-        Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
-      );
+      const { recording } = await Audio.Recording.createAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
       setRecording(recording);
       setIsRecording(true);
       Alert.alert('Recording started.');
@@ -50,12 +50,16 @@ const TestRecordingScreen = () => {
         setRecording(null);
         setIsRecording(false);
 
-        Alert.alert('Recording stopped.', 'Audio saved successfully.');
-        console.log('Recording URI:', uri);
-
-        // Insert recording data into the call record under caller's section
         if (uri) {
-          insertRecordingToCallRoom(uri);
+          console.log('Recording saved at:', uri);
+
+          // Upload the recording and get the download URL
+          const downloadURL = await uploadRecordingToStorage(uri);
+
+          if (downloadURL) {
+            // Insert recording data into the call record
+            await insertRecordingToCallRoom(downloadURL);
+          }
         }
       }
     } catch (error) {
@@ -64,11 +68,39 @@ const TestRecordingScreen = () => {
     }
   };
 
-  // Function to insert the recording data into the Firebase call room under the caller's section
-  const insertRecordingToCallRoom = async (uri: string) => {
+  // Function to upload recording to Firebase Storage
+  const uploadRecordingToStorage = async (localUri: string) => {
+    try {
+      console.log('Uploading recording from URI:', localUri);
+
+      const response = await fetch(localUri);
+      const blob = await response.blob();
+      const storageReference = storageRef(storage, `recordings/${auth.currentUser?.uid}/${Date.now()}.3gp`);
+
+      // Check if blob is created successfully
+      if (!blob) {
+        throw new Error('Failed to create blob from recording');
+      }
+
+      const uploadResult = await uploadBytes(storageReference, blob);
+
+      // Retrieve the download URL from Firebase Storage
+      const downloadURL = await getDownloadURL(uploadResult.ref);
+
+      console.log('Recording uploaded successfully. Download URL:', downloadURL);
+      return downloadURL;
+    } catch (error) {
+      console.error('Error uploading recording:', error);
+      Alert.alert('Upload Error', 'Could not upload recording.');
+      return null;
+    }
+  };
+
+  // Function to insert the recording download URL into Firebase call room
+  const insertRecordingToCallRoom = async (downloadURL: string) => {
     try {
       const callsRef = ref(db, `calls`);
-      const snapshot = await get(callsRef); // Get all calls
+      const snapshot = await get(callsRef);
 
       if (snapshot.exists()) {
         const callsData = snapshot.val();
@@ -79,24 +111,23 @@ const TestRecordingScreen = () => {
         });
 
         if (userCalls.length > 0) {
-          // Assuming only one matching call exists, get the first match
           const [callId, callData] = userCalls[0];
 
-          // Update the existing call room with the new recording URI
+          // Update the existing call room with the new recording download URL
           const updatedCallData = {
             ...callData,
             caller: {
               ...callData.caller,
-              recordingUri: uri, // Save the recording URI under the caller section
+              recordingUri: downloadURL, // Save the Firebase Storage download URL
             },
-            status: 'completed', // Update status to completed
+            status: 'completed',
             timestamp: new Date().toISOString(),
           };
 
           const callRef = ref(db, `calls/${callId}`);
-          await update(callRef, updatedCallData); // Update the call data
+          await update(callRef, updatedCallData);
 
-          Alert.alert('Call data updated', 'Recording data has been added to the call.');
+          Alert.alert('Call data updated', 'Recording has been added to the call.');
         } else {
           Alert.alert('Error', 'No matching call found for this user.');
         }
@@ -114,7 +145,6 @@ const TestRecordingScreen = () => {
     try {
       if (recordingUri) {
         const { sound } = await Audio.Sound.createAsync({ uri: recordingUri });
-        setSound(sound);
         await sound.playAsync();
         Alert.alert('Playing Recording');
       } else {
@@ -130,19 +160,11 @@ const TestRecordingScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Test Audio Recording</Text>
 
-      {/* Start Recording Button */}
-      <TouchableOpacity
-        style={styles.callButton}
-        onPress={startRecording}
-        disabled={isRecording}
-      >
+      <TouchableOpacity style={styles.callButton} onPress={startRecording} disabled={isRecording}>
         <Ionicons name="mic" size={50} color="white" />
-        <Text style={styles.callButtonText}>
-          {isRecording ? 'Recording...' : 'Start Recording'}
-        </Text>
+        <Text style={styles.callButtonText}>{isRecording ? 'Recording...' : 'Start Recording'}</Text>
       </TouchableOpacity>
 
-      {/* Stop Recording Button */}
       <TouchableOpacity
         style={[styles.callButton, { backgroundColor: '#FF6347', marginTop: 20 }]}
         onPress={stopRecording}
@@ -152,7 +174,6 @@ const TestRecordingScreen = () => {
         <Text style={styles.callButtonText}>Stop Recording</Text>
       </TouchableOpacity>
 
-      {/* Play Recorded Audio Button */}
       <TouchableOpacity
         style={[styles.callButton, { backgroundColor: '#2CFF62', marginTop: 20 }]}
         onPress={playRecording}
