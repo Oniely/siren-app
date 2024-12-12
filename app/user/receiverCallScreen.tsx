@@ -19,7 +19,7 @@ const ReceiverCallScreen = () => {
       const snapshot = await get(callRef);
 
       if (snapshot.exists()) {
-        Object.entries(snapshot.val()).forEach(([callRoomId, callData]) => {
+        Object.entries(snapshot.val()).forEach(([callRoomId, callData]: any) => {
           const recordingUri = callData.caller?.recordingUri;
 
           if (recordingUri && recordingUri.startsWith('https://')) {
@@ -36,7 +36,7 @@ const ReceiverCallScreen = () => {
       Alert.alert('Error', 'Could not fetch the call data. Please try again.');
     }
   };
-  
+
   const playRecording = async () => {
     if (!recordingUri) {
       Alert.alert('No Recording', 'There is no recording to play.');
@@ -49,7 +49,7 @@ const ReceiverCallScreen = () => {
       await sound.playAsync();
       setIsPlaying(true);
 
-      sound.setOnPlaybackStatusUpdate((status) => {
+      sound.setOnPlaybackStatusUpdate((status: any) => {
         if (status.isLoaded && status.didJustFinish) {
           setIsPlaying(false);
         }
