@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Alert, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
-import { ref, get, query, orderByChild, equalTo, update, onValue, remove } from 'firebase/database';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, get, query, orderByChild, equalTo, update, onValue, remove } from 'firebase/database';
 import { db, auth, storage } from '@/firebaseConfig';
+import { useLocalSearchParams } from 'expo-router';
 import { getAuth } from 'firebase/auth';
-import { useRouter } from 'expo-router';
+import { useRouter } from 'expo-router'; // Import useRouter from expo-router
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 const ReceiverCallScreen = () => {
   const router = useRouter();
-
   const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingUri, setRecordingUri] = useState<string | null>(null);
@@ -19,101 +19,63 @@ const ReceiverCallScreen = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [callDetails, setCallDetails] = useState<any>(null);
-
-  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null); // For storing interval ID
-  const [isCallStarted, setIsCallStarted] = useState(false);
+  const [isReceiverRecordingPlayed, setIsReceiverRecordingPlayed] = useState(false); // New flag
   const receiverId = getAuth().currentUser?.uid;
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null); // For storing interval ID
 
-<<<<<<< HEAD
-=======
-  const fetchCallData = async (receiverId: string) => {
-    try {
-      const callRef = query(ref(db, 'calls'), orderByChild('receiver/id'), equalTo(receiverId));
-      const snapshot = await get(callRef);
-
-      if (snapshot.exists()) {
-        Object.entries(snapshot.val()).forEach(([callRoomId, callData]: any) => {
-          const recordingUri = callData.caller?.recordingUri;
-
-          if (recordingUri && recordingUri.startsWith('https://')) {
-            setRecordingUri(recordingUri); // Set the URI
-            setCallDetails(callData); // Optionally, you can store additional call details
-            return; // Exit the loop once a valid recording is found
-          }
-        });
-      } else {
-        Alert.alert('No Calls', 'There are no calls for this receiver.');
-      }
-    } catch (error) {
-      console.error('Error fetching call data:', error);
-      Alert.alert('Error', 'Could not fetch the call data. Please try again.');
-    }
-  };
-
-  const playRecording = async () => {
-    if (!recordingUri) {
-      Alert.alert('No Recording', 'There is no recording to play.');
-      return;
-    }
-
-    try {
-      const { sound } = await Audio.Sound.createAsync({ uri: recordingUri });
-      setSound(sound);
-      await sound.playAsync();
-      setIsPlaying(true);
-
-      sound.setOnPlaybackStatusUpdate((status: any) => {
-        if (status.isLoaded && status.didJustFinish) {
-          setIsPlaying(false);
-        }
-      });
-    } catch (error) {
-      console.error('Error playing recording:', error);
-      Alert.alert('Error', 'Could not play the recording. Please try again.');
-    }
-  };
-
->>>>>>> b184e995b332498fcf567d3df4f8980c9188ead5
   useEffect(() => {
-    if (receiverId) {
-      const callRef = ref(db, 'calls');
-      const unsubscribe = onValue(callRef, (snapshot) => {
-        if (snapshot.exists()) {
-          const calls = snapshot.val();
-          Object.entries(calls).forEach(([roomId, callData]: any) => {
-            if (callData.receiver.id === receiverId) {
+    if (!receiverId) return;
+
+    const callRef = ref(db, 'calls');
+    const unsubscribe = onValue(callRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const calls = snapshot.val();
+        Object.entries(calls).forEach(([roomId, callData]: any) => {
+          if (callData.receiver.id === receiverId) {
+            const receiverRecordingUri = callData.caller?.recordingUri;
+            if (receiverRecordingUri && receiverRecordingUri.startsWith('https://')) {
               setCallRoomId(roomId);
               setCallDetails(callData);
             }
-          });
-        }
-      });
-
-      return () => unsubscribe();
-    }
-  }, [receiverId]);
-
-  useEffect(() => {
-    if (!callRoomId) return;
-
-    const callRef = ref(db, `calls/${callRoomId}`);
-    const unsubscribe = onValue(callRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const updatedCallDetails = snapshot.val();
-        setCallDetails(updatedCallDetails);
-
-        // Automatically play receiver's recording if the recordingUri is updated
-        if (updatedCallDetails.caller?.recordingUri) {
-          playCallerRecording(updatedCallDetails.caller.recordingUri);
-        }
+          }
+        });
+      } else {
+        console.log('No calls found for the caller.');
       }
     });
 
-    return () => unsubscribe(); // Clean up the listener
-  }, [callRoomId]);
+    return () => unsubscribe();
+  }, [receiverId]);
 
-  // Start recording automatically once the call starts
-  const startRecordingAutomatically = async () => {
+  useEffect(() => {
+    if (callDetails && callDetails.caller?.recordingUri && !isReceiverRecordingPlayed) {
+      // Play the receiver's recording once if it's not played already
+      playCallerRecording(callDetails.caller.recordingUri);
+    }
+  }, [callDetails]);
+
+  const playCallerRecording = async (uri: string) => {
+    try {
+      if (uri) {
+        const { sound } = await Audio.Sound.createAsync({ uri });
+        setSound(sound);
+        await sound.playAsync();
+        setIsPlaying(true);
+
+        sound.setOnPlaybackStatusUpdate((status: any) => {
+          if (status.isLoaded && status.didJustFinish) {
+            setIsPlaying(false);
+          }
+        });
+      } else {
+        Alert.alert('No recording found', 'Receiver has not uploaded any recording.');
+      }
+    } catch (error) {
+      console.error('Error playing receiver recording:', error);
+      Alert.alert('Error', "Couldn't play receiver's recording.");
+    }
+  };
+  const startRecording = async () => {
     try {
       const permission = await Audio.requestPermissionsAsync();
       if (!permission.granted) {
@@ -121,117 +83,64 @@ const ReceiverCallScreen = () => {
         return;
       }
 
-      // Set up audio mode for recording
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
 
-      // Only start a new recording if there is no active recording
-      if (!isRecording) {
-        const newRecording = new Audio.Recording();
-
-        await newRecording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
-        await newRecording.startAsync();
-
-        setRecording(newRecording);
-        setIsRecording(true);
-
-        console.log('Recording started automatically.');
-
-        // Set a timeout to stop and upload the recording
-        setTimeout(async () => {
-          try {
-            await stopAndUploadRecording(newRecording);
-          } catch (error) {
-            console.error('Error in recording timeout:', error);
-          }
-        }, 5000); // 5 seconds
-      }
+      const { recording } = await Audio.Recording.createAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+      setRecording(recording);
+      setIsRecording(true);
+      Alert.alert('Recording started.');
     } catch (error) {
       console.error('Error starting recording:', error);
-      Alert.alert('Error', 'Could not start recording automatically. Please try again.');
+      Alert.alert('Error', 'Could not start recording. Please try again.');
     }
   };
 
-  const stopAndUploadRecording = async (currentRecording: Audio.Recording) => {
+  const stopRecording = async () => {
     try {
-      // Stop the current recording
-      await currentRecording.stopAndUnloadAsync();
-      const uri = currentRecording.getURI();
+      if (recording) {
+        await recording.stopAndUnloadAsync();
+        const uri = recording.getURI();
+        setRecordingUri(uri);
+        setRecording(null);
+        setIsRecording(false);
 
-      if (uri) {
-        console.log('Recording saved at:', uri);
+        if (uri && callRoomId) {
+          console.log('Recording saved at:', uri);
 
-        // Upload the recording and get the download URL
-        const downloadURL = await uploadRecordingToStorage(uri);
+          const downloadURL = await uploadRecordingToStorage(uri);
 
-        if (downloadURL) {
-          // Update Firebase with the new recording URL
-          await updateCallWithRecording(downloadURL);
+          if (downloadURL) {
+            await insertRecordingToCallRoom(downloadURL);
+          }
         }
       }
-
-      // Reset recording state
-      setRecording(null);
-      setIsRecording(false);
-
-      // Immediately start a new recording
-      await startRecordingAutomatically();
     } catch (error) {
-      console.error('Error stopping and uploading recording:', error);
-
-      // Even if there's an error, try to start a new recording
-      setRecording(null);
-      setIsRecording(false);
-      await startRecordingAutomatically();
+      console.error('Error stopping recording:', error);
+      Alert.alert('Error', 'Could not stop recording. Please try again.');
     }
   };
 
   const uploadRecordingToStorage = async (localUri: string) => {
     try {
-      console.log('Uploading recording from URI:', localUri);
-
       const response = await fetch(localUri);
       const blob = await response.blob();
       const storageReference = storageRef(storage, `recordings/${auth.currentUser?.uid}/${Date.now()}.3gp`);
 
-      // Check if blob is created successfully
       if (!blob) {
         throw new Error('Failed to create blob from recording');
       }
 
       const uploadResult = await uploadBytes(storageReference, blob);
-
-      // Retrieve the download URL from Firebase Storage
       const downloadURL = await getDownloadURL(uploadResult.ref);
 
-      console.log('Recording uploaded successfully. Download URL:', downloadURL);
       return downloadURL;
     } catch (error) {
       console.error('Error uploading recording:', error);
       Alert.alert('Upload Error', 'Could not upload recording.');
       return null;
-    }
-  };
-
-  // Function to insert the recording download URL into Firebase call room
-  const updateCallWithRecording = async (downloadURL: string) => {
-    try {
-      const callRef = ref(db, `calls/${callRoomId}`);
-      const callDataUpdate = {
-        receiver: {
-          ...callDetails.receiver,
-          recordingUri: downloadURL, // Save the Firebase Storage download URL
-        },
-        status: 'ongoing',
-        timestamp: new Date().toISOString(),
-      };
-      await update(callRef, callDataUpdate);
-      console.log('Call updated with new recording URI.');
-    } catch (error) {
-      console.error('Error updating call with recording:', error);
-      Alert.alert('Error', 'Could not update call data.');
     }
   };
 
@@ -248,7 +157,7 @@ const ReceiverCallScreen = () => {
         ...callDetails,
         receiver: {
           ...callDetails.receiver,
-          recordingUri: downloadURL, // Save the Firebase Storage download URL
+          recordingUri: downloadURL, 
         },
         status: 'completed',
         timestamp: new Date().toISOString(),
@@ -263,48 +172,29 @@ const ReceiverCallScreen = () => {
     }
   };
 
-  const playCallerRecording = async (uri: string) => {
+  // Updated playRecording method to play the receiver's recording
+  const playRecording = async () => {
     try {
-      console.log('Starting to load receiver recording...');
-      const { sound, status } = await Audio.Sound.createAsync({ uri });
-
-      // Check if the sound is successfully loaded
-      if (status.isLoaded) {
-        setSound(sound); // Save the sound instance for later control
-        console.log('Receiver recording loaded successfully, starting playback...');
-        await sound.playAsync(); // Play the audio
+      if (recordingUri) {
+        const { sound } = await Audio.Sound.createAsync({ uri: recordingUri });
+        setSound(sound);
+        await sound.playAsync();
         setIsPlaying(true);
 
-        // Monitor playback status
-        sound.setOnPlaybackStatusUpdate((playbackStatus) => {
-          if (playbackStatus.didJustFinish) {
-            console.log('Playback finished.');
+        sound.setOnPlaybackStatusUpdate((status: any) => {
+          if (status.isLoaded && status.didJustFinish) {
             setIsPlaying(false);
-            sound.unloadAsync();
-            setSound(null);
           }
         });
       } else {
-        console.error('Sound could not be loaded:');
-        Alert.alert('Playback Error', 'The audio file could not be loaded for playback.');
+        Alert.alert('No recording found', 'Please record audio first.');
       }
     } catch (error) {
-      console.error('Error playing receiver recording:');
+      console.error('Error playing recording:', error);
+      Alert.alert('Error', 'Could not play the recording.');
     }
   };
 
-  useEffect(() => {
-    if (isCallStarted) {
-      startRecordingAutomatically();
-    }
-
-    return () => {
-      // Clean up any ongoing recordings
-      if (recording) {
-        recording.stopAndUnloadAsync();
-      }
-    };
-  }, [isCallStarted]);
   useEffect(() => {
     return () => {
       if (sound) {
@@ -312,25 +202,18 @@ const ReceiverCallScreen = () => {
       }
     };
   }, [sound]);
-
   const endCall = async () => {
     try {
-      // Stop the recording automation
+      // Stop the recording
+      await stopRecording();
+
+      // Stop the recording automation if it's active
       if (intervalId) {
         clearInterval(intervalId); // Stop the interval that triggers recording
         setIntervalId(null); // Reset the intervalId state
       }
 
-      // Stop and unload the current recording if it's active
-      if (recording) {
-        await recording.stopAndUnloadAsync(); // Stop the recording
-        setRecording(null); // Clear the recording state
-        setIsRecording(false); // Set the recording state to false
-      }
-      if (!callRoomId) {
-        Alert.alert('Error', 'Call Room ID is not available.');
-        return;
-      }
+      // Remove the call room from Firebase
       if (callRoomId) {
         const callRef = ref(db, `calls/${callRoomId}`);
         await remove(callRef); // Delete the call room data from Firebase
@@ -348,26 +231,38 @@ const ReceiverCallScreen = () => {
       Alert.alert('Error', 'Could not end the call. Please try again.');
     }
   };
-
   return (
     <View style={styles.container}>
       <View style={styles.contactContainer}>
+        <Text style={styles.title}>{'Calling'} </Text>
+
         <Image source={require('@/assets/images/profile-logo.png')} style={styles.contactImage} />
-        <Text style={styles.title}>Calling</Text>
+        <View style={styles.sectionContainer}>
+          <TouchableOpacity
+            style={[styles.upperButton, { backgroundColor: '#2CFF62' }]}
+            disabled={!callDetails?.caller?.recordingUri || isPlaying}
+          >
+            <Ionicons name="play" size={50} color="white" />
+            <Text style={styles.callButtonText}>{isPlaying ? 'Playing...' : "Play Caller's Recording"}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={[styles.callButton, { backgroundColor: '#FF6347', marginTop: 20 }]}
-          onPress={() => setIsCallStarted(true)}
-        >
+        <TouchableOpacity style={styles.callButton} onPress={startRecording} disabled={isRecording}>
           <Ionicons name="mic" size={50} color="white" />
-          <Text style={styles.callButtonText}>{isRecording ? 'Recording...' : 'Start Call'}</Text>
+          <Text style={styles.callButtonText}>{isRecording ? 'Recording...' : 'Start Recording'}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.endcallButton, { backgroundColor: '#FF4500', marginTop: 40 }]}
-          onPress={endCall}
+          style={[styles.callButton, { backgroundColor: '#FF6347' }]}
+          onPress={stopRecording}
+          disabled={!isRecording}
         >
+          <FontAwesome name="send" size={50} color="white" />
+          <Text style={styles.callButtonText}>Send</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.callButton, { backgroundColor: '#FF4500' }]} onPress={endCall}>
           <Ionicons name="call" size={50} color="white" />
           <Text style={styles.callButtonText}>End Call</Text>
         </TouchableOpacity>
@@ -383,6 +278,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
   },
+  contactImage: {
+    resizeMode: 'contain',
+    height: hp(20),
+    width: wp(30),
+  },
   contactContainer: {
     height: hp(50),
     justifyContent: 'center',
@@ -390,11 +290,11 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     height: hp(50),
-  },
-  contactImage: {
-    resizeMode: 'contain',
-    height: hp(20),
-    width: wp(30),
+    flexDirection: 'row',
+    width: wp(90),
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: wp(5),
   },
   title: {
     fontSize: 30,
@@ -403,31 +303,32 @@ const styles = StyleSheet.create({
   },
   callButton: {
     backgroundColor: '#2CFF62',
-    padding: 20,
-    borderRadius: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  endcallButton: {
-    backgroundColor: '#2CFF62',
-    padding: 20,
+    height: hp(15),
+    width: wp(25),
+    padding: 15,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },
   callButtonText: {
     color: 'white',
-    fontSize: 20,
-    marginTop: 10,
+    fontSize: 18,
+    flexWrap: 'wrap',
+    textAlign: 'center',
   },
   sectionContainer: {
     marginTop: 20,
+    width: wp(80),
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
+  upperButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 15,
+    width: wp(70),
+    borderRadius: 30,
+    textAlign: 'center',
   },
 });
 

@@ -14,7 +14,7 @@ import React, { useState, useEffect } from 'react';
 import StyledContainer from '@/components/StyledContainer';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { get, ref } from 'firebase/database';
+import { get, ref, set } from 'firebase/database';
 import { db } from '@/firebaseConfig';
 import { getAuth } from 'firebase/auth';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -69,7 +69,7 @@ export default function EmergencyCall() {
 
       // Retrieve responders with their keys
       const responders = Object.entries(responderSnapshot.val() || []).map(([key, value]) => ({
-        id: key, // Use the key as the ID
+        id: key, 
         ...value,
       }));
       console.log('Responders from Firebase:', responders);
@@ -159,27 +159,64 @@ export default function EmergencyCall() {
       .catch((err) => console.error('Error opening phone dialer:', err));
   };
 
-  const autoCallNearestResponder = () => {
-    if (nearestResponder && nearestResponder.number) {
-      setTimeout(() => {
-        callNumber(nearestResponder.number); // Call the nearest responder after 3 seconds
-        setIsCalling(true); // Indicate that a call is in progress
-      }, 3000);
+  const startAudioCall = async (responder) => {
+    if (!responder?.id || !responder?.username) {
+      Alert.alert('Error', 'Responder data is incomplete. Please try again.');
+      return;
+    }
+    if (responder) {
+      try {
+        // Generate a unique room ID
+        const roomId = `room_${Date.now()}_${user?.uid}_${responder.id}`;
+
+        // Reference to the "calls" collection
+        const callRef = ref(db, `calls/${roomId}`);
+
+
+        await set(callRef, {
+          status: 'initiated',
+          caller: {
+            id: user?.uid || 'unknown',
+            name: user?.displayName || 'Unknown Caller',
+          },
+          receiver: {
+            id: responder?.id || 'unknown',
+            name: responder?.username || 'Unknown Responder',
+          },
+          timestamp: new Date().toISOString(),
+        });
+
+        // Notify user and navigate to call screen
+        Alert.alert(`Audio call started with ${responder.username}`);
+        router.push({
+          pathname: '/user/CallScreen',
+          params: {
+            name: responder.username,
+          },
+        });
+      } catch (error) {
+        console.error('Error starting audio call: ', error);
+        Alert.alert('Error', 'Could not initiate the call. Please try again.');
+      }
     } else {
-      Alert.alert('No Responder', 'No nearby responder found.');
+      Alert.alert('No valid responder to call.');
     }
   };
 
   const handlePanicButtonPress = () => {
-    setIsModalVisible(true); // Show modal on panic button click
-    fetchNearestResponder(); // Detect nearest responder when button is clicked
-
-    // Disable the panic button and wait before calling the responder
-    setTimeout(() => {
-      autoCallNearestResponder(); // Automatically call the nearest responder after 3 seconds
-    }, 3000);
+    setIsModalVisible(true);
+    fetchNearestResponder()
+      .then(() => {
+        if (nearestResponder) {
+          startAudioCall(nearestResponder); // Initiate the audio call once a responder is found
+        } else {
+          Alert.alert('No Responder', 'No nearby responder found.');
+        }
+      })
+      .catch((error) => {
+        console.error('Error fetching nearest responder:', error);
+      });
   };
-
   const closeModal = () => {
     setIsModalVisible(false);
     setIsCalling(false); // Reset the calling status when the modal is closed

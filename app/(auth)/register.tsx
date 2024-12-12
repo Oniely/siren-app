@@ -94,17 +94,19 @@ const Register = () => {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
           Alert.alert('Error', 'Permission to access location was denied');
+          setLoading(false); // Ensure loading spinner stops
           return;
         }
 
         const locationData = await Location.getCurrentPositionAsync({});
-        setLocation({
+        const fetchedLocation = {
           latitude: locationData.coords.latitude,
           longitude: locationData.coords.longitude,
-        });
-        console.log('Location:', location); // For debugging purposes
-      }
+        };
+        setLocation(fetchedLocation);
 
+        console.log('Fetched Location:', fetchedLocation); // Debugging
+      }
       const userRef = ref(db, 'users');
       const snapshot = await get(userRef);
       const existingUsers = snapshot.val();
@@ -244,6 +246,18 @@ const Register = () => {
                   onChangeText={setConfirmPassword}
                   autoCapitalize="none"
                   secureTextEntry
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <TextInput
+                  placeholder="Location"
+                  style={styles.input}
+                  value={
+                    location
+                      ? `Lat: ${location.latitude}, Long: ${location.longitude}`
+                      : 'Fetching location...'
+                  }
+                  editable={false} // Make this field non-editable
                 />
               </View>
             </View>
