@@ -6,7 +6,7 @@ import { db, auth } from '@/firebaseConfig'; // Assuming this is your firebase c
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { Audio } from 'expo-av'; // Importing expo-av
-
+import { useRouter } from 'expo-router';
 // Define the type for users fetched from Firebase
 type User = {
   id: string;
@@ -24,6 +24,7 @@ const PhoneDialer = () => {
   const [users, setUsers] = useState<User[]>([]); // To store users from Firebase
   const [selectedUser, setSelectedUser] = useState<User | null>(null); // To store the selected user
   const [sound, setSound] = useState();
+  const router = useRouter();
 
   // Fetch users from Firebase on component mount
   const fetchUsers = async () => {
@@ -110,14 +111,14 @@ const PhoneDialer = () => {
           timestamp: new Date().toISOString(),
         });
 
-        // Play sound to simulate the call initiation (if you want)
-        // const { sound } = await Audio.Sound.createAsync(require('@/assets/images/rvm_voice.mp3'), {
-        //   shouldPlay: true,
-        // });
-        // setSound(sound);
-        // await sound.playAsync();
-
         Alert.alert(`Audio call started with ${selectedUser.username}`);
+
+        router.push({
+          pathname: '/user/CallScreen',
+          params: {
+            name: selectedUser.username,
+          },
+        });
       } catch (error) {
         console.error('Error starting audio call: ', error);
         Alert.alert('Error', 'Could not initiate the call. Please try again.');
