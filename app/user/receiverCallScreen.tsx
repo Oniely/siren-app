@@ -24,6 +24,56 @@ const ReceiverCallScreen = () => {
   const [isCallStarted, setIsCallStarted] = useState(false);
   const receiverId = getAuth().currentUser?.uid;
 
+<<<<<<< HEAD
+=======
+  const fetchCallData = async (receiverId: string) => {
+    try {
+      const callRef = query(ref(db, 'calls'), orderByChild('receiver/id'), equalTo(receiverId));
+      const snapshot = await get(callRef);
+
+      if (snapshot.exists()) {
+        Object.entries(snapshot.val()).forEach(([callRoomId, callData]: any) => {
+          const recordingUri = callData.caller?.recordingUri;
+
+          if (recordingUri && recordingUri.startsWith('https://')) {
+            setRecordingUri(recordingUri); // Set the URI
+            setCallDetails(callData); // Optionally, you can store additional call details
+            return; // Exit the loop once a valid recording is found
+          }
+        });
+      } else {
+        Alert.alert('No Calls', 'There are no calls for this receiver.');
+      }
+    } catch (error) {
+      console.error('Error fetching call data:', error);
+      Alert.alert('Error', 'Could not fetch the call data. Please try again.');
+    }
+  };
+
+  const playRecording = async () => {
+    if (!recordingUri) {
+      Alert.alert('No Recording', 'There is no recording to play.');
+      return;
+    }
+
+    try {
+      const { sound } = await Audio.Sound.createAsync({ uri: recordingUri });
+      setSound(sound);
+      await sound.playAsync();
+      setIsPlaying(true);
+
+      sound.setOnPlaybackStatusUpdate((status: any) => {
+        if (status.isLoaded && status.didJustFinish) {
+          setIsPlaying(false);
+        }
+      });
+    } catch (error) {
+      console.error('Error playing recording:', error);
+      Alert.alert('Error', 'Could not play the recording. Please try again.');
+    }
+  };
+
+>>>>>>> b184e995b332498fcf567d3df4f8980c9188ead5
   useEffect(() => {
     if (receiverId) {
       const callRef = ref(db, 'calls');

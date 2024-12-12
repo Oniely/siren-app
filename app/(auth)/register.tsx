@@ -23,6 +23,7 @@ import { Picker } from '@react-native-picker/picker';
 const { height } = Dimensions.get('window');
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import * as Location from 'expo-location';
+import LoadingOverlay from '@/components/app/LoadingOverlay';
 const Register = () => {
   const router = useRouter();
 
@@ -34,7 +35,9 @@ const Register = () => {
   const [number, setNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [location, setLocation] = useState<LocationType>(null); 
+  const [location, setLocation] = useState<LocationType>(null);
+  const [loading, setLoading] = useState(false);
+
   type LocationType = {
     latitude: number;
     longitude: number;
@@ -63,28 +66,30 @@ const Register = () => {
   };
 
   const handleSignup = async () => {
-    if (!username || !email || !password || !confirmPassword || !category) {
-      alert('Please fill in all fields');
-      return;
-    }
-    if (username.length < 3) {
-      Alert.alert('Error', 'Username must be at least 3 characters long.');
-      return;
-    }
-    if (password.length < 6) {
-      Alert.alert('Error', 'Password must be at least 6 characters long.');
-      return;
-    }
-    if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match.');
-      return;
-    }
-    if (!validateEmail(email)) {
-      Alert.alert('Error', 'Invalid email format.');
-      return;
-    }
+    setLoading(true);
 
     try {
+      if (!username || !email || !password || !confirmPassword || !category) {
+        alert('Please fill in all fields');
+        return;
+      }
+      if (username.length < 3) {
+        Alert.alert('Error', 'Username must be at least 3 characters long.');
+        return;
+      }
+      if (password.length < 6) {
+        Alert.alert('Error', 'Password must be at least 6 characters long.');
+        return;
+      }
+      if (password !== confirmPassword) {
+        Alert.alert('Error', 'Passwords do not match.');
+        return;
+      }
+      if (!validateEmail(email)) {
+        Alert.alert('Error', 'Invalid email format.');
+        return;
+      }
+
       if (category === 'Responder') {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== 'granted') {
@@ -155,10 +160,14 @@ const Register = () => {
       } else {
         Alert.alert('Error', 'An unknown error occurred.');
       }
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <SafeAreaView style={styles.container}>
+      <LoadingOverlay visible={loading} message="Registering account" />
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView contentContainerStyle={styles.scrollViewContent} keyboardShouldPersistTaps="handled">
           <View style={styles.formContainer}>
