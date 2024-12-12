@@ -30,6 +30,7 @@ const TestRecordingScreen = () => {
       });
 
       // Start recording
+      // @ts-ignore
       const { recording } = await Audio.Recording.createAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
       setRecording(recording);
       setIsRecording(true);
@@ -106,7 +107,7 @@ const TestRecordingScreen = () => {
         const callsData = snapshot.val();
 
         // Filter calls where the caller's user ID matches the current user's ID
-        const userCalls = Object.entries(callsData).filter(([callId, callData]) => {
+        const userCalls = Object.entries(callsData).filter(([callId, callData]: any) => {
           return callData.caller?.id === auth.currentUser?.uid;
         });
 
@@ -115,8 +116,10 @@ const TestRecordingScreen = () => {
 
           // Update the existing call room with the new recording download URL
           const updatedCallData = {
+            // @ts-ignore
             ...callData,
             caller: {
+              // @ts-ignore
               ...callData.caller,
               recordingUri: downloadURL, // Save the Firebase Storage download URL
             },
