@@ -69,7 +69,7 @@ export default function EmergencyCall() {
 
       // Retrieve responders with their keys
       const responders = Object.entries(responderSnapshot.val() || []).map(([key, value]) => ({
-        id: key, 
+        id: key,
         ...value,
       }));
       console.log('Responders from Firebase:', responders);
@@ -164,42 +164,55 @@ export default function EmergencyCall() {
       Alert.alert('Error', 'Responder data is incomplete. Please try again.');
       return;
     }
-    if (responder) {
-      try {
-        // Generate a unique room ID
-        const roomId = `room_${Date.now()}_${user?.uid}_${responder.id}`;
 
-        // Reference to the "calls" collection
-        const callRef = ref(db, `calls/${roomId}`);
+    try {
+      // Check if the responder is currently in an active call
+      const callsSnapshot = await get(ref(db, `calls/`));
+      if (callsSnapshot.exists()) {
+        const activeCalls = Object.values(callsSnapshot.val() || {});
 
+        const isResponderInCall = activeCalls.some(
+          (call) =>
+            (call.receiver?.id === responder.id || call.caller?.id === responder.id) &&
+            call.status === 'initiated'
+        );
 
-        await set(callRef, {
-          status: 'initiated',
-          caller: {
-            id: user?.uid || 'unknown',
-            name: user?.displayName || 'Unknown Caller',
-          },
-          receiver: {
-            id: responder?.id || 'unknown',
-            name: responder?.username || 'Unknown Responder',
-          },
-          timestamp: new Date().toISOString(),
-        });
-
-        // Notify user and navigate to call screen
-        Alert.alert(`Audio call started with ${responder.username}`);
-        router.push({
-          pathname: '/user/CallScreen',
-          params: {
-            name: responder.username,
-          },
-        });
-      } catch (error) {
-        console.error('Error starting audio call: ', error);
-        Alert.alert('Error', 'Could not initiate the call. Please try again.');
+        if (isResponderInCall) {
+          Alert.alert(
+            'Responder Busy',
+            'The responder is currently in another call. Please try again later.'
+          );
+          return;
+        }
       }
-    } else {
-      Alert.alert('No valid responder to call.');
+      // If not in call, initiate the audio call
+      const roomId = `room_${Date.now()}_${user?.uid}_${responder.id}`;
+
+      const callRef = ref(db, `calls/${roomId}`);
+
+      await set(callRef, {
+        status: 'initiated',
+        caller: {
+          id: user?.uid || 'unknown',
+          name: user?.displayName || 'Unknown Caller',
+        },
+        receiver: {
+          id: responder?.id || 'unknown',
+          name: responder?.username || 'Unknown Responder',
+        },
+        timestamp: new Date().toISOString(),
+      });
+
+      Alert.alert(`Audio call started with ${responder.username}`);
+      router.push({
+        pathname: '/user/CallScreen',
+        params: {
+          name: responder.username,
+        },
+      });
+    } catch (error) {
+      console.error('Error starting audio call: ', error);
+      Alert.alert('Error', 'Could not initiate the call. Please try again.');
     }
   };
 
