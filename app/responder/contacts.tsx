@@ -45,9 +45,8 @@ const Contact = () => {
   const [username, setUsername] = useState('');
   const [firstname, setFirstName] = useState('');
   const [lastname, setLastName] = useState('');
-  const [email, setEmail] = useState('');
   const [number, setNumber] = useState('');
-  const [category, setCategory] = useState<string>('personal'); // Default category
+  const [category, setCategory] = useState<any>('personal'); // Default category
   const [searchUsername, setSearchUsername] = useState('');
   const [matchingUsers, setMatchingUsers] = useState<ContactType[]>([]);
   const [selectedUser, setSelectedUser] = useState<ContactType | null>(null);
@@ -65,7 +64,6 @@ const Contact = () => {
     firstname: string;
     lastname: string;
     username: string;
-    email: string;
     number: string;
     category: 'personal' | 'emergency' | 'siren';
   };
@@ -86,11 +84,11 @@ const Contact = () => {
   const handleSearchSiren = (text: string) => {
     setSearchText(text);
     if (text.trim() === '') {
-      setFilteredData(contacts.filter((contact) => contact.category === 'siren'));
+      setFilteredData(contacts.filter((contact: any) => contact.category === 'siren'));
     } else {
       setFilteredData(
         contacts.filter(
-          (contact) =>
+          (contact: any) =>
             contact.category === 'siren' && contact.username.toLowerCase().includes(text.toLowerCase())
         )
       );
@@ -108,19 +106,16 @@ const Contact = () => {
       username: user.username,
       firstname: user.firstname || '',
       lastname: user.lastname || '',
-      email: user.email || '',
       number: user.number || '',
       category: 'siren',
     };
 
-    
-
     try {
       await createSirenContactandRoom(sirenContact);
-      setContacts((prevContacts) => [...prevContacts, sirenContact]);
+      setContacts((prevContacts: any) => [...prevContacts, sirenContact]);
 
       if (activeTab.toLowerCase() === 'siren') {
-        setFilteredData((prevFilteredData) => [...prevFilteredData, sirenContact]);
+        setFilteredData((prevFilteredData: any) => [...prevFilteredData, sirenContact]);
       }
       setModalVisible(false);
       setSelectedUser(null);
@@ -152,20 +147,16 @@ const Contact = () => {
     const sirenContactRef = ref(db, `contacts/${userId}`);
     const newsirenContactRef = push(sirenContactRef);
 
-  
-    
-       try {
+    try {
       await set(newUserRef, {
         contactId: addedContact.id,
         username: addedContact.username,
-        email: addedContact.email,
         number: addedContact.number || '',
         roomId: newMessagesRef.key,
         category: addedContact.category,
       });
       await set(newsirenContactRef, {
         name: addedContact.firstname + ' ' + addedContact.lastname,
-        email: addedContact.email,
         number: addedContact.number,
         category: addedContact.category,
         userId: userId,
@@ -250,7 +241,6 @@ const Contact = () => {
     try {
       await set(newContactRef, {
         name: addedContact.firstname + ' ' + addedContact.lastname,
-        email: addedContact.email,
         number: addedContact.number,
         category: addedContact.category,
         userId: userId,
@@ -291,7 +281,7 @@ const Contact = () => {
     try {
       const snapshot = await get(ref(db, 'users/'));
       if (snapshot.exists()) {
-        const usersData = [];
+        const usersData: any = [];
         snapshot.forEach((childSnapshot) => {
           const user = childSnapshot.val();
           const userId = childSnapshot.key;
@@ -327,23 +317,21 @@ const Contact = () => {
         if (snapshot.exists()) {
           const data = snapshot.val();
 
-          const formattedContacts: ContactType[] = Object.entries(data).map(
-            ([contactId, contact]: [string, any]) => ({
-              id: contactId,
-              firstname: contact.name?.split(' ')[0] || '',
-              lastname: contact.name?.split(' ')[1] || '',
-              username: contact.name || `${contact.firstname} ${contact.lastname}`,
-              email: contact.email || '',
-              number: contact.number || '',
-              category: contact.category || 'personal',
-            })
-          );
+          const formattedContacts: any = Object.entries(data).map(([contactId, contact]: [string, any]) => ({
+            id: contactId,
+            firstname: contact.name?.split(' ')[0] || '',
+            lastname: contact.name?.split(' ')[1] || '',
+            username: contact.name || `${contact.firstname} ${contact.lastname}`,
+            email: contact.email || '',
+            number: contact.number || '',
+            category: contact.category || 'personal',
+          }));
 
           // Set the formatted contacts to state
           setContacts(formattedContacts);
         } else {
           console.log('No contacts found for the current user');
-          setContacts([]); 
+          setContacts([]);
         }
       } catch (error) {
         console.error('Error fetching contacts: ', error);
@@ -355,9 +343,9 @@ const Contact = () => {
   //FETCH SELECTED USER
   useEffect(() => {
     if (selectedUser && selectedUser.id) {
-      console.log('Selected user:', selectedUser); 
+      console.log('Selected user:', selectedUser);
     }
-  }, [selectedUser]); 
+  }, [selectedUser]);
 
   // SEARCH FILTER
   useEffect(() => {
@@ -382,7 +370,7 @@ const Contact = () => {
             value={searchUsername}
             onChangeText={(text) => {
               setSearchUsername(text);
-              handleSearchUsername(); 
+              handleSearchUsername();
             }}
           />
           {matchingUsers.length > 0 ? (
@@ -390,9 +378,7 @@ const Contact = () => {
               <View key={user.id} style={{ padding: 10, marginBottom: 5 }}>
                 <View style={styles.usernameContainer}>
                   <Text>{user.username}</Text>
-                  <Pressable
-                    onPress={() => handleAddSirenContact(user)} 
-                  >
+                  <Pressable onPress={() => handleAddSirenContact(user)}>
                     <FS name="plus-circle" size={24} color="#0b0c63" />
                   </Pressable>
                 </View>
@@ -428,13 +414,6 @@ const Contact = () => {
           />
           <TextInput
             style={styles.searchInput}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-          />
-          <TextInput
-            style={styles.searchInput}
             placeholder="Number"
             value={number}
             onChangeText={setNumber}
@@ -452,7 +431,7 @@ const Contact = () => {
   // DISPLAY CONTACT INFORMATION
   const renderContent = () => {
     const filteredContacts = filteredData.filter(
-      (contact) => contact.category.toLowerCase() === activeTab.toLowerCase()
+      (contact: any) => contact.category.toLowerCase() === activeTab.toLowerCase()
     );
 
     if (!filteredContacts.length) {
@@ -462,9 +441,9 @@ const Contact = () => {
     return (
       <FlatList
         data={filteredContacts}
-        keyExtractor={(item) => item.id} 
-        contentContainerStyle={styles.contactList} 
-        renderItem={({ item }) => (
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.contactList}
+        renderItem={({ item }: any) => (
           <View style={styles.contacts}>
             <Pressable style={styles.contactsInfo}>
               <Image
@@ -497,23 +476,22 @@ const Contact = () => {
   };
   // ADD CONTACT FUNCTION
   const handleAddContact = async () => {
-    if (!firstname || !lastname || !email || !number) {
+    if (!firstname || !lastname || !number) {
       Alert.alert('Validation Error', 'All fields are required.');
       return;
     }
 
-    const addedContact: ContactType = {
+    const addedContact: any = {
       id: Date.now().toString(),
       username: `${firstname} ${lastname}`,
       firstname,
       lastname,
-      email,
       number,
       category,
     };
 
     try {
-      await createContact(addedContact); 
+      await createContact(addedContact);
 
       setContacts((prevContacts) => [...prevContacts, addedContact]);
 
@@ -533,7 +511,7 @@ const Contact = () => {
     if (text.trim() === '') {
       setFilteredData(data);
     } else {
-      const filtered = data.filter((item) => item.name.toLowerCase().includes(text.toLowerCase()));
+      const filtered = data.filter((item: any) => item.name.toLowerCase().includes(text.toLowerCase()));
       setFilteredData(filtered);
     }
   };
@@ -557,7 +535,7 @@ const Contact = () => {
             >
               <Picker.Item label="Personal" value="personal" />
               <Picker.Item label="Emergency" value="emergency" />
-              <Picker.Item label="Siren" value="siren" />
+              {/* <Picker.Item label="Siren" value="siren" /> */}
             </Picker>
 
             {renderModalContent()}
@@ -597,9 +575,9 @@ const Contact = () => {
             <Text style={[styles.header, activeTab === 'Personal' && styles.activeHeader]}>Personal</Text>
           </Pressable>
           {/* Siren */}
-          <Pressable onPress={() => setActiveTab('Siren')}>
+          {/* <Pressable onPress={() => setActiveTab('Siren')}>
             <Text style={[styles.header, activeTab === 'Siren' && styles.activeHeader]}>Siren</Text>
-          </Pressable>
+          </Pressable> */}
         </View>
         <View style={styles.contactContainer}>{renderContent()}</View>
       </View>

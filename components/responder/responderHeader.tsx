@@ -18,11 +18,11 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ConfirmModal from '../ConfirmModal';
 import { FontAwesome } from '@expo/vector-icons';
-import { User } from 'firebase/auth';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ScaledSheet } from 'react-native-size-matters';
 import { ref, get, onValue, set, push } from 'firebase/database';
 import { db, auth } from '@/firebaseConfig';
+import { User } from '@/hooks/useUser';
 
 interface Call {
   callId: string;
@@ -73,81 +73,81 @@ const ResponderHeader = ({ user }: { user: User }) => {
     }
   }; // Function to fetch incoming calls for the current user
 
-  // const fetchIncomingCalls = async (userId: string): Promise<Call[]> => {
-  //   const callsRef = ref(db, 'calls');
-  //   const snapshot = await get(callsRef);
+  const fetchIncomingCalls = async (userId: string): Promise<Call[]> => {
+    const callsRef = ref(db, 'calls');
+    const snapshot = await get(callsRef);
 
-  //   if (snapshot.exists()) {
-  //     const calls: Record<string, Call> = snapshot.val();
-  //     const userIncomingCalls = Object.entries(calls)
-  //       .filter(([key, value]) => value.receiver?.id === userId && value.status !== 'completed')
-  //       .map(([key, value]) => ({
-  //         callId: key,
-  //         ...value,
-  //       }));
-  //     return userIncomingCalls;
-  //   }
-  //   return [];
-  // };
+    if (snapshot.exists()) {
+      const calls: Record<string, Call> = snapshot.val();
+      const userIncomingCalls = Object.entries(calls)
+        .filter(([key, value]) => value.receiver?.id === userId && value.status !== 'completed')
+        .map(([key, value]: any) => ({
+          callId: key,
+          ...value,
+        }));
+      return userIncomingCalls;
+    }
+    return [];
+  };
 
-  // // Real-time listener for incoming calls
-  // useEffect(() => {
-  //   const userId = auth.currentUser?.uid;
-  //   if (!userId) return;
+  // Real-time listener for incoming calls
+  useEffect(() => {
+    const userId = auth.currentUser?.uid;
+    if (!userId) return;
 
-  //   const callsRef = ref(db, 'calls');
-  //   let debounceTimeout: NodeJS.Timeout;
+    const callsRef = ref(db, 'calls');
+    let debounceTimeout: NodeJS.Timeout;
 
-  //   const unsubscribe = onValue(callsRef, async (snapshot) => {
-  //     if (snapshot.exists()) {
-  //       const calls: Call[] = await fetchIncomingCalls(userId);
+    const unsubscribe = onValue(callsRef, async (snapshot) => {
+      if (snapshot.exists()) {
+        const calls: Call[] = await fetchIncomingCalls(userId);
 
-  //       clearTimeout(debounceTimeout);
+        clearTimeout(debounceTimeout);
 
-  //       // Delay notification processing
-  //       debounceTimeout = setTimeout(() => {
-  //         setIncomingCalls(calls);
-  //         if (calls.length > 0) {
-  //           setShowCallNotification(true);
-  //           lastNotificationTime.current = Date.now(); // Update the last notification time
-  //         }
-  //       }, 5000); // 5-second debounce
-  //     }
-  //   });
+        // Delay notification processing
+        debounceTimeout = setTimeout(() => {
+          setIncomingCalls(calls);
+          if (calls.length > 0) {
+            setShowCallNotification(true);
+            lastNotificationTime.current = Date.now(); // Update the last notification time
+          }
+        }, 5000); // 5-second debounce
+      }
+    });
 
-  //   return () => {
-  //     clearTimeout(debounceTimeout);
-  //     unsubscribe();
-  //   };
-  // }, []);
+    return () => {
+      clearTimeout(debounceTimeout);
+      unsubscribe();
+    };
+  }, []);
 
-  // const handleAcceptCall = (call: Call) => {
-  //   router.push({
-  //     pathname: '/user/receiverCallScreen',
-  //     params: {
-  //       callId: call.callId,
-  //       callerName: call.caller.name,
-  //       callerID: call.caller.id,
-  //     },
-  //   });
-  //   setShowCallNotification(false);
-  // };
-  // const handleDeclineCall = async (call: Call) => {
-  //   try {
-  //     const callRef = ref(db, `calls/${call.callId}`);
-  //     await set(callRef, null); // Deletes the call room from Firebase
-  //     setShowCallNotification(false); // Hide the notification
-  //     setIncomingCalls((prev) => prev.filter((c) => c.callId !== call.callId)); // Remove from local state
+  const handleAcceptCall = (call: Call) => {
+    router.push({
+      pathname: '/user/receiverCallScreen',
+      params: {
+        callId: call.callId,
+        callerName: call.caller.name,
+        callerID: call.caller.id,
+      },
+    });
+    setShowCallNotification(false);
+  };
+  const handleDeclineCall = async (call: Call) => {
+    try {
+      const callRef = ref(db, `calls/${call.callId}`);
+      await set(callRef, null); // Deletes the call room from Firebase
+      setShowCallNotification(false); // Hide the notification
+      setIncomingCalls((prev) => prev.filter((c) => c.callId !== call.callId)); // Remove from local state
 
-  //     const callerNotificationRef = ref(db, `users/${call.caller.id}/notifications`);
-  //     await push(callerNotificationRef, {
-  //       message: `Your call to ${call.receiver.name} was declined.`,
-  //       timestamp: Date.now(),
-  //     });
-  //   } catch (error) {
-  //     console.error('Error deleting call room:', error);
-  //   }
-  // };
+      const callerNotificationRef = ref(db, `users/${call.caller.id}/notifications`);
+      await push(callerNotificationRef, {
+        message: `Your call to ${call.receiver.name} was declined.`,
+        timestamp: Date.now(),
+      });
+    } catch (error) {
+      console.error('Error deleting call room:', error);
+    }
+  };
   return (
     <View style={styles.container}>
       <Modal transparent={true} visible={showCallNotification} animationType="slide">
@@ -183,7 +183,9 @@ const ResponderHeader = ({ user }: { user: User }) => {
         </Pressable>
         <Pressable onPress={() => router.push('/responder/profile')}>
           <Image
-            source={user?.photoURL ? { uri: user.photoURL } : require('@/assets/images/profile-logo.png')}
+            source={
+              user?.profileImage ? { uri: user.profileImage } : require('@/assets/images/profile-logo.png')
+            }
             style={styles.police}
           />
         </Pressable>
@@ -199,11 +201,15 @@ const ResponderHeader = ({ user }: { user: User }) => {
           <View style={styles.burgerProfile}>
             <Pressable onPress={() => router.push('/responder/profile')}>
               <Image
-                source={user?.photoURL ? { uri: user.photoURL } : require('@/assets/images/profile-logo.png')}
+                source={
+                  user?.profileImage
+                    ? { uri: user.profileImage }
+                    : require('@/assets/images/profile-logo.png')
+                }
                 style={styles.sliderNavImage}
               />
             </Pressable>
-            <Text style={styles.burgerName}>{user?.displayName || ''}</Text>
+            <Text style={styles.burgerName}>{user?.firstname || ''}</Text>
           </View>
 
           <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/responder/contacts')}>

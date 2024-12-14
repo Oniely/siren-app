@@ -8,17 +8,17 @@ import { scale, ScaledSheet } from 'react-native-size-matters';
 import { getAuth } from 'firebase/auth';
 import NewsAlertCard from '@/components/NewsAlertCard';
 import Loading from '@/components/app/Loading';
+import useUser from '@/hooks/useUser';
+import { auth } from '@/firebaseConfig';
 
 MCI.loadFont();
 
 const itemWidth = Dimensions.get('screen').width * 0.9;
 
 const Dashboard = () => {
-  const user = getAuth().currentUser;
+  const user = auth.currentUser;
   const router = useRouter();
   const scrollX = useRef(new Animated.Value(0)).current;
-
-  if (!user) return <Loading />;
 
   const nearbyAccidents = [
     {
@@ -51,7 +51,7 @@ const Dashboard = () => {
             style={styles.topBarImage}
           />
           <View>
-            <Text style={styles.topBarName}>{user?.displayName || ''}</Text>
+            <Text style={styles.topBarName}>{user?.displayName || 'Elizabeth'}</Text>
             <Link href={'/user/profile'}>
               <Text style={styles.topBarLink}>See profile</Text>
             </Link>

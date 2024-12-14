@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   StyleSheet,
   Text,
@@ -13,13 +13,28 @@ import {
 import { useLocalSearchParams } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { db } from '@/firebaseConfig';
-import { ref, get, onChildAdded, push, query, orderByChild, onValue } from 'firebase/database';
+import {
+  set,
+  ref,
+  get,
+  onChildAdded,
+  push,
+  query,
+  orderByChild,
+  onValue,
+  remove,
+  equalTo,
+} from 'firebase/database';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MessageHeader from '@/components/MessageHeader';
 import Container from '@/components/Container';
 import Feather from '@expo/vector-icons/Feather';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Audio } from 'expo-av';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { useRouter } from 'expo-router';
+import { getAuth } from 'firebase/auth';
 
 interface Receiver {
   username: string;
@@ -34,12 +49,15 @@ interface Message {
 }
 
 const MessagingItem = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const { roomId } = useLocalSearchParams();
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentUserId, setCurrentUserId] = useState('');
   const [receiver, setReceiver] = useState<Receiver | null>(null);
   const flatListRef = useRef<FlatList>(null);
+  const router = useRouter();
+  const user = getAuth().currentUser;
 
   useEffect(() => {
     // Scroll to the end when messages are updated
@@ -77,7 +95,7 @@ const MessagingItem = () => {
       onValue(roomQuery, (snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.val();
-          const messagesArray = Object.entries(data.messages || {}).map(([key, msg]) => ({
+          const messagesArray = Object.entries(data.messages || {}).map(([key, msg]: any) => ({
             id: key,
             ...msg,
           }));
@@ -105,7 +123,65 @@ const MessagingItem = () => {
         .catch((error) => Alert.alert('Error sending message:', error.message));
     }
   };
+  const handleStartCall = useCallback(async () => {
+    if (!receiver) {
+      Alert.alert('Error', 'Receiver information not available');
+      return;
+    }
 
+    try {
+      await startAudioCall(receiver);
+    } catch (error) {
+      console.error('Call initiation error:', error);
+      Alert.alert('Call Error', 'Unable to start the call. Please try again.');
+    }
+  }, [receiver]);
+
+  const startAudioCall = async (receiver: Receiver) => {
+    try {
+      // First, retrieve the user2 ID from the room
+      const roomRef = ref(db, `rooms/${roomId}`);
+      const roomSnapshot = await get(roomRef);
+
+      if (!roomSnapshot.exists()) {
+        Alert.alert('Error', 'Room not found');
+        return;
+      }
+
+      const roomData = roomSnapshot.val();
+      const receiverId = roomData.user1 === currentUserId ? roomData.user2 : roomData.user1;
+
+      const callRef = ref(db, `calls/${roomId}`);
+
+      // Create call record
+      await set(callRef, {
+        status: 'initiated',
+        caller: {
+          id: currentUserId,
+          name: user?.displayName || 'Unknown Caller',
+        },
+        receiver: {
+          id: receiverId,
+          name: receiver.username || 'Unknown Receiver',
+        },
+        timestamp: new Date().toISOString(),
+        notify: true,
+      });
+
+      router.push({
+        pathname: '/user/call/Caller',
+        params: {
+          roomId,
+          currentUserId,
+          receiverId,
+          receiverName: receiver.username,
+        },
+      });
+    } catch (error) {
+      console.error('Error starting audio call:', error);
+      Alert.alert('Call Error', 'Unable to start the call. Please try again.');
+    }
+  };
   return (
     <Container bg="#F0F1F2">
       <MessageHeader username={receiver?.username || 'Loading...'} email={receiver?.email || 'Loading...'} />
@@ -134,11 +210,8 @@ const MessagingItem = () => {
 
         <View style={styles.chatButtons}>
           <View style={styles.actions}>
-            <Pressable>
-              <MCI name="camera-outline" size={30} color={'#b6b6b7'} />
-            </Pressable>
-            <Pressable>
-              <Feather name="mic" size={30} color="#b6b6b7" />
+            <Pressable onPress={handleStartCall}>
+              <Ionicons name="call-outline" size={30} color="#b6b6b7" />
             </Pressable>
           </View>
           <TextInput
@@ -150,9 +223,6 @@ const MessagingItem = () => {
           />
           <Pressable>
             <MCI name="image-outline" size={30} color={'#b6b6b7'} />
-          </Pressable>
-          <Pressable>
-            <FontAwesome name="smile-o" size={30} color="#b6b6b7" />
           </Pressable>
           <TouchableOpacity onPress={createMessage} style={styles.sendButton}>
             <MCI name="send" size={30} color={'#b6b6b7'} />

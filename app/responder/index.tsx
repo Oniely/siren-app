@@ -7,15 +7,19 @@ import ResponderStyledContainer from '@/components/responder/responderStyledCont
 import ResponderHeader from '@/components/responder/responderHeader';
 import { scale, ScaledSheet } from 'react-native-size-matters';
 import { getAuth } from 'firebase/auth';
+import Loading from '@/components/app/Loading';
+import useUser from '@/hooks/useUser';
 
 MCI.loadFont();
 
 const itemWidth = Dimensions.get('screen').width * 0.9;
 
 const ResponderDashboard = () => {
-  const user = getAuth().currentUser;
+  const { user, loading } = useUser();
   const router = useRouter();
   const scrollX = useRef(new Animated.Value(0)).current;
+
+  if (loading) return <Loading />;
 
   const nearbyAccidents = [
     {
@@ -46,7 +50,7 @@ const ResponderDashboard = () => {
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.textWrapper}>
-            <Text style={styles.indexText}>Hi, {user?.displayName || 'Elizabeth'}</Text>
+            <Text style={styles.indexText}>Hi, {user?.firstname || 'Elizabeth'}</Text>
             <Text style={styles.indexDesc}>Welcome to Siren Responder</Text>
           </View>
           <View style={styles.bigCircleContainer}>

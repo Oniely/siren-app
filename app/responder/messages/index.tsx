@@ -8,8 +8,10 @@ import { get, ref, onValue, set, push } from 'firebase/database';
 import { db } from '@/firebaseConfig';
 import Container from '@/components/Container';
 import Footer from '@/components/responder/responderFooter';
+import { getAuth } from 'firebase/auth';
 
 const Messaging = () => {
+  const currentUser = getAuth().currentUser;
   const [matchingUsers, setMatchingUsers] = useState<ContactType[]>([]);
   const router = useRouter();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -215,14 +217,19 @@ const Messaging = () => {
               <FlatList
                 style={styles.contactContainer}
                 data={users}
-                renderItem={({ item }) => (
-                  <View key={item.id} style={styles.userItem}>
-                    <Text>{item.username}</Text>
-                    <Pressable onPress={() => createRoom(item)}>
-                      <FS name="plus-circle" size={24} color="#0b0c63" />
-                    </Pressable>
-                  </View>
-                )}
+                // @ts-ignore
+                renderItem={({ item }: any) => {
+                  if (item.id === currentUser?.uid) return;
+
+                  return (
+                    <View key={item.id} style={styles.userItem}>
+                      <Text>{item.username}</Text>
+                      <Pressable onPress={() => createRoom(item)}>
+                        <FS name="plus-circle" size={24} color="#0b0c63" />
+                      </Pressable>
+                    </View>
+                  );
+                }}
                 keyExtractor={(item) => item.id}
               />
             ) : (

@@ -69,13 +69,6 @@ const Profile = () => {
             </View>
             <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.settingButton} activeOpacity={0.8}>
-            <View style={styles.settingContent}>
-              <SimpleLineIcons name="globe" size={24} color="#b6b6b7" />
-              <Text style={styles.settingText}>Language</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
-          </TouchableOpacity>
           <TouchableOpacity
             style={styles.settingButton}
             onPress={() => router.push('/responder/responderMap')}
@@ -84,6 +77,13 @@ const Profile = () => {
             <View style={styles.settingContent}>
               <FontAwesome6 name="location-dot" size={24} color="#b6b6b7" />
               <Text style={styles.settingText}>Location</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.settingButton} activeOpacity={0.8}>
+            <View style={styles.settingContent}>
+              <Ionicons name="settings" size={24} color="#b6b6b7" />
+              <Text style={styles.settingText}>Settings</Text>
             </View>
             <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
           </TouchableOpacity>

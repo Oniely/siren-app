@@ -1,20 +1,9 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-  Modal,
-  FlatList,
-  Linking,
-  Alert,
-  Pressable,
-} from 'react-native';
-import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Image, StyleSheet, Modal, Linking, Alert } from 'react-native';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import StyledContainer from '@/components/StyledContainer';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { get, ref, set } from 'firebase/database';
+import { get, ref, set, query, orderByChild, equalTo, remove } from 'firebase/database';
 import { db } from '@/firebaseConfig';
 import { getAuth } from 'firebase/auth';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -26,9 +15,11 @@ export default function EmergencyCall() {
   const user = getAuth().currentUser;
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [sirenContacts, setSirenContacts] = useState([]);
-  const [nearestResponder, setNearestResponder] = useState([]);
-  const [isCalling, setIsCalling] = useState(false); // To track whether a call is in progress
+  const [sirenContacts, setSirenContacts] = useState<any>([]);
+  const [nearestResponder, setNearestResponder] = useState<any>([]);
+  const [isCalling, setIsCalling] = useState(false);
+
+  const isCallInProgressRef = useRef(false);
 
   type Responder = {
     id: string;
@@ -43,83 +34,78 @@ export default function EmergencyCall() {
     number: string;
     [key: string]: any; // Any additional user fields
   };
-
-  const fetchNearestResponder = async () => {
+  const fetchNearestResponder = useCallback(async () => {
     try {
+      // Request location permissions
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        Alert.alert('Permission Denied', 'Location permissions are required to find nearby responders.');
-        return;
+        throw new Error('Location permissions are required');
       }
 
+      // Get current user location
       const userLocation = await Location.getCurrentPositionAsync({});
       const userCoords = {
         latitude: userLocation.coords.latitude,
         longitude: userLocation.coords.longitude,
       };
 
-      console.log('User Location:', userCoords);
-
-      // Fetch responders from Firebase
+      // Fetch all responders
       const responderSnapshot = await get(ref(db, 'responders/'));
       if (!responderSnapshot.exists()) {
-        console.log('No responders found in Firebase');
-        return;
+        throw new Error('No responders found');
       }
 
-      // Retrieve responders with their keys
-      const responders = Object.entries(responderSnapshot.val() || []).map(([key, value]) => ({
+      // Convert responders to array with their IDs
+      const responders = Object.entries(responderSnapshot.val() || []).map(([key, value]: any) => ({
         id: key,
         ...value,
       }));
-      console.log('Responders from Firebase:', responders);
 
-      // Fetch user details for each responder
+      // Fetch user details for responders
       const detailedResponders = await Promise.all(
         responders.map(async (responder) => {
           const userSnapshot = await get(ref(db, `users/${responder.id}`));
-          if (userSnapshot.exists()) {
-            const userDetails = userSnapshot.val();
-            console.log(`User Details for Responder ID ${responder.id}:`, userDetails);
-            return { ...responder, ...userDetails };
-          }
-          console.log(`No user details found for Responder ID ${responder.id}`);
-          return null;
+          return userSnapshot.exists() ? { ...responder, ...userSnapshot.val() } : null;
         })
       );
 
-      const validResponders = detailedResponders.filter(Boolean);
-      console.log('Valid Responders:', validResponders);
+      // Filter out null and invalid responders
+      const validResponders = detailedResponders
+        .filter(Boolean)
+        .filter((responder) => responder.latitude && responder.longitude && responder.role === 'responder');
 
       if (validResponders.length === 0) {
-        console.log('No valid responders nearby');
-        return;
+        throw new Error('No valid responders found');
       }
 
       // Calculate distances
-      const respondersWithDistance = validResponders
-        .filter((responder) => responder.latitude && responder.longitude)
-        .map((responder) => {
-          const distance = geolib.getDistance(
-            { latitude: userCoords.latitude, longitude: userCoords.longitude },
-            { latitude: responder.latitude, longitude: responder.longitude }
-          );
-          return { ...responder, distance };
-        });
+      const respondersWithDistance = validResponders.map((responder) => ({
+        ...responder,
+        distance: geolib.getDistance(
+          {
+            latitude: userCoords.latitude,
+            longitude: userCoords.longitude,
+          },
+          {
+            latitude: responder.latitude,
+            longitude: responder.longitude,
+          }
+        ),
+      }));
 
-      // Find the nearest responder
-      const nearestResponder = respondersWithDistance.sort((a, b) => a.distance - b.distance)[0];
-      console.log('Nearest Responder:', nearestResponder);
+      // Sort responders by distance
+      const sortedResponders = respondersWithDistance.sort((a, b) => a.distance - b.distance);
 
-      if (nearestResponder) {
-        setNearestResponder(nearestResponder); // Only set the nearestResponder if valid
-      } else {
-        console.log('No responders nearby');
-      }
+      // Select the nearest responder
+      const nearest = sortedResponders[0];
+
+      return nearest;
     } catch (error) {
       console.error('Error finding nearest responder:', error);
+      throw error;
     }
-  };
+  }, []);
+
   const fetchSirenContacts = async () => {
     try {
       const userId = await AsyncStorage.getItem('userId');
@@ -128,7 +114,7 @@ export default function EmergencyCall() {
         if (snapshot.exists()) {
           // Filter the users with the role of 'responder'
           const allUsers = Object.values(snapshot.val() || []);
-          const responderContacts = allUsers.filter((user) => user.role === 'responder');
+          const responderContacts = allUsers.filter((user: any) => user.role === 'responder');
           setSirenContacts(responderContacts);
         } else {
           console.log('No Siren contacts found');
@@ -140,12 +126,8 @@ export default function EmergencyCall() {
       console.error('Error fetching Siren contacts:', error);
     }
   };
-  useEffect(() => {
-    fetchSirenContacts();
-    fetchNearestResponder();
-  }, []);
 
-  const callNumber = (number) => {
+  const callNumber = (number: any) => {
     const url = `tel:${number}`;
 
     Linking.canOpenURL(url)
@@ -159,80 +141,120 @@ export default function EmergencyCall() {
       .catch((err) => console.error('Error opening phone dialer:', err));
   };
 
-  const startAudioCall = async (responder) => {
-    if (!responder?.id || !responder?.username) {
-      Alert.alert('Error', 'Responder data is incomplete. Please try again.');
-      return;
-    }
-
-    try {
-      // Check if the responder is currently in an active call
-      const callsSnapshot = await get(ref(db, `calls/`));
-      if (callsSnapshot.exists()) {
-        const activeCalls = Object.values(callsSnapshot.val() || {});
-
-        const isResponderInCall = activeCalls.some(
-          (call) =>
-            (call.receiver?.id === responder.id || call.caller?.id === responder.id) &&
-            call.status === 'initiated'
-        );
-
-        if (isResponderInCall) {
-          Alert.alert(
-            'Responder Busy',
-            'The responder is currently in another call. Please try again later.'
-          );
-          return;
-        }
+  const startAudioCall = useCallback(
+    async (responder: any) => {
+      if (!responder || !responder.id || !responder.number) {
+        throw new Error('Incomplete responder information');
       }
-      // If not in call, initiate the audio call
-      const roomId = `room_${Date.now()}_${user?.uid}_${responder.id}`;
 
-      const callRef = ref(db, `calls/${roomId}`);
+      try {
+        // Set flag to prevent multiple calls
+        isCallInProgressRef.current = true;
 
-      await set(callRef, {
-        status: 'initiated',
-        caller: {
-          id: user?.uid || 'unknown',
-          name: user?.displayName || 'Unknown Caller',
-        },
-        receiver: {
-          id: responder?.id || 'unknown',
-          name: responder?.username || 'Unknown Responder',
-        },
-        timestamp: new Date().toISOString(),
-      });
+        // Remove any existing call rooms for this user
+        const existingCallsQuery = query(ref(db, 'calls'), orderByChild('caller/id'), equalTo(user?.uid));
 
-      Alert.alert(`Audio call started with ${responder.username}`);
-      router.push({
-        pathname: '/user/CallScreen',
-        params: {
-          name: responder.username,
-        },
-      });
-    } catch (error) {
-      console.error('Error starting audio call: ', error);
-      Alert.alert('Error', 'Could not initiate the call. Please try again.');
-    }
-  };
-
-  const handlePanicButtonPress = () => {
-    setIsModalVisible(true);
-    fetchNearestResponder()
-      .then(() => {
-        if (nearestResponder) {
-          startAudioCall(nearestResponder); // Initiate the audio call once a responder is found
-        } else {
-          Alert.alert('No Responder', 'No nearby responder found.');
+        const existingCallsSnapshot = await get(existingCallsQuery);
+        if (existingCallsSnapshot.exists()) {
+          const existingCalls = existingCallsSnapshot.val();
+          await Promise.all(
+            Object.keys(existingCalls).map(async (callId) => {
+              await remove(ref(db, `calls/${callId}`));
+            })
+          );
         }
-      })
-      .catch((error) => {
-        console.error('Error fetching nearest responder:', error);
-      });
-  };
+
+        // Generate unique room ID
+        const roomId = `room_${Date.now()}_${user?.uid}_${responder.id}`;
+        const callRef = ref(db, `calls/${roomId}`);
+
+        // Create call record
+        await set(callRef, {
+          status: 'initiated',
+          caller: {
+            id: user?.uid || 'unknown',
+            name: user?.displayName || 'Unknown Caller',
+          },
+          receiver: {
+            id: responder.id || 'unknown',
+            name: responder.username || 'Unknown Responder',
+          },
+          timestamp: new Date().toISOString(),
+        });
+
+        // Navigate to call screen
+        router.push({
+          pathname: '/user/CallScreen',
+          params: {
+            roomId: roomId,
+            name: responder.username,
+          },
+        });
+
+        setIsCalling(true);
+        setIsModalVisible(true);
+
+        return roomId;
+      } catch (error) {
+        console.error('Error starting audio call:', error);
+
+        // Reset call in progress flag
+        isCallInProgressRef.current = false;
+
+        throw error;
+      }
+    },
+    [user, router]
+  );
+
+  const initiateEmergencyCall = useCallback(async () => {
+    try {
+      // Prevent multiple call attempts
+      if (isCallInProgressRef.current) {
+        console.log('Call already in progress');
+        return;
+      }
+
+      // Set modal visibility
+      setIsModalVisible(true);
+
+      // Find nearest responder
+      const responder = await fetchNearestResponder();
+
+      if (responder) {
+        await startAudioCall(responder);
+        setNearestResponder(responder);
+      }
+    } catch (error) {
+      // Show error alert
+      Alert.alert(
+        'Emergency Call Failed',
+        'Unable to find a nearby responder. Please try again or contact support.'
+      );
+      setIsModalVisible(false);
+
+      // Reset call in progress flag
+      isCallInProgressRef.current = false;
+    }
+  }, [fetchNearestResponder, startAudioCall]);
+
+  // Initial call setup - only triggered once
+  useEffect(() => {
+    initiateEmergencyCall();
+
+    // Cleanup function to reset call state
+    return () => {
+      isCallInProgressRef.current = false;
+      setIsCalling(false);
+    };
+  }, []); // Empty dependency array ensures this runs only once
+
+  // Close modal and reset state
   const closeModal = () => {
     setIsModalVisible(false);
-    setIsCalling(false); // Reset the calling status when the modal is closed
+    setIsCalling(false);
+    setNearestResponder(null);
+    isCallInProgressRef.current = false;
   };
 
   // This useEffect will handle the logic of calling the nearest responder only if valid data is available
@@ -270,7 +292,7 @@ export default function EmergencyCall() {
           <View style={styles.bigCircleContainer}>
             <Image source={require('@/assets/images/emergency_call_hero.png')} style={styles.buttonBg} />
             <TouchableOpacity
-              onPress={handlePanicButtonPress} // Trigger panic button logic
+              // onPress={handlePanicButtonPress} // Trigger panic button logic
               style={styles.panicButton}
               disabled={isCalling} // Disable the button if a call is already in progress
             >

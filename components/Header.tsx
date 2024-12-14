@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Dimensions,
+  Modal,
 } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Href, usePathname, useRouter } from 'expo-router';
@@ -17,12 +18,12 @@ import Foundation from '@expo/vector-icons/Foundation';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
-import { ref, get } from 'firebase/database';
 import { db, auth } from '@/firebaseConfig';
-import { User } from 'firebase/auth';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { ScaledSheet } from 'react-native-size-matters';
-
+import { ref, get, onValue, set, push, update } from 'firebase/database';
+import CallNotification from './CallNotification';
+import { User } from 'firebase/auth';
 const { height } = Dimensions.get('window');
 
 interface HeaderProps {
@@ -37,6 +38,19 @@ interface Report {
     longitude: number;
   };
   status: string;
+}
+interface Call {
+  callId: string;
+  caller: {
+    id: string;
+    name: string;
+  };
+  receiver: {
+    id: string;
+    name: string;
+  };
+  status: string;
+  timestamp: string;
 }
 
 const Header: React.FC<HeaderProps> = ({ user }) => {
@@ -116,6 +130,8 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
 
   return (
     <View style={styles.container}>
+      {/* <CallNotification currentUserId={user.uid} /> */}
+
       {/* Left Side: Burger Menu */}
       <Pressable onPress={toggleMenu}>
         <MaterialCommunityIcons name="menu" size={30} color="#8F8E8D" />
@@ -145,7 +161,10 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
             <Feather name="phone-call" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Emergency Call</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/receiverCallScreen')}>
+          <TouchableOpacity
+            style={styles.sliderNavItem}
+            onPress={() => handlePress('/user/receiverCallScreen')}
+          >
             <Feather name="phone-call" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Emergency Call</Text>
           </TouchableOpacity>
@@ -285,5 +304,50 @@ const styles = ScaledSheet.create({
     top: '200@s',
     bottom: 0,
     height: '200@s',
+  },
+  notificationOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  notificationContainer: {
+    width: '90%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: '20@s',
+    alignItems: 'center',
+  },
+  notificationItem: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  notificationText: {
+    fontSize: '18@ms',
+    marginBottom: '15@s',
+    textAlign: 'center',
+  },
+  callActionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  acceptCallButton: {
+    backgroundColor: 'green',
+    padding: '10@s',
+    borderRadius: 5,
+    width: '45%',
+    alignItems: 'center',
+  },
+  declineCallButton: {
+    backgroundColor: 'red',
+    padding: '10@s',
+    borderRadius: 5,
+    width: '45%',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: '16@ms',
   },
 });
