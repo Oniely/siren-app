@@ -3,7 +3,7 @@ import { db, storage } from '@/firebaseConfig';
 import { Audio } from 'expo-av';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { onValue, ref, set, update } from 'firebase/database';
+import { onValue, ref, remove, set, update } from 'firebase/database';
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, Alert } from 'react-native';
 
@@ -91,14 +91,31 @@ const Caller = () => {
     console.log('Ending call...');
 
     // end call will empty the roomId datas
-    let updates: any = {};
-    updates[`calls/${roomId}/status`] = 'completed';
-    updates[`calls/${roomId}/caller`] = null;
-    updates[`calls/${roomId}/receiver`] = null;
+    const callRef = ref(db, `calls/${roomId}`);
+    await remove(callRef);
 
-    await update(ref(db), updates);
+    setCallStatus('completed');
+  };
 
-    router.replace('/');
+  const handleCallRoomNotFound = () => {
+    Alert.alert('Call Ended', 'The call room has been closed or does not exist.', [
+      {
+        text: 'OK',
+        onPress: () => {
+          if (roomId) {
+            const currentCallRef = ref(db, `calls/${roomId}`);
+            remove(currentCallRef)
+              .then(() => router.back())
+              .catch((error) => {
+                console.error('Error updating call status:', error);
+                router.back();
+              });
+          } else {
+            router.back();
+          }
+        },
+      },
+    ]);
   };
 
   // purpose is to actively fetch receiver area of data when its updated (mostly recording)
@@ -146,8 +163,28 @@ const Caller = () => {
     init();
   }, [receiverAudio]);
 
+  useEffect(() => {
+    const callRef = ref(db, `calls/${roomId}`);
+    const unsubscribe = onValue(callRef, (snapshot) => {
+      if (!snapshot.exists()) {
+        const room = snapshot.val();
+
+        if (!room) {
+          handleCallRoomNotFound();
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   // if callStatus is not ongoing then we'll add a loading indicating we are waiting for the other side to answer
-  if (!callStatus || callStatus !== 'ongoing') return <LoadingOverlay message="Waiting for answer" visible />;
+  if (!callStatus || callStatus !== 'ongoing') {
+    if (callStatus === 'completed') {
+      return router.replace('/');
+    }
+    return <LoadingOverlay message="Waiting for answer" visible />;
+  }
 
   return (
     <View style={{ padding: 20 }}>

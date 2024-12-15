@@ -19,7 +19,7 @@ const ResponderDashboard = () => {
   const router = useRouter();
   const scrollX = useRef(new Animated.Value(0)).current;
 
-  if (loading) return <Loading />;
+  const userId = getAuth().currentUser?.uid;
 
   const nearbyAccidents = [
     {
@@ -42,11 +42,11 @@ const ResponderDashboard = () => {
     },
   ];
 
-  // if (loading) return <Loading />;
+  if (loading) return <Loading />;
 
   return (
     <ResponderStyledContainer>
-      <ResponderHeader user={user!} />
+      <ResponderHeader user={user!} userId={userId!} />
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View style={styles.textWrapper}>

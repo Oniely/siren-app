@@ -23,6 +23,12 @@ import { ScaledSheet } from 'react-native-size-matters';
 import { ref, get, onValue, set, push } from 'firebase/database';
 import { db, auth } from '@/firebaseConfig';
 import { User } from '@/hooks/useUser';
+import CallNotification from '../CallNotification';
+
+interface Props {
+  user: User;
+  userId: string;
+}
 
 interface Call {
   callId: string;
@@ -39,7 +45,7 @@ interface Call {
 }
 const { height } = Dimensions.get('window');
 
-const ResponderHeader = ({ user }: { user: User }) => {
+const ResponderHeader = ({ user, userId }: Props) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [notifiedCallIds, setNotifiedCallIds] = useState<Set<string>>(new Set());
@@ -73,105 +79,10 @@ const ResponderHeader = ({ user }: { user: User }) => {
     }
   }; // Function to fetch incoming calls for the current user
 
-  const fetchIncomingCalls = async (userId: string): Promise<Call[]> => {
-    const callsRef = ref(db, 'calls');
-    const snapshot = await get(callsRef);
-
-    if (snapshot.exists()) {
-      const calls: Record<string, Call> = snapshot.val();
-      const userIncomingCalls = Object.entries(calls)
-        .filter(([key, value]) => value.receiver?.id === userId && value.status !== 'completed')
-        .map(([key, value]: any) => ({
-          callId: key,
-          ...value,
-        }));
-      return userIncomingCalls;
-    }
-    return [];
-  };
-
-  // Real-time listener for incoming calls
-  useEffect(() => {
-    const userId = auth.currentUser?.uid;
-    if (!userId) return;
-
-    const callsRef = ref(db, 'calls');
-    let debounceTimeout: NodeJS.Timeout;
-
-    const unsubscribe = onValue(callsRef, async (snapshot) => {
-      if (snapshot.exists()) {
-        const calls: Call[] = await fetchIncomingCalls(userId);
-
-        clearTimeout(debounceTimeout);
-
-        // Delay notification processing
-        debounceTimeout = setTimeout(() => {
-          setIncomingCalls(calls);
-          if (calls.length > 0) {
-            setShowCallNotification(true);
-            lastNotificationTime.current = Date.now(); // Update the last notification time
-          }
-        }, 5000); // 5-second debounce
-      }
-    });
-
-    return () => {
-      clearTimeout(debounceTimeout);
-      unsubscribe();
-    };
-  }, []);
-
-  const handleAcceptCall = (call: Call) => {
-    router.push({
-      pathname: '/user/receiverCallScreen',
-      params: {
-        callId: call.callId,
-        callerName: call.caller.name,
-        callerID: call.caller.id,
-      },
-    });
-    setShowCallNotification(false);
-  };
-  const handleDeclineCall = async (call: Call) => {
-    try {
-      const callRef = ref(db, `calls/${call.callId}`);
-      await set(callRef, null); // Deletes the call room from Firebase
-      setShowCallNotification(false); // Hide the notification
-      setIncomingCalls((prev) => prev.filter((c) => c.callId !== call.callId)); // Remove from local state
-
-      const callerNotificationRef = ref(db, `users/${call.caller.id}/notifications`);
-      await push(callerNotificationRef, {
-        message: `Your call to ${call.receiver.name} was declined.`,
-        timestamp: Date.now(),
-      });
-    } catch (error) {
-      console.error('Error deleting call room:', error);
-    }
-  };
   return (
     <View style={styles.container}>
-      <Modal transparent={true} visible={showCallNotification} animationType="slide">
-        <View style={styles.notificationOverlay}>
-          <View style={styles.notificationContainer}>
-            {incomingCalls.map((call) => (
-              <View key={call.callId} style={styles.notificationItem}>
-                <Text style={styles.notificationText}>Incoming Call from {call.caller.name}</Text>
-                <View style={styles.callActionButtons}>
-                  <TouchableOpacity style={styles.acceptCallButton} onPress={() => handleAcceptCall(call)}>
-                    <Text style={styles.buttonText}>Accept</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.declineCallButton}
-                    onPress={() => handleDeclineCall(call)} // Use the new function
-                  >
-                    <Text style={styles.buttonText}>Decline</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            ))}
-          </View>
-        </View>
-      </Modal>
+      <CallNotification currentUserId={userId} />
+
       {/* Left Side: Burger Menu */}
       <Pressable onPress={toggleMenu}>
         <MaterialCommunityIcons name="menu" size={30} color="#8F8E8D" />

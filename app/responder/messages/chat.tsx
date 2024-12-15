@@ -75,7 +75,7 @@ const MessagingItem = () => {
       onValue(roomQuery, (snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.val();
-          const messagesArray = Object.entries(data.messages || {}).map(([key, msg]) => ({
+          const messagesArray = Object.entries(data.messages || {}).map(([key, msg]: any) => ({
             id: key,
             ...msg,
           }));

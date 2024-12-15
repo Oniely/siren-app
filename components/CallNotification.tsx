@@ -80,6 +80,8 @@ const CallNotification = ({ currentUserId }: Props) => {
 
     await update(ref(db), updates);
 
+    console.log(callData);
+
     router.push({
       pathname: '/user/call/Receiver',
       params: {

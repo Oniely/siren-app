@@ -23,11 +23,12 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import { ScaledSheet } from 'react-native-size-matters';
 import { ref, get, onValue, set, push, update } from 'firebase/database';
 import CallNotification from './CallNotification';
-import { User } from 'firebase/auth';
+import { User } from '@/hooks/useUser';
 const { height } = Dimensions.get('window');
 
 interface HeaderProps {
   user: User;
+  userId: string;
 }
 
 interface Report {
@@ -53,7 +54,7 @@ interface Call {
   timestamp: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ user }) => {
+const Header: React.FC<HeaderProps> = ({ user, userId }) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const slideAnimation = useRef(new Animated.Value(-350)).current;
   const router = useRouter();
@@ -130,7 +131,7 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
 
   return (
     <View style={styles.container}>
-      {/* <CallNotification currentUserId={user.uid} /> */}
+      <CallNotification currentUserId={userId} />
 
       {/* Left Side: Burger Menu */}
       <Pressable onPress={toggleMenu}>
@@ -147,11 +148,15 @@ const Header: React.FC<HeaderProps> = ({ user }) => {
           <View style={styles.burgerProfile}>
             <Pressable onPress={() => router.push('/user/profile')}>
               <Image
-                source={user?.photoURL ? { uri: user.photoURL } : require('@/assets/images/profile-logo.png')}
+                source={
+                  user?.profileImage
+                    ? { uri: user.profileImage }
+                    : require('@/assets/images/profile-logo.png')
+                }
                 style={styles.sliderNavImage}
               />
             </Pressable>
-            <Text style={styles.burgerName}>{user?.displayName || ''}</Text>
+            <Text style={styles.burgerName}>{user?.firstname || ''}</Text>
           </View>
           <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/call_dial')}>
             <Feather name="phone-call" size={35} color="#0c0c63" />

@@ -16,9 +16,11 @@ MCI.loadFont();
 const itemWidth = Dimensions.get('screen').width * 0.9;
 
 const Dashboard = () => {
-  const user = auth.currentUser;
+  const { user, loading } = useUser();
   const router = useRouter();
   const scrollX = useRef(new Animated.Value(0)).current;
+
+  const userId = getAuth().currentUser?.uid;
 
   const nearbyAccidents = [
     {
@@ -41,17 +43,19 @@ const Dashboard = () => {
     },
   ];
 
+  if (loading) return <Loading />;
+
   return (
     <StyledContainer>
-      <Header user={user!} />
+      <Header user={user!} userId={userId!} />
       <View style={styles.indexTopBar}>
         <View style={styles.topBarLeft}>
           <Image
-            source={user?.photoURL ? { uri: user.photoURL } : require('@/assets/images/profile.png')}
+            source={user?.profileImage ? { uri: user.profileImage } : require('@/assets/images/profile.png')}
             style={styles.topBarImage}
           />
           <View>
-            <Text style={styles.topBarName}>{user?.displayName || 'Elizabeth'}</Text>
+            <Text style={styles.topBarName}>{user?.firstname || 'Elizabeth'}</Text>
             <Link href={'/user/profile'}>
               <Text style={styles.topBarLink}>See profile</Text>
             </Link>
