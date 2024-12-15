@@ -187,7 +187,7 @@ const Receiver = () => {
   }
 
   return (
-    <View style={{ padding: 20 }}>
+    <View style={{ padding: 50 }}>
       <Text>Caller Screen</Text>
       <Text>Calling {callerName}</Text>
       <Button

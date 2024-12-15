@@ -1,6 +1,6 @@
 import { db } from '@/firebaseConfig';
 import { useRouter } from 'expo-router';
-import { onChildAdded, onValue, ref, update } from 'firebase/database';
+import { onChildAdded, onValue, ref, remove, update } from 'firebase/database';
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, Modal } from 'react-native';
 
@@ -63,12 +63,12 @@ const CallNotification = ({ currentUserId }: Props) => {
     };
   }, [currentUserId]);
 
-  const handleDecline = () => {
+  const handleDecline = async () => {
     setIsModalVisible(false);
     setCallData(null);
 
-    // TODO
-    // update status to decline
+    const callRef = ref(db, `calls/${callData?.roomId}`);
+    await remove(callRef);
   };
 
   const handleAccept = async () => {
