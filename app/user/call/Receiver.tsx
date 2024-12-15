@@ -105,7 +105,7 @@ const Receiver = () => {
           if (roomId) {
             const currentCallRef = ref(db, `calls/${roomId}`);
             remove(currentCallRef)
-              .then(() => router.back())
+              .then(() => router.replace('/'))
               .catch((error) => {
                 console.error('Error updating call status:', error);
                 router.back();

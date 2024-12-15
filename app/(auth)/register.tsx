@@ -289,10 +289,8 @@ const styles = StyleSheet.create({
     height: hp(100),
   },
   scrollViewContent: {
-    paddingBottom: 20,
     justifyContent: 'center',
     textAlign: 'center',
-    height: hp(100),
   },
   signupHeader: {
     height: hp(10),
@@ -370,6 +368,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignContent: 'center',
     backgroundColor: '#1010',
+    paddingVertical: 40,
   },
   picker: {
     width: '100%',

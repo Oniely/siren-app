@@ -34,6 +34,7 @@ export default function EmergencyCall() {
     number: string;
     [key: string]: any; // Any additional user fields
   };
+
   const fetchNearestResponder = useCallback(async () => {
     try {
       // Request location permissions
@@ -180,14 +181,17 @@ export default function EmergencyCall() {
             name: responder.username || 'Unknown Responder',
           },
           timestamp: new Date().toISOString(),
+          notify: true,
         });
 
         // Navigate to call screen
         router.push({
-          pathname: '/user/CallScreen',
+          pathname: '/user/call/Caller',
           params: {
-            roomId: roomId,
-            name: responder.username,
+            roomId,
+            currentUserId: user?.uid,
+            receiverId: responder.id,
+            receiverName: responder.username,
           },
         });
 

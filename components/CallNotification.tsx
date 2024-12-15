@@ -45,8 +45,14 @@ const CallNotification = ({ currentUserId }: Props) => {
         for (let roomId in calls) {
           const call = calls[roomId];
 
+          console.log('CallNotification Data: ', call);
+
+          // TODO
+          // can improve logic of notif to only appear when status is initiated or when notify is true
+
           // Check if the current user is the receiver
           if (call.receiver.id === currentUserId) {
+            console.log('CALLING!');
             setCallData({ ...call, roomId });
             setIsModalVisible(true);
             return;
