@@ -64,6 +64,30 @@ const Register = () => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   };
+  useEffect(() => {
+    const fetchLocation = async () => {
+      if (category === 'Responder') {
+        try {
+          const { status } = await Location.requestForegroundPermissionsAsync();
+          if (status !== 'granted') {
+            Alert.alert('Permission Denied', 'Location access is required for responders.');
+            return;
+          }
+          const locationData = await Location.getCurrentPositionAsync({});
+          setLocation({
+            latitude: locationData.coords.latitude,
+            longitude: locationData.coords.longitude,
+          });
+        } catch (error) {
+          console.error('Error fetching location:', error);
+          Alert.alert('Error', 'Failed to fetch location.');
+        }
+      } else {
+        setLocation(null); // Clear location if category changes
+      }
+    };
+    fetchLocation();
+  }, [category]);
 
   const handleSignup = async () => {
     setLoading(true);
@@ -90,23 +114,6 @@ const Register = () => {
         return;
       }
 
-      if (category === 'Responder') {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-          Alert.alert('Error', 'Permission to access location was denied');
-          setLoading(false); // Ensure loading spinner stops
-          return;
-        }
-
-        const locationData = await Location.getCurrentPositionAsync({});
-        const fetchedLocation = {
-          latitude: locationData.coords.latitude,
-          longitude: locationData.coords.longitude,
-        };
-        setLocation(fetchedLocation);
-
-        console.log('Fetched Location:', fetchedLocation); // Debugging
-      }
       const userRef = ref(db, 'users');
       const snapshot = await get(userRef);
       const existingUsers = snapshot.val();
@@ -139,8 +146,15 @@ const Register = () => {
           role: 'user',
         });
       } else if (category === 'Responder') {
-        // TODO
-        // add location when registering for responderd
+        if (!location) {
+          Alert.alert('Error', 'Location not available. Please try again.');
+          return;
+        }
+        await set(ref(db, `responders/${userId}`), {
+          status: 'inactive',
+          location: location,
+        });
+
         await set(ref(db, `users/${userId}`), {
           firstname,
           lastname,
@@ -256,8 +270,10 @@ const Register = () => {
                   style={styles.input}
                   value={
                     location
-                      ? `Lat: ${location.latitude}, Long: ${location.longitude}`
-                      : 'Fetching location...'
+                      ? `Lat: ${location.latitude.toFixed(6)}, Long: ${location.longitude.toFixed(6)}`
+                      : category === 'Responder'
+                      ? 'Fetching location...'
+                      : 'Location not required'
                   }
                   editable={false} // Make this field non-editable
                 />

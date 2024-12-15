@@ -11,6 +11,8 @@ import {
   TouchableOpacity,
   View,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -122,8 +124,10 @@ const Login = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+            <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      
       <ScrollView
-        contentContainerStyle={{ flex: 1, width: '100%', height: '100%' }}
+        contentContainerStyle={styles.scrollViewContent}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
@@ -201,6 +205,7 @@ const Login = () => {
         </Modal>
         <StatusBar style="dark" />
       </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -211,16 +216,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#faf9f6',
     padding: 16,
-    height: hp('100%'),
+    height: hp(100),
     width: wp('100%'),
   },
+  scrollViewContent: {
+        height: hp(100),
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
   imageContainer: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'transparent',
     rowGap: 5,
     paddingTop: 20,
+    height: hp(30),
   },
   logo: {
     resizeMode: 'center',
@@ -237,7 +247,7 @@ const styles = StyleSheet.create({
     flex: 2,
     position: 'relative',
     width: '100%',
-    marginTop: 80,
+    marginTop: 40,
     justifyContent: 'space-between',
   },
   inputContainer: {

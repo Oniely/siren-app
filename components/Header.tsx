@@ -162,17 +162,7 @@ const Header: React.FC<HeaderProps> = ({ user, userId }) => {
             <Feather name="phone-call" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Emergency Call</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/CallScreen')}>
-            <Feather name="phone-call" size={35} color="#0c0c63" />
-            <Text style={styles.sliderNavItemText}>Emergency Call</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.sliderNavItem}
-            onPress={() => handlePress('/user/receiverCallScreen')}
-          >
-            <Feather name="phone-call" size={35} color="#0c0c63" />
-            <Text style={styles.sliderNavItemText}>Emergency Call</Text>
-          </TouchableOpacity>
+
           <TouchableOpacity style={styles.sliderNavItem} onPress={() => handlePress('/user/messages')}>
             <FontAwesome name="send" size={35} color="#0c0c63" />
             <Text style={styles.sliderNavItemText}>Emergency Text</Text>
