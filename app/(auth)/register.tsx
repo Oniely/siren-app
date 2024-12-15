@@ -139,6 +139,8 @@ const Register = () => {
           role: 'user',
         });
       } else if (category === 'Responder') {
+        // TODO
+        // add location when registering for responderd
         await set(ref(db, `users/${userId}`), {
           firstname,
           lastname,

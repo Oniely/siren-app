@@ -153,7 +153,7 @@ export default function EmergencyCall() {
         isCallInProgressRef.current = true;
 
         // Remove any existing call rooms for this user
-        const existingCallsQuery = query(ref(db, 'calls'), orderByChild('caller/id'), equalTo(user?.uid));
+        const existingCallsQuery = query(ref(db, 'calls'), orderByChild('caller/id'), equalTo(user?.uid!));
 
         const existingCallsSnapshot = await get(existingCallsQuery);
         if (existingCallsSnapshot.exists()) {

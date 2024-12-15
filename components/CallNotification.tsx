@@ -25,9 +25,6 @@ interface CallType {
 // TODO
 // UI of caller & receiver screen
 
-// TODO
-// remove the 'e' error thats appearing
-
 const CallNotification = ({ currentUserId }: Props) => {
   const router = useRouter();
 
