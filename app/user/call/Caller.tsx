@@ -5,7 +5,9 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { onValue, ref, remove, set, update } from 'firebase/database';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Alert } from 'react-native';
+import { View, Text, Button, Alert, StyleSheet, Pressable } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 const Caller = () => {
   const router = useRouter();
@@ -187,16 +189,108 @@ const Caller = () => {
   }
 
   return (
-    <View style={{ padding: 50 }}>
-      <Text>Caller Screen</Text>
-      <Text>Calling {receiverName}</Text>
-      <Button
-        title={recording ? 'Stop Recording' : 'Start Recording'}
-        onPress={recording ? stopRecording : startRecording}
-      />
-      <Button title={'End Call'} onPress={endCall} />
+    <View style={styles.container}>
+      <View style={styles.callForm}>
+        <View style={styles.upperForm}>
+          <Text style={styles.textCaller}>{receiverName || 'Unknown'}</Text>
+        </View>
+        <View style={styles.lowerForm}>
+          <View style={styles.buttonContainer}>
+            <Pressable onPress={recording ? stopRecording : startRecording} style={styles.startButton}>
+              <MaterialIcons name="call" size={70} color="white" />
+              <Text style={styles.callButtonText}>{recording ? 'Stop Recording' : 'Start Recording'}</Text>
+            </Pressable>
+            {/* <Button
+            style={styles.startButton}
+              title={recording ? 'Stop Recording' : 'Start Recording'}
+              onPress={recording ? stopRecording : startRecording}
+            /> */}
+            <Pressable onPress={endCall} style={styles.endButton}>
+              <MaterialIcons name="call-end" size={70} color="white" />
+              <Text style={styles.endButtonText}>End Call</Text>
+            </Pressable>
+            {/* <Button title={'End Call'} onPress={endCall} /> */}
+          </View>
+        </View>
+      </View>
     </View>
   );
 };
 
 export default Caller;
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    height: hp(100),
+    width: wp(100),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  callForm: {
+    padding: 20,
+    height: hp(100),
+    width: wp(100),
+  },
+  upperForm: {
+    height: hp(50),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textInfo: {
+    fontSize: 24,
+    marginBottom: 20,
+  },
+  textCaller: {
+    fontWeight: 'bold',
+    fontSize: 44,
+    textAlign: 'center',
+    flexWrap: 'wrap',
+  },
+  lowerForm: {
+    height: hp(50),
+    justifyContent: 'center',
+    alignContent: 'center',
+  },
+  buttonContainer: {
+    justifyContent: 'space-evenly',
+    flexDirection: 'row',
+  },
+  button: {},
+  startButton: {
+    backgroundColor: '#007C01',
+    padding: 20,
+    flexWrap: 'wrap',
+    textAlign: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 50,
+  },
+  endButton: {
+    backgroundColor: '#E80001',
+    padding: 20,
+    borderRadius: 50,
+    flexWrap: 'wrap',
+    textAlign: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  callButtonText: {
+    color: 'white',
+    width: wp(17.5),
+    fontSize: 18,
+    marginTop: 10,
+    flexWrap: 'wrap',
+    textAlign: 'center',
+  },
+  endButtonText: {
+    width: wp(17.5),
+    color: 'white',
+    fontSize: 18,
+    marginTop: 10,
+    flexWrap: 'wrap',
+    textAlign: 'center',
+  },
+});

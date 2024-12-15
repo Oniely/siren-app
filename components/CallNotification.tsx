@@ -2,8 +2,9 @@ import { db } from '@/firebaseConfig';
 import { useRouter } from 'expo-router';
 import { onChildAdded, onValue, ref, remove, update } from 'firebase/database';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Modal } from 'react-native';
-
+import { View, Text, Button, Modal, StyleSheet, Pressable } from 'react-native';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 interface Props {
   currentUserId: string;
 }
@@ -98,27 +99,21 @@ const CallNotification = ({ currentUserId }: Props) => {
 
   return (
     <Modal visible={isModalVisible} transparent>
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        }}
-      >
-        <View
-          style={{
-            width: 300,
-            padding: 20,
-            backgroundColor: 'white',
-            borderRadius: 10,
-          }}
-        >
-          <Text style={{ fontSize: 18, marginBottom: 20 }}>Incoming Call</Text>
-          {/* <Text style={{ marginBottom: 20 }}>From: {callData?.caller?.name || 'Unknown'}</Text> */}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-            <Button title="Decline" onPress={handleDecline} color="red" />
-            <Button title="Accept" onPress={handleAccept} color="green" />
+      <View style={styles.container}>
+        <View style={styles.callForm}>
+          <View style={styles.upperForm}>
+            <Text style={styles.textInfo}>Incoming Call</Text>
+            <Text style={styles.textCaller}>{callData?.caller?.name || 'Unknown'}</Text>
+          </View>
+          <View style={styles.lowerForm}>
+            <View style={styles.buttonContainer}>
+              <Pressable onPress={handleAccept} style={styles.acceptButton}>
+                <MaterialIcons name="call" size={70} color="white" />
+              </Pressable>
+              <Pressable onPress={handleDecline} style={styles.declineButton}>
+                <MaterialIcons name="call-end" size={70} color="white" />
+              </Pressable>
+            </View>
           </View>
         </View>
       </View>
@@ -127,3 +122,54 @@ const CallNotification = ({ currentUserId }: Props) => {
 };
 
 export default CallNotification;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  callForm: {
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    height: hp(100),
+    width: wp(100),
+  },
+  upperForm: {
+    height: hp(50),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textInfo: {
+    fontSize: 24,
+    marginBottom: 20,
+  },
+  textCaller: {
+    fontWeight: 'bold',
+    fontSize: 44,
+    textAlign: 'center',
+    flexWrap: 'wrap',
+  },
+  lowerForm: {
+    height: hp(50),
+    justifyContent: 'center',
+    alignContent: 'center',
+  },
+  buttonContainer: {
+    justifyContent: 'space-evenly',
+    flexDirection: 'row',
+  },
+  button: {},
+  acceptButton: {
+    backgroundColor: '#007C01',
+    padding: 20,
+    borderRadius: 50,
+  },
+  declineButton: {
+    backgroundColor: '#E80001',
+    padding: 20,
+    borderRadius: 50,
+  },
+});
