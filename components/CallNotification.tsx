@@ -2,7 +2,7 @@ import { db } from '@/firebaseConfig';
 import { useRouter } from 'expo-router';
 import { onChildAdded, onValue, ref, remove, update } from 'firebase/database';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Modal, StyleSheet, Pressable } from 'react-native';
+import { View, Text, Button, Modal, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 interface Props {
@@ -49,7 +49,7 @@ const CallNotification = ({ currentUserId }: Props) => {
           // can improve logic of notif to only appear when status is initiated or when notify is true
 
           // Check if the current user is the receiver
-          if (call.receiver.id === currentUserId) {
+          if (call.receiver.id === currentUserId && call.notify) {
             console.log('CALLING!');
             setCallData({ ...call, roomId });
             setIsModalVisible(true);
@@ -78,23 +78,29 @@ const CallNotification = ({ currentUserId }: Props) => {
   const handleAccept = async () => {
     setIsModalVisible(false);
 
-    let updates: any = {};
-    updates[`calls/${callData?.roomId}/status`] = 'ongoing';
-    updates[`calls/${callData?.roomId}/notify`] = false;
+    try {
+      let updates: any = {};
+      updates[`calls/${callData?.roomId}/status`] = 'ongoing';
+      updates[`calls/${callData?.roomId}/notify`] = false;
 
-    await update(ref(db), updates);
+      await update(ref(db), updates);
 
-    console.log(callData);
+      console.log(callData);
 
-    router.push({
-      pathname: '/user/call/Receiver',
-      params: {
-        roomId: callData?.roomId,
-        currentUserId,
-        callerId: callData?.caller.id,
-        callerName: callData?.caller.name,
-      },
-    });
+      router.push({
+        pathname: '/user/call/Receiver',
+        params: {
+          roomId: callData?.roomId,
+          currentUserId,
+          callerId: callData?.caller.id,
+          callerName: callData?.caller.name,
+        },
+      });
+    } catch (error) {
+      console.error('Error accepting call:', error);
+    } finally {
+      setIsModalVisible(false);
+    }
   };
 
   return (
@@ -102,17 +108,17 @@ const CallNotification = ({ currentUserId }: Props) => {
       <View style={styles.container}>
         <View style={styles.callForm}>
           <View style={styles.upperForm}>
-            <Text style={styles.textInfo}>Incoming Call</Text>
             <Text style={styles.textCaller}>{callData?.caller?.name || 'Unknown'}</Text>
+            <Text style={styles.textInfo}>Incoming Call</Text>
           </View>
           <View style={styles.lowerForm}>
             <View style={styles.buttonContainer}>
-              <Pressable onPress={handleAccept} style={styles.acceptButton}>
+              <TouchableOpacity onPress={handleAccept} style={styles.acceptButton} activeOpacity={0.8}>
                 <MaterialIcons name="call" size={70} color="white" />
-              </Pressable>
-              <Pressable onPress={handleDecline} style={styles.declineButton}>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleDecline} style={styles.declineButton} activeOpacity={0.8}>
                 <MaterialIcons name="call-end" size={70} color="white" />
-              </Pressable>
+              </TouchableOpacity>
             </View>
           </View>
         </View>

@@ -182,7 +182,7 @@ const Receiver = () => {
   // if callStatus is not ongoing then we'll add a loading indicating we are waiting for the other side to answer
   if (!callStatus || callStatus !== 'ongoing') {
     if (callStatus === 'completed') {
-      return router.replace('/');
+      return router.back();
     }
     return <LoadingOverlay message="Waiting for answer" visible />;
   }
