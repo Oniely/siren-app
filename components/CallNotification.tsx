@@ -1,10 +1,12 @@
-import { db } from '@/firebaseConfig';
+import { auth, db } from '@/firebaseConfig';
 import { useRouter } from 'expo-router';
 import { onChildAdded, onValue, ref, remove, update } from 'firebase/database';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Modal, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
+import { View, Text, Button, Modal, StyleSheet, Pressable, TouchableOpacity, Vibration } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import LoadingOverlay from './app/LoadingOverlay';
+
 interface Props {
   currentUserId: string;
 }
@@ -18,19 +20,21 @@ interface CallType {
     id: string;
     name: string;
   };
+  toResponder?: boolean;
   notify: boolean;
   status: string;
   timestamp: string;
 }
 
-// TODO
-// UI of caller & receiver screen
-
-const CallNotification = ({ currentUserId }: Props) => {
+const CallNotification = () => {
   const router = useRouter();
+  const currentUserId = auth.currentUser?.uid;
+
+  console.log('Call Notification CurrentUser: ', currentUserId);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [callData, setCallData] = useState<({ roomId: string } & CallType) | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const callsRef = ref(db, 'calls');
@@ -53,6 +57,7 @@ const CallNotification = ({ currentUserId }: Props) => {
             console.log('CALLING!');
             setCallData({ ...call, roomId });
             setIsModalVisible(true);
+            Vibration.vibrate(2000);
             return;
           }
         }
@@ -68,15 +73,27 @@ const CallNotification = ({ currentUserId }: Props) => {
   }, [currentUserId]);
 
   const handleDecline = async () => {
+    setLoading(true);
     setIsModalVisible(false);
     setCallData(null);
 
-    const callRef = ref(db, `calls/${callData?.roomId}`);
-    await remove(callRef);
+    Vibration.cancel();
+
+    try {
+      const callRef = ref(db, `calls/${callData?.roomId}`);
+      await remove(callRef);
+    } catch (error) {
+      console.error('Handle Decline Error: ', error);
+    } finally {
+      setLoading(true);
+    }
   };
 
   const handleAccept = async () => {
+    setLoading(true);
     setIsModalVisible(false);
+
+    Vibration.cancel();
 
     try {
       let updates: any = {};
@@ -94,36 +111,51 @@ const CallNotification = ({ currentUserId }: Props) => {
           currentUserId,
           callerId: callData?.caller.id,
           callerName: callData?.caller.name,
+          isResponder: callData?.toResponder ? 'true' : 'false', // used string because boolean don't work
         },
       });
     } catch (error) {
       console.error('Error accepting call:', error);
     } finally {
+      setLoading(false);
       setIsModalVisible(false);
     }
   };
 
   return (
-    <Modal visible={isModalVisible} transparent>
-      <View style={styles.container}>
-        <View style={styles.callForm}>
-          <View style={styles.upperForm}>
-            <Text style={styles.textCaller}>{callData?.caller?.name || 'Unknown'}</Text>
-            <Text style={styles.textInfo}>Incoming Call</Text>
-          </View>
-          <View style={styles.lowerForm}>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity onPress={handleAccept} style={styles.acceptButton} activeOpacity={0.8}>
-                <MaterialIcons name="call" size={70} color="white" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleDecline} style={styles.declineButton} activeOpacity={0.8}>
-                <MaterialIcons name="call-end" size={70} color="white" />
-              </TouchableOpacity>
+    <>
+      <LoadingOverlay visible={loading} message="Redirecting to call..." />
+      <Modal visible={isModalVisible} transparent>
+        <View style={styles.container}>
+          <View style={styles.callForm}>
+            <View style={styles.upperForm}>
+              <Text style={styles.textCaller}>{callData?.caller?.name || 'Unknown'}</Text>
+              <Text style={styles.textInfo}>Incoming Call</Text>
+            </View>
+            <View style={styles.lowerForm}>
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  onPress={handleAccept}
+                  style={styles.acceptButton}
+                  activeOpacity={0.8}
+                  disabled={loading}
+                >
+                  <MaterialIcons name="call" size={70} color="white" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={handleDecline}
+                  style={styles.declineButton}
+                  activeOpacity={0.8}
+                  disabled={loading}
+                >
+                  <MaterialIcons name="call-end" size={70} color="white" />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>
-      </View>
-    </Modal>
+      </Modal>
+    </>
   );
 };
 

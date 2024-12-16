@@ -81,7 +81,11 @@ const Profile = () => {
             </View>
             <Ionicons name="chevron-forward" size={24} color="#b6b6b7" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.settingButton} activeOpacity={0.8}>
+          <TouchableOpacity
+            style={styles.settingButton}
+            onPress={() => router.push('/user/settings')}
+            activeOpacity={0.8}
+          >
             <View style={styles.settingContent}>
               <Ionicons name="settings" size={24} color="#b6b6b7" />
               <Text style={styles.settingText}>Settings</Text>

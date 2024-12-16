@@ -28,7 +28,6 @@ const { height } = Dimensions.get('window');
 
 interface HeaderProps {
   user: User;
-  userId: string;
 }
 
 interface Report {
@@ -54,7 +53,7 @@ interface Call {
   timestamp: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ user, userId }) => {
+const Header: React.FC<HeaderProps> = ({ user }) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const slideAnimation = useRef(new Animated.Value(-350)).current;
   const router = useRouter();
@@ -131,7 +130,7 @@ const Header: React.FC<HeaderProps> = ({ user, userId }) => {
 
   return (
     <View style={styles.container}>
-      <CallNotification currentUserId={userId} />
+      <CallNotification />
 
       {/* Left Side: Burger Menu */}
       <Pressable onPress={toggleMenu}>

@@ -181,6 +181,7 @@ export default function EmergencyCall() {
             name: responder.username || 'Unknown Responder',
           },
           timestamp: new Date().toISOString(),
+          toResponder: true,
           notify: true,
         });
 

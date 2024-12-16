@@ -13,7 +13,7 @@ const Receiver = () => {
   const router = useRouter();
   const params = useLocalSearchParams();
 
-  const { roomId, currentUserId, callerId, callerName } = params;
+  const { roomId, currentUserId, callerId, callerName, isResponder } = params;
 
   // your states
   const [recording, setRecording] = useState<any>(null);
@@ -29,7 +29,6 @@ const Receiver = () => {
       latitude: any;
     };
   }
-
 
   // record audio and save it to <recording> state
   const startRecording = async () => {
@@ -102,6 +101,18 @@ const Receiver = () => {
     try {
       const callRef = ref(db, `calls/${roomId}`);
       await remove(callRef);
+
+      callerDataSend();
+      setCallStatus('completed');
+    } catch (error) {
+      console.error('Failed to end the call:', error);
+      Alert.alert('Error', 'Could not end the call. Please try again.');
+    }
+  };
+
+  // redirect responder ONLY!
+  const callerDataSend = async () => {
+    if (isResponder === 'true') {
       router.push({
         pathname: '/responder/validation',
         params: {
@@ -109,23 +120,9 @@ const Receiver = () => {
           name: callerName || 'Unknown',
         },
       });
-    } catch (error) {
-      console.error('Failed to end the call:', error);
-      Alert.alert('Error', 'Could not end the call. Please try again.');
     }
   };
-  // const callerDataSend = async () => {
-  //   router.push({
-  //     pathname: '/responder\validation',
-  //     params: {
-  //       callerId: callerId, // Unique caller ID
-  //       name: callerName,
-  //       contact: callerNumber,
-  //       location: callerLocation,
-  //       issue: 'Network Issue',
-  //     },
-  //   });
-  // };
+
   const handleCallRoomNotFound = () => {
     Alert.alert('Call Ended', 'The call room has been closed or does not exist.', [
       {
@@ -134,15 +131,7 @@ const Receiver = () => {
           if (roomId) {
             const currentCallRef = ref(db, `calls/${roomId}`);
             remove(currentCallRef)
-              .then(() =>
-                router.push({
-                  pathname: '/responder/validation',
-                  params: {
-                    callerId: callerId, // Unique caller ID
-                    name: callerName,
-                  },
-                })
-              )
+              .then(() => callerDataSend())
               .catch((error) => {
                 console.error('Error updating call status:', error);
                 router.back();

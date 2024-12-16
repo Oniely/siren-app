@@ -226,7 +226,7 @@ const ReportEmergency = () => {
     <Container bg="#faf9f6" statusBarStyle="light">
       <View style={[styles.header, { backgroundColor: '#e6e6e6' }]}>
         <Text>Report Emergency</Text>
-      </View>{' '}
+      </View>
       <ScrollView style={styles.reportContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Caller ID</Text>

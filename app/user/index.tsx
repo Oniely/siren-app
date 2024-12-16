@@ -10,6 +10,7 @@ import NewsAlertCard from '@/components/NewsAlertCard';
 import Loading from '@/components/app/Loading';
 import useUser from '@/hooks/useUser';
 import { auth } from '@/firebaseConfig';
+import CallNotification from '@/components/CallNotification';
 
 MCI.loadFont();
 
@@ -47,7 +48,7 @@ const Dashboard = () => {
 
   return (
     <StyledContainer>
-      <Header user={user!} userId={userId!} />
+      <Header user={user!} />
       <View style={styles.indexTopBar}>
         <View style={styles.topBarLeft}>
           <Image

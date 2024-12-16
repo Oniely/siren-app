@@ -27,7 +27,6 @@ import CallNotification from '../CallNotification';
 
 interface Props {
   user: User;
-  userId: string;
 }
 
 interface Call {
@@ -45,7 +44,7 @@ interface Call {
 }
 const { height } = Dimensions.get('window');
 
-const ResponderHeader = ({ user, userId }: Props) => {
+const ResponderHeader = ({ user }: Props) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [notifiedCallIds, setNotifiedCallIds] = useState<Set<string>>(new Set());
@@ -81,7 +80,7 @@ const ResponderHeader = ({ user, userId }: Props) => {
 
   return (
     <View style={styles.container}>
-      <CallNotification currentUserId={userId} />
+      <CallNotification />
 
       {/* Left Side: Burger Menu */}
       <Pressable onPress={toggleMenu}>
