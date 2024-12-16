@@ -103,7 +103,6 @@ const Receiver = () => {
       await remove(callRef);
 
       callerDataSend();
-      setCallStatus('completed');
     } catch (error) {
       console.error('Failed to end the call:', error);
       Alert.alert('Error', 'Could not end the call. Please try again.');
