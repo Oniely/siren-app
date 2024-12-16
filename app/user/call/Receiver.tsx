@@ -23,6 +23,14 @@ const Receiver = () => {
   // caller states
   const [callerAudio, setCallerAudio] = useState<any>(null);
 
+  interface LocationProp {
+    coords: {
+      longitude: any;
+      latitude: any;
+    };
+  }
+
+
   // record audio and save it to <recording> state
   const startRecording = async () => {
     try {
@@ -91,14 +99,33 @@ const Receiver = () => {
 
   const endCall = async () => {
     console.log('Ending call...');
-
-    // end call will empty the roomId datas
-    const callRef = ref(db, `calls/${roomId}`);
-    await remove(callRef);
-
-    setCallStatus('completed');
+    try {
+      const callRef = ref(db, `calls/${roomId}`);
+      await remove(callRef);
+      router.push({
+        pathname: '/responder/validation',
+        params: {
+          callerId: callerId,
+          name: callerName || 'Unknown',
+        },
+      });
+    } catch (error) {
+      console.error('Failed to end the call:', error);
+      Alert.alert('Error', 'Could not end the call. Please try again.');
+    }
   };
-
+  // const callerDataSend = async () => {
+  //   router.push({
+  //     pathname: '/responder\validation',
+  //     params: {
+  //       callerId: callerId, // Unique caller ID
+  //       name: callerName,
+  //       contact: callerNumber,
+  //       location: callerLocation,
+  //       issue: 'Network Issue',
+  //     },
+  //   });
+  // };
   const handleCallRoomNotFound = () => {
     Alert.alert('Call Ended', 'The call room has been closed or does not exist.', [
       {
@@ -107,7 +134,15 @@ const Receiver = () => {
           if (roomId) {
             const currentCallRef = ref(db, `calls/${roomId}`);
             remove(currentCallRef)
-              .then(() => router.replace('/'))
+              .then(() =>
+                router.push({
+                  pathname: '/responder/validation',
+                  params: {
+                    callerId: callerId, // Unique caller ID
+                    name: callerName,
+                  },
+                })
+              )
               .catch((error) => {
                 console.error('Error updating call status:', error);
                 router.back();
@@ -209,7 +244,13 @@ const Receiver = () => {
               title={recording ? 'Stop Recording' : 'Start Recording'}
               onPress={recording ? stopRecording : startRecording}
             /> */}
-            <TouchableOpacity onPress={endCall} style={styles.endButton} activeOpacity={0.8}>
+            <TouchableOpacity
+              onPress={() => {
+                endCall();
+              }}
+              style={styles.endButton}
+              activeOpacity={0.8}
+            >
               <MaterialIcons name="call-end" size={70} color="white" />
               <Text style={styles.endButtonText}>End Call</Text>
             </TouchableOpacity>

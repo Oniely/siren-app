@@ -124,87 +124,86 @@ const Login = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-            <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      
-      <ScrollView
-        contentContainerStyle={styles.scrollViewContent}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.imageContainer}>
-          <Image source={require('@/assets/images/logo.png')} style={styles.logo} />
-        </View>
-        <View style={styles.formContainer}>
-          <View>
-            <View style={styles.whiteLine} />
-            <View style={styles.inputContainer}>
-              <Icon name="user" size={20} color="#0c0c63" />
-              <TextInput
-                placeholder="Username"
-                style={styles.input}
-                value={username}
-                onChangeText={setUsername}
-                autoCapitalize="none"
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Icon name="lock" size={20} color="#0c0c63" />
-              <TextInput
-                placeholder="Password"
-                style={styles.input}
-                secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={setPassword}
-                autoCapitalize="none"
-              />
-              <Pressable onPress={() => setShowPassword((prev) => !prev)}>
-                <Icon name={showPassword ? 'eye' : 'eye-slash'} size={25} color={'#5997C6'} />
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView
+          contentContainerStyle={styles.scrollViewContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.imageContainer}>
+            <Image source={require('@/assets/images/logo.png')} style={styles.logo} />
+          </View>
+          <View style={styles.formContainer}>
+            <View>
+              <View style={styles.whiteLine} />
+              <View style={styles.inputContainer}>
+                <Icon name="user" size={20} color="#0c0c63" />
+                <TextInput
+                  placeholder="Username"
+                  style={styles.input}
+                  value={username}
+                  onChangeText={setUsername}
+                  autoCapitalize="none"
+                />
+              </View>
+              <View style={styles.inputContainer}>
+                <Icon name="lock" size={20} color="#0c0c63" />
+                <TextInput
+                  placeholder="Password"
+                  style={styles.input}
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={setPassword}
+                  autoCapitalize="none"
+                />
+                <Pressable onPress={() => setShowPassword((prev) => !prev)}>
+                  <Icon name={showPassword ? 'eye' : 'eye-slash'} size={25} color={'#5997C6'} />
+                </Pressable>
+              </View>
+              <TouchableOpacity style={styles.submit} onPress={handleLogin}>
+                <Text style={styles.submitText}>Login</Text>
+              </TouchableOpacity>
+              <Pressable onPress={() => setShowForgotPasswordModal(true)}>
+                <Text style={styles.forgotPass}>Forgot Password?</Text>
               </Pressable>
             </View>
-            <TouchableOpacity style={styles.submit} onPress={handleLogin}>
-              <Text style={styles.submitText}>Login</Text>
-            </TouchableOpacity>
-            <Pressable onPress={() => setShowForgotPasswordModal(true)}>
-              <Text style={styles.forgotPass}>Forgot Password?</Text>
-            </Pressable>
-          </View>
-          <View>
-            <Text style={styles.connectWith}>or connect with</Text>
-            <View style={styles.thirdpartyButtonContainer}>
-              <Icon name="facebook-square" size={40} color={'#0c0c63'} />
-              <Icon name="user" size={40} color={'#0c0c63'} />
-              <Icon name="google" size={40} color={'#0c0c63'} />
-            </View>
-            <View style={styles.askToRegister}>
-              <Text style={styles.normalRegisterText}>Don't have an account?</Text>
-              <Pressable onPress={() => router.push('/register')}>
-                <Text style={styles.registerText}>Signup</Text>
-              </Pressable>
+            <View style={styles.lowerForm}>
+              <Text style={styles.connectWith}>or connect with</Text>
+              <View style={styles.thirdpartyButtonContainer}>
+                <Icon name="facebook-square" size={40} color={'#0c0c63'} />
+                <Icon name="user" size={40} color={'#0c0c63'} />
+                <Icon name="google" size={40} color={'#0c0c63'} />
+              </View>
+              <View style={styles.askToRegister}>
+                <Text style={styles.normalRegisterText}>Don't have an account?</Text>
+                <Pressable onPress={() => router.push('/register')}>
+                  <Text style={styles.registerText}>Signup</Text>
+                </Pressable>
+              </View>
             </View>
           </View>
-        </View>
-        {/* Forgot Password Modal */}
-        <Modal transparent={true} visible={showForgotPasswordModal} animationType="slide">
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>Reset Password</Text>
-              <TextInput
-                placeholder="Enter your email"
-                style={styles.modalInput}
-                value={resetEmail}
-                onChangeText={setResetEmail}
-              />
-              <TouchableOpacity style={styles.modalButton} onPress={handleForgotPassword}>
-                <Text style={styles.modalButtonText}>Send Reset Link</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setShowForgotPasswordModal(false)}>
-                <Text style={styles.modalCloseText}>Close</Text>
-              </TouchableOpacity>
+          {/* Forgot Password Modal */}
+          <Modal transparent={true} visible={showForgotPasswordModal} animationType="slide">
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Reset Password</Text>
+                <TextInput
+                  placeholder="Enter your email"
+                  style={styles.modalInput}
+                  value={resetEmail}
+                  onChangeText={setResetEmail}
+                />
+                <TouchableOpacity style={styles.modalButton} onPress={handleForgotPassword}>
+                  <Text style={styles.modalButtonText}>Send Reset Link</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setShowForgotPasswordModal(false)}>
+                  <Text style={styles.modalCloseText}>Close</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        </Modal>
-        <StatusBar style="dark" />
-      </ScrollView>
+          </Modal>
+          <StatusBar style="dark" />
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -220,7 +219,7 @@ const styles = StyleSheet.create({
     width: wp('100%'),
   },
   scrollViewContent: {
-        height: hp(100),
+    height: hp(100),
     justifyContent: 'center',
     textAlign: 'center',
   },
@@ -230,7 +229,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     rowGap: 5,
     paddingTop: 20,
-    height: hp(30),
+    height: hp(35),
   },
   logo: {
     resizeMode: 'center',
@@ -271,6 +270,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'semibold',
     paddingVertical: 2,
+  },
+  lowerForm: {
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    height: hp(30),
   },
   submit: {
     width: 160,
