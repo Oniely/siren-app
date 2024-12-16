@@ -5,9 +5,10 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { onValue, ref, remove, set, update } from 'firebase/database';
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Alert, StyleSheet, Pressable } from 'react-native';
+import { View, Text, Button, Alert, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+
 const Receiver = () => {
   const router = useRouter();
   const params = useLocalSearchParams();
@@ -195,19 +196,23 @@ const Receiver = () => {
         </View>
         <View style={styles.lowerForm}>
           <View style={styles.buttonContainer}>
-            <Pressable onPress={recording ? stopRecording : startRecording} style={styles.startButton}>
+            <TouchableOpacity
+              onPress={recording ? stopRecording : startRecording}
+              style={styles.startButton}
+              activeOpacity={0.8}
+            >
               <MaterialIcons name="call" size={70} color="white" />
               <Text style={styles.callButtonText}>{recording ? 'Stop Recording' : 'Start Recording'}</Text>
-            </Pressable>
+            </TouchableOpacity>
             {/* <Button
             style={styles.startButton}
               title={recording ? 'Stop Recording' : 'Start Recording'}
               onPress={recording ? stopRecording : startRecording}
             /> */}
-            <Pressable onPress={endCall} style={styles.endButton}>
+            <TouchableOpacity onPress={endCall} style={styles.endButton} activeOpacity={0.8}>
               <MaterialIcons name="call-end" size={70} color="white" />
               <Text style={styles.endButtonText}>End Call</Text>
-            </Pressable>
+            </TouchableOpacity>
             {/* <Button title={'End Call'} onPress={endCall} /> */}
           </View>
         </View>
