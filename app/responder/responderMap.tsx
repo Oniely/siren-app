@@ -280,13 +280,14 @@ const ResponderMap = () => {
                   e.persist();
                   handleMarkerPress(report);
                 }}
+                zIndex={markerColor === 'red' ? 2000 : 1000}
               >
                 <Entypo name="location-pin" size={60} color={markerColor} />
               </Marker>
             );
           })}
         </MapView>
-        <Modalize ref={modalizeRef} snapPoint={350} onClose={resetSelectedReport}>
+        <Modalize ref={modalizeRef} snapPoint={380} onClose={resetSelectedReport}>
           <View style={styles.modal}>
             <View style={[styles.flexRowCenter, styles.borderBottom, { paddingTop: 15 }]}>
               <Image source={require('@/assets/images/profile.png')} />
@@ -367,13 +368,14 @@ const ResponderMap = () => {
                 <View style={styles.infoColumn}>
                   <Text style={[styles.infoHeaderText, styles.pad]}>Images</Text>
                   <View style={styles.imageContainer}>
-                    {selectedReport?.assets.map((item: any, idx: number) => (
-                      <Image
-                        source={item ? { uri: item.url } : require('@/assets/images/policeman.png')}
-                        style={styles.image}
-                        key={idx}
-                      />
-                    ))}
+                    {selectedReport?.assets &&
+                      selectedReport.assets.map((item: any, idx: number) => (
+                        <Image
+                          source={item ? { uri: item.url } : require('@/assets/images/policeman.png')}
+                          style={styles.image}
+                          key={idx}
+                        />
+                      ))}
                   </View>
                 </View>
               </View>
