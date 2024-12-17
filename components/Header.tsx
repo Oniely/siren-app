@@ -223,7 +223,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   police: {
-    resizeMode: 'stretch',
+    resizeMode: 'cover',
     height: '40@s',
     width: '40@s',
     borderRadius: '20@s',
@@ -266,6 +266,7 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
     height: '90@s',
     zIndex: 100,
+    flexWrap: 'wrap',
   },
   sliderNavItemText: {
     color: '#000',

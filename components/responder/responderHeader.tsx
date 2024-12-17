@@ -233,6 +233,8 @@ const styles = ScaledSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     height: '90@vs',
+    flexWrap: 'wrap',
+
     zIndex: 100,
   },
   sliderNavItemText: {

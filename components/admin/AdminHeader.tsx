@@ -16,6 +16,8 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScaledSheet } from 'react-native-size-matters';
 import ConfirmModal from '../ConfirmModal';
+import Feather from '@expo/vector-icons/Feather';
+import { FontAwesome } from '@expo/vector-icons';
 const { height } = Dimensions.get('window');
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
@@ -55,7 +57,7 @@ const AdminHeader: React.FC<HeaderProps> = ({ bg = '#e6e6e6' }) => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: bg }]}>
+    <View style={[styles.container]}>
       {/* Left Side: Burger Menu */}
       <Pressable onPress={toggleMenu}>
         <MaterialCommunityIcons name="menu" size={30} color="#8F8E8D" />
@@ -132,17 +134,14 @@ export default AdminHeader;
 
 const styles = ScaledSheet.create({
   container: {
-    paddingVertical: '15@s',
+    paddingVertical: '15@vs',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: '20@s',
-    zIndex: 1000,
-    height: hp('10%'),
-    flexWrap: 'wrap',
   },
   title: {
-    fontSize: '18@s',
+    fontSize: '18@ms',
     fontWeight: 'bold',
     color: '#000',
   },
@@ -152,10 +151,17 @@ const styles = ScaledSheet.create({
     alignItems: 'center',
   },
   police: {
-    resizeMode: 'stretch',
+    resizeMode: 'cover',
     height: '40@s',
     width: '40@s',
     borderRadius: '20@s',
+  },
+  burgerProfile: {
+    height: '250@s',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FAF9F6',
+    width: '100%',
   },
   navScrollContainer: {
     flex: 1,
@@ -164,16 +170,9 @@ const styles = ScaledSheet.create({
     backgroundColor: '#ffffff',
     zIndex: 1000,
   },
-  burgerProfile: {
-    height: 250,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FAF9F6',
-    width: '100%',
-  },
   burgerName: {
-    marginTop: '20@s',
-    fontSize: '25@s',
+    marginTop: '20@vs',
+    fontSize: '25@ms',
     color: '#000',
     fontFamily: 'BeVietnamProThin',
   },
@@ -190,26 +189,33 @@ const styles = ScaledSheet.create({
     height: hp('100%'),
   },
   sliderNavItem: {
-    paddingVertical: 10,
+    paddingVertical: '10@vs',
     left: wp('10%'),
     flexDirection: 'row',
     alignItems: 'center',
-    height: 100,
+    height: '90@vs',
     zIndex: 100,
+    flexWrap: 'wrap',
   },
   sliderNavItemText: {
     color: '#000',
-    fontSize: 24,
-    marginHorizontal: 10,
-    paddingLeft: wp('5%'),
+    fontSize: '24@ms',
+    marginHorizontal: '10@s',
+    paddingLeft: '30@s',
     fontFamily: 'BeVietnamProThin',
+  
   },
-  sliderNavImage: {},
+  sliderNavImage: {
+    resizeMode: 'cover',
+    width: '125@s',
+    height: '125@s',
+    borderRadius: 999,
+  },
   closeButton: {
     position: 'absolute',
-    top: 10,
-    left: 15,
-    padding: 10,
+    top: '10@s',
+    left: '15@s',
+    padding: '10@s',
     zIndex: 3,
   },
   closeButtonText: {
@@ -217,11 +223,11 @@ const styles = ScaledSheet.create({
     justifyContent: 'center',
     textAlign: 'center',
     color: '#333',
-    fontSize: '50@s',
+    fontSize: '50@ms',
   },
   burgerFooter: {
     textAlign: 'center',
-    top: 200,
+    top: hp(20),
     bottom: 0,
     height: '200@s',
   },
