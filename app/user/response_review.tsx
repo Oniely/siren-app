@@ -1,4 +1,13 @@
-import { View, Text, Image, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
 import React, { useEffect, useState, useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScaledSheet } from 'react-native-size-matters';
@@ -7,6 +16,7 @@ import { StatusBar } from 'expo-status-bar';
 import { db, auth } from '@/firebaseConfig';
 import { ref, get, onValue, push, set, update } from 'firebase/database';
 import { useRouter } from 'expo-router';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 export default function ResponseReview() {
   const [defaultRating, setDefaultRating] = useState(0);
@@ -122,41 +132,47 @@ export default function ResponseReview() {
   //  });
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.headText} numberOfLines={1}>
-        Response Review
-      </Text>
-      <View style={styles.responderInfo}>
-        <Image source={require('@/assets/images/profile.png')} style={styles.responderImage} />
-        <Text style={styles.responderName}>{profileData?.firstname + ' ' + profileData?.lastname}</Text>
-        <Text style={styles.responderContact}>9892-28732-222</Text>
-      </View>
-      <View style={styles.responseContainer}>
-        <Text style={styles.responseFeedback}>Response Feedback?</Text>
-        <CustomRatingBar />
-      </View>
-      <KeyboardAvoidingView
-        style={{ width: '100%', alignItems: 'center' }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={1000}
+      <ScrollView
+        contentContainerStyle={styles.scrollViewContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <View style={styles.commentContainer}>
-          <TextInput
-            placeholder="Add comment here (optional)"
-            style={styles.commentInput}
-            value={comment}
-            onChangeText={setComment}
-          />
-          <Text style={styles.commentDesc}>Anything you want to comment?</Text>
-          <Text style={styles.footerDesc}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec urna vel sapien aliquam
-            posuere.
-          </Text>
-          <TouchableOpacity style={styles.submitButton} activeOpacity={0.7} onPress={handleSubmit}>
-            <Text style={styles.submitText}>Submit Feedback</Text>
-          </TouchableOpacity>
+        <Text style={styles.headText} numberOfLines={1}>
+          Response Review
+        </Text>
+        <View style={styles.responderInfo}>
+          <Image source={require('@/assets/images/profile.png')} style={styles.responderImage} />
+          <Text style={styles.responderName}>{profileData?.firstname + ' ' + profileData?.lastname}</Text>
+          <Text style={styles.responderContact}>9892-28732-222</Text>
         </View>
-      </KeyboardAvoidingView>
-      <StatusBar style="dark" />
+        <View style={styles.responseContainer}>
+          <Text style={styles.responseFeedback}>Response Feedback?</Text>
+          <CustomRatingBar />
+        </View>
+        <KeyboardAvoidingView
+          style={{ width: '100%', alignItems: 'center' }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={1000}
+        >
+          <View style={styles.commentContainer}>
+            <TextInput
+              placeholder="Add comment here (optional)"
+              style={styles.commentInput}
+              value={comment}
+              onChangeText={setComment}
+            />
+            <Text style={styles.commentDesc}>Anything you want to comment?</Text>
+            <Text style={styles.footerDesc}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec urna vel sapien aliquam
+              posuere.
+            </Text>
+            <TouchableOpacity style={styles.submitButton} activeOpacity={0.7} onPress={handleSubmit}>
+              <Text style={styles.submitText}>Submit Feedback</Text>
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+        <StatusBar style="dark" />
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -169,11 +185,19 @@ const styles = ScaledSheet.create({
     paddingVertical: '30@s',
     gap: '45@s',
   },
+  scrollViewContent: {
+    justifyContent: 'center',
+    textAlign: 'center',
+    alignItems: 'center',
+    height: hp('100%'),
+    width: wp(100),
+  },
   headText: {
     fontSize: '28@vs',
     fontFamily: 'BeVietnamProRegular',
     letterSpacing: 0,
     color: '#0b0c63',
+    height: hp(10),
   },
   responderInfo: {
     alignItems: 'center',

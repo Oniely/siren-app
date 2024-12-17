@@ -229,7 +229,7 @@ const ResponderMap = () => {
                 <Text style={styles.topBarLink}>0912309123</Text>
               </View>
             </View>
-            <TouchableOpacity onPress={() => router.back()} activeOpacity={0.7}>
+            <TouchableOpacity onPress={() => router.navigate('/responder/')} activeOpacity={0.7}>
               <Image source={require('@/assets/images/close_btn.png')} style={styles.closeBtn} />
             </TouchableOpacity>
           </View>

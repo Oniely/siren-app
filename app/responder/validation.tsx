@@ -298,21 +298,22 @@ const ReportEmergency = () => {
             onChangeText={setDetails}
           />
         </View>
-
-        <Pressable
-          style={styles.button}
-          disabled={status === 'Submitting' || status === 'Uploading'}
-          onPress={handleSubmit} // Use the new function
-        >
-          <Text style={styles.buttonText}>Submit Report</Text>
-        </Pressable>
-        <Pressable
-          style={styles.button}
-          disabled={status === 'Submitting' || status === 'Uploading'}
-          onPress={cancelReport} // Use the new function
-        >
-          <Text style={styles.buttonText}>Cancel Report</Text>
-        </Pressable>
+        <View style={styles.buttonContainer}>
+          <Pressable
+            style={styles.acceptbutton}
+            disabled={status === 'Submitting' || status === 'Uploading'}
+            onPress={handleSubmit} // Use the new function
+          >
+            <Text style={styles.buttonText}>Submit Report</Text>
+          </Pressable>
+          <Pressable
+            style={styles.cancelbutton}
+            disabled={status === 'Submitting' || status === 'Uploading'}
+            onPress={cancelReport} // Use the new function
+          >
+            <Text style={styles.buttonText}>Cancel Report</Text>
+          </Pressable>
+        </View>
       </ScrollView>
     </Container>
   );
@@ -430,14 +431,27 @@ const styles = StyleSheet.create({
     marginTop: 10,
     padding: 10,
   },
-  button: {
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+  },
+  acceptbutton: {
     backgroundColor: '#0B0C63',
     paddingVertical: 15,
-    paddingHorizontal: 15,
+    paddingHorizontal: 30,
     borderRadius: 10,
-    width: '86%',
-    marginHorizontal: 'auto',
-    marginVertical: 60,
+    width: wp(35),
+    marginVertical: 20,
+    zIndex: 10,
+  },
+  cancelbutton: {
+    backgroundColor: '#CD0000',
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    width: wp(35),
+    marginVertical: 20,
     zIndex: 10,
   },
   buttonText: {

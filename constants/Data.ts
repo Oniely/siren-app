@@ -71,77 +71,77 @@ export const establishments = [
     coordinates: { latitude: 14.5512, longitude: 121.0537 },
   },
   // Bacolod City Emergency Centers
-  {
-    id: 11,
-    name: 'Bacolod City Medical Center',
-    category: 'Hospital',
-    type: 'Medical',
-    coordinates: { latitude: 10.6843, longitude: 122.9558 }, // Corrected coordinates
-  },
-  {
-    id: 12,
-    name: 'San Jose Hospital',
-    category: 'Hospital',
-    type: 'Medical',
-    coordinates: { latitude: 10.6881, longitude: 122.9542 }, // Corrected coordinates
-  },
-  {
-    id: 13,
-    name: 'Bacolod City Police Station 1',
-    category: 'Police Station',
-    type: 'Disaster',
-    coordinates: { latitude: 10.6843, longitude: 122.9555 }, // Corrected coordinates
-  },
-  {
-    id: 14,
-    name: 'Bacolod City Fire Station',
-    category: 'Fire Station',
-    type: 'Disaster',
-    coordinates: { latitude: 10.6839, longitude: 122.9575 }, // Corrected coordinates
-  },
+  // {
+  //   id: 11,
+  //   name: 'Bacolod City Medical Center',
+  //   category: 'Hospital',
+  //   type: 'Medical',
+  //   coordinates: { latitude: 10.6843, longitude: 122.9558 }, // Corrected coordinates
+  // },
+  // {
+  //   id: 12,
+  //   name: 'San Jose Hospital',
+  //   category: 'Hospital',
+  //   type: 'Medical',
+  //   coordinates: { latitude: 10.6881, longitude: 122.9542 }, // Corrected coordinates
+  // },
+  // {
+  //   id: 13,
+  //   name: 'Bacolod City Police Station 1',
+  //   category: 'Police Station',
+  //   type: 'Disaster',
+  //   coordinates: { latitude: 10.6843, longitude: 122.9555 }, // Corrected coordinates
+  // },
+  // {
+  //   id: 14,
+  //   name: 'Bacolod City Fire Station',
+  //   category: 'Fire Station',
+  //   type: 'Disaster',
+  //   coordinates: { latitude: 10.6839, longitude: 122.9575 }, // Corrected coordinates
+  // },
 
   // Kabankalan City Emergency Centers
-  {
-    id: 15,
-    name: 'Kabankalan District Hospital',
-    category: 'Hospital',
-    type: 'Medical',
-    coordinates: { latitude: 10.2381, longitude: 122.8132 },
-  },
-  {
-    id: 16,
-    name: 'Kabankalan City Police Station',
-    category: 'Police Station',
-    type: 'Disaster',
-    coordinates: { latitude: 10.2379, longitude: 122.814 },
-  },
-  {
-    id: 17,
-    name: 'Kabankalan City Fire Station',
-    category: 'Fire Station',
-    type: 'Disaster',
-    coordinates: { latitude: 10.2382, longitude: 122.8125 },
-  },
+  // {
+  //   id: 15,
+  //   name: 'Kabankalan District Hospital',
+  //   category: 'Hospital',
+  //   type: 'Medical',
+  //   coordinates: { latitude: 10.2381, longitude: 122.8132 },
+  // },
+  // {
+  //   id: 16,
+  //   name: 'Kabankalan City Police Station',
+  //   category: 'Police Station',
+  //   type: 'Disaster',
+  //   coordinates: { latitude: 10.2379, longitude: 122.814 },
+  // },
+  // {
+  //   id: 17,
+  //   name: 'Kabankalan City Fire Station',
+  //   category: 'Fire Station',
+  //   type: 'Disaster',
+  //   coordinates: { latitude: 10.2382, longitude: 122.8125 },
+  // },
   // Cauayan Emergency Centers
-  {
-    id: 18,
-    name: 'Cauayan District Hospital',
-    category: 'Hospital',
-    type: 'Medical',
-    coordinates: { latitude: 10.5444, longitude: 122.928 },
-  },
-  {
-    id: 19,
-    name: 'Cauayan Municipal Police Station',
-    category: 'Police Station',
-    type: 'Disaster',
-    coordinates: { latitude: 10.5445, longitude: 122.9275 },
-  },
-  {
-    id: 20,
-    name: 'Cauayan Fire Station',
-    category: 'Fire Station',
-    type: 'Disaster',
-    coordinates: { latitude: 10.5446, longitude: 122.9275 },
-  },
+  // {
+  //   id: 18,
+  //   name: 'Cauayan District Hospital',
+  //   category: 'Hospital',
+  //   type: 'Medical',
+  //   coordinates: { latitude: 10.5444, longitude: 122.928 },
+  // },
+  // {
+  //   id: 19,
+  //   name: 'Cauayan Municipal Police Station',
+  //   category: 'Police Station',
+  //   type: 'Disaster',
+  //   coordinates: { latitude: 10.5445, longitude: 122.9275 },
+  // },
+  // {
+  //   id: 20,
+  //   name: 'Cauayan Fire Station',
+  //   category: 'Fire Station',
+  //   type: 'Disaster',
+  //   coordinates: { latitude: 10.5446, longitude: 122.9275 },
+  // },
 ];
