@@ -17,10 +17,20 @@ export default function Analytics() {
   const [incidentCounts, setIncidentCounts] = useState<any>({
     'Road Accidents': 0,
     'Fires and Explosions': 0,
-    'Natural Disasters': 0,
+    'Natural Disaster': 0,
+    'Medical Issues': 0,
+    'Domestic Problems': 0,
+    'Public Safety Threats': 0,
   });
 
-  const predefinedCategories = ['Road Accidents', 'Fires and Explosions', 'Natural Disasters'];
+  const predefinedCategories = [
+    'Road Accidents',
+    'Fires and Explosions',
+    'Natural Disaster',
+    'Medical Issues',
+    'Domestic Problems',
+    'Public Safety Threats',
+  ];
 
   useEffect(() => {
     const fetchReports = async () => {
@@ -83,7 +93,7 @@ export default function Analytics() {
 
     fetchReports();
   }, []);
-  const translateTimestamp = (timestamp) => {
+  const translateTimestamp = (timestamp: any) => {
     const date = new Date(timestamp); // Convert the timestamp to a Date object
     return date.toLocaleString(); // Formats to a readable local date and time
   };
@@ -159,25 +169,17 @@ export default function Analytics() {
           <View style={styles.mapDataContainer}>
             <Text style={styles.textHeader}>Map Data {'(Incident Counts and Latest)'}</Text>
             <View style={styles.dataContainer}>
-              {predefinedCategories.map((category) => (
-                <View key={category} style={styles.dataBox}>
-                  <Text style={styles.boxName}>{category}</Text>
-                  <Text style={styles.boxData}>{incidentCounts[category]} incidents</Text>
+              {latestReports.map((report: any, index: number) => (
+                <View key={index} style={styles.dataBox}>
+                  <Text style={styles.boxName}>{report.category}</Text>
+                  <Text style={styles.boxData}>
+                    Incidents: {incidentCounts[report.category]}
+                    {'\n'}Time:{' '}
+                    {report.timestamp ? translateTimestamp(report.timestamp) : 'No data available'}
+                  </Text>
                 </View>
               ))}
             </View>
-          </View>
-
-          {/* Latest Reports */}
-          <View style={styles.latestReports}>
-            {latestReports.map((report: any, index: number) => (
-              <View key={index} style={styles.latestReportBox}>
-                <Text style={styles.boxName}>{report.category}</Text>
-                <Text style={styles.boxData}>
-                  Time: {report.timestamp ? translateTimestamp(report.timestamp) : 'No data available'}
-                </Text>
-              </View>
-            ))}
           </View>
         </View>
       </ScrollView>
@@ -212,7 +214,7 @@ const styles = ScaledSheet.create({
   },
   dataBox: {
     width: '96@s',
-    height: '85@s',
+    height: '120@vs',
     borderWidth: 1,
     borderColor: '#b0adad',
     borderRadius: '10@s',

@@ -185,7 +185,7 @@ const Caller = () => {
     if (callStatus === 'completed') {
       return router.replace('/');
     }
-    return <LoadingOverlay message="Waiting for answer" visible />;
+    return <LoadingOverlay message="Waiting for answer" visible backButtonVisible />;
   }
 
   return (
