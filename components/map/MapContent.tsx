@@ -1,19 +1,19 @@
 import React from 'react';
 import { Image, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-// @ts-ignore
-import evac from '@/assets/images/evacuation.png';
-// @ts-ignore
-import secure from '@/assets/images/secure.png';
-// @ts-ignore
-import warn from '@/assets/images/warning.png';
+// // @ts-ignore
+// import evac from '@/assets/images/evacuation.png';
+// // @ts-ignore
+// import secure from '@/assets/images/secure.png';
+// // @ts-ignore
+// import warn from '@/assets/images/warning.png';
 
 import Footer from '../Footer';
 import SearchInMap from './SearchInMap';
 
 const Options = ({ path, text }: any) => (
   <TouchableOpacity style={styles.option}>
-    <Image source={path} />
+    {/* <Image source={path} /> */}
     <Text style={styles.optionText}>{text}</Text>
   </TouchableOpacity>
 );
@@ -23,9 +23,9 @@ const MapContent = () => {
     <View style={styles.container}>
       <SearchInMap />
       <View style={styles.options}>
-        <Options path={evac} text={'Reported Emergencies'} />
-        <Options path={secure} text={'Safe zone'} />
-        <Options path={warn} text={'Evacuation'} />
+        {/* <Options text={'Reported Emergencies'} />
+        <Options text={'Safe zone'} />
+        <Options text={'Evacuation'} /> */}
       </View>
       <View style={styles.mapContent} />
       {/* <Footer /> */}
@@ -46,20 +46,21 @@ const styles = StyleSheet.create({
   mapContent: {
     flex: 1,
   },
-  options: {
-    width: '90%',
-    flexDirection: 'row',
-    gap: 5,
-    marginHorizontal: 'auto',
-    marginTop: 10,
-    justifyContent: 'center',
-  },
   option: {
+    borderWidth: 2,
     flexDirection: 'row',
     gap: 5,
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 5,
     padding: 5,
+  },
+  options: {
+    width: '90%',
+    flexDirection: 'row',
+    gap: 10,
+    marginHorizontal: 'auto',
+    marginTop: 10,
+    justifyContent: 'center',
   },
   optionText: {
     fontSize: 11,
