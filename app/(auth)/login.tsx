@@ -168,12 +168,12 @@ const Login = () => {
               </Pressable>
             </View>
             <View style={styles.lowerForm}>
-              <Text style={styles.connectWith}>or connect with</Text>
+              {/* <Text style={styles.connectWith}>or connect with</Text>
               <View style={styles.thirdpartyButtonContainer}>
                 <Icon name="facebook-square" size={40} color={'#0c0c63'} />
                 <Icon name="user" size={40} color={'#0c0c63'} />
                 <Icon name="google" size={40} color={'#0c0c63'} />
-              </View>
+              </View> */}
               <View style={styles.askToRegister}>
                 <Text style={styles.normalRegisterText}>Don't have an account?</Text>
                 <Pressable onPress={() => router.push('/register')}>
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     gap: 10,
-    marginBottom: 60,
+    marginBottom: 200,
   },
   normalRegisterText: {
     color: '#000000',
