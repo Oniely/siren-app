@@ -33,6 +33,7 @@ const WaitingResponder: React.FC = () => {
   const [responderLocation, setResponderLocation] = useState<any>(null);
   const mapRef = useRef<MapView>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [selectedReport, setSelectedReport] = useState<any>(null); // For storing the selected report for the modal
 
   const fetchProfileData = async () => {
     try {
@@ -109,31 +110,33 @@ const WaitingResponder: React.FC = () => {
     fetchUserReports();
   }, [reports]);
 
-  const startTimer = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-    timerRef.current = setTimeout(() => {
-      console.log('Timer finished');
-      setModalVisible(true);
-    }, 300000);
-  };
+  // const startTimer = () => {
+  //   if (timerRef.current) {
+  //     clearTimeout(timerRef.current);
+  //   }
+  //   timerRef.current = setTimeout(() => {
+  //     console.log('Timer finished');
+  //     setModalVisible(true);
+  //   }, 300000);
+  // };
   const handleNotYet = () => {
     console.log('Not Yet clicked, restarting timer');
     setModalVisible(false); // Hide the modal
-    startTimer(); // Restart the timer
+    // startTimer(); // Restart the timer
   };
-  useEffect(() => {
-    startTimer();
-    return () => {
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-      }
-    };
-  }, []);
-  const handleMarkerPress = (report: any, event: any) => {
-    event.persist();
+  // useEffect(() => {
+  //   startTimer();
+  //   return () => {
+  //     if (timerRef.current) {
+  //       clearTimeout(timerRef.current);
+  //     }
+  //   };
+  // }, []);
+  const handleMarkerPress = (report: any) => {
+    setSelectedReport(report); // Set the selected report
+    setModalVisible(true); // Show the modal
   };
+
   // Ensure map only updates when both responder and report data are present
   useEffect(() => {
     if (reports.length > 0 && responderLocation) {
@@ -220,7 +223,7 @@ const WaitingResponder: React.FC = () => {
               coordinate={report.location}
               title={report.senderName}
               description={report.category}
-              onPress={(event) => handleMarkerPress(report, event)}
+              onPress={() => handleMarkerPress(report)} // Pass the report data
             >
               <Entypo name="location-pin" size={60} color={markerColor} />
             </Marker>
@@ -247,30 +250,64 @@ const WaitingResponder: React.FC = () => {
         visible={modalVisible}
         onRequestClose={() => {
           setModalVisible(false);
+          setSelectedReport(null); // Clear selected report
         }}
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalText}>Is the emergency responded?</Text>
-            <View style={styles.modalButtons}>
-              <Pressable
-                style={[styles.declineModalButtons, styles.modalButton]}
-                onPress={() => {
-                  setModalVisible(false);
-                }}
-              >
-                <Text style={styles.buttonTextNo}>Not Yet</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.confirmModalButtons, styles.modalButton]}
-                onPress={() => {
-                  setModalVisible(false);
-                  router.push('/user/response_review'); // Replace with the actual review page route
-                }}
-              >
-                <Text style={styles.buttonTextYes}>Review</Text>
-              </Pressable>
-            </View>
+            {selectedReport ? (
+              selectedReport.status === 'Reviewed' ? (
+                // If status is "Reviewed"
+                <>
+                  <Text style={styles.modalText}>This report has already been reviewed.</Text>
+                  <Pressable
+                    style={[styles.closeModalButton, styles.modalButton]}
+                    onPress={() => {
+                      setModalVisible(false);
+                      setSelectedReport(null); // Clear selected report
+                    }}
+                  >
+                    <Text style={styles.buttonTextClose}>Close</Text>
+                  </Pressable>
+                </>
+              ) : (
+                // If status is not "Reviewed"
+                <>
+                  <Text style={styles.modalText}>
+                    Do you want to review the report from {selectedReport.senderName}?
+                  </Text>
+                  <Text style={styles.modalDetails}>
+                    <Text style={{ fontWeight: 'bold' }}>Category:</Text> {selectedReport.category}
+                  </Text>
+                  <Text style={styles.modalDetails}>
+                    <Text style={{ fontWeight: 'bold' }}>Description:</Text> {selectedReport.details || 'N/A'}
+                  </Text>
+                  <View style={styles.modalButtons}>
+                    <Pressable
+                      style={[styles.declineModalButtons, styles.modalButton]}
+                      onPress={() => {
+                        setModalVisible(false);
+                        setSelectedReport(null); // Clear selected report
+                      }}
+                    >
+                      <Text style={styles.buttonTextNo}>Cancel</Text>
+                    </Pressable>
+                    <Pressable
+                      style={[styles.confirmModalButtons, styles.modalButton]}
+                      onPress={() => {
+                        setModalVisible(false);
+                        if (selectedReport) {
+                          router.push('/user/response_review'); // Navigate to the review page
+                        }
+                        setSelectedReport(null); // Clear selected report
+                      }}
+                    >
+                      <Text style={styles.buttonTextYes}>Review</Text>
+                    </Pressable>
+                  </View>
+                </>
+              )
+            ) : null}
           </View>
         </View>
       </Modal>
@@ -358,10 +395,31 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
+  modalDetails: {
+    fontSize: 14,
+    fontFamily: 'BeVietnamProRegular',
+    color: '#333',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
+  },
+  closeModalButton: {
+    backgroundColor: '#E75B65',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    paddingVertical: 10,
+    borderRadius: 5,
+    width: '45%',
+    alignItems: 'center',
+  },
+  buttonTextClose: {
+    fontSize: 16,
+    fontFamily: 'BeVietnamProRegular',
+    color: '#fff',
   },
   indexTopBar: {
     flexDirection: 'row',
