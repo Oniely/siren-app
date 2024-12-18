@@ -58,15 +58,15 @@ const category = [
   },
   {
     name: 'Medical Issues',
-    img: require('@/assets/images/road.png'),
+    img: require('@/assets/images/heart.jpg'),
   },
   {
     name: 'Domestic Problems',
-    img: require('@/assets/images/road.png'),
+    img: require('@/assets/images/domestic.jpg'),
   },
   {
     name: 'Public Safety Threats',
-    img: require('@/assets/images/road.png'),
+    img: require('@/assets/images/safety.jpg'),
   },
 ];
 
@@ -423,6 +423,7 @@ const styles = StyleSheet.create({
   },
   category: {
     flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#0C0C63',
     paddingVertical: 10,
     gap: 10,
@@ -434,6 +435,8 @@ const styles = StyleSheet.create({
   },
   categoryImages: {
     backgroundColor: '#e6e6e6',
+    width: 15,
+    height: 15,
   },
   emergencyDetails: {
     width: '84%',
