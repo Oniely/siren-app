@@ -56,6 +56,18 @@ const category = [
     name: 'Road Accidents',
     img: require('@/assets/images/road.png'),
   },
+  {
+    name: 'Medical Issues',
+    img: require('@/assets/images/road.png'),
+  },
+  {
+    name: 'Domestic Problems',
+    img: require('@/assets/images/road.png'),
+  },
+  {
+    name: 'Public Safety Threats',
+    img: require('@/assets/images/road.png'),
+  },
 ];
 
 const ReportEmergency = () => {
@@ -395,17 +407,16 @@ const styles = StyleSheet.create({
     zIndex: -1,
     marginHorizontal: 'auto',
   },
-
   categList: {
     position: 'absolute',
     width: '100%',
-    bottom: -150,
+    bottom: -300,
     right: 0,
     padding: 5,
     backgroundColor: '#0C0C63',
-    maxHeight: 150,
-    height: 150,
-    zIndex: 100,
+    maxHeight: 300,
+    height: 300,
+    zIndex: 1000,
     borderRadius: 10,
     overflow: 'scroll',
     gap: 10,
