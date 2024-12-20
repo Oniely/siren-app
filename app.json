@@ -46,7 +46,8 @@
         {
           "photosPermission": "The Siren App accesses your photos to upload images & update you profile."
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
